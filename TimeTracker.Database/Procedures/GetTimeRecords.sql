@@ -1,11 +1,11 @@
 ﻿CREATE PROCEDURE [dbo].[GetTimeRecords]
 (
-	@UserId INT = NULL,
-	@FromDate DATE = NULL,
-	@ToDate DATE = NULL,
-	@PageNumber INT,
-	@PageSize INT,
-	@Total INT OUTPUT
+	@UserId		INT = NULL,
+	@FromDate	DATE = NULL,
+	@ToDate		DATE = NULL,
+	@PageNumber	INT,
+	@PageSize	INT,
+	@Total		INT OUTPUT
 )
 AS
 BEGIN	

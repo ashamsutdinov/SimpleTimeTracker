@@ -1,8 +1,8 @@
 ﻿CREATE PROCEDURE [dbo].[GetUsers]
 (
-	@PageNumber INT,
-	@PageSize INT,
-	@Total INT OUTPUT
+	@PageNumber	INT,
+	@PageSize	INT,
+	@Total		INT OUTPUT
 )
 AS
 BEGIN

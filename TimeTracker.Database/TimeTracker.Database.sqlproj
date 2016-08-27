@@ -94,6 +94,8 @@
     <Build Include="Procedures\SaveTimeRecord.sql" />
     <Build Include="Procedures\DeleteTimeRecord.sql" />
     <Build Include="Procedures\GetTimeRecords.sql" />
+    <Build Include="Procedures\SaveTimeRecordNote.sql" />
+    <Build Include="Procedures\DeleteTimeRecordNote.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="PostDeploy.sql" />

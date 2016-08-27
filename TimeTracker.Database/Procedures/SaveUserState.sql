@@ -1,7 +1,7 @@
 ﻿CREATE PROCEDURE [dbo].[SaveUserState]
 (
-	@Id NVARCHAR(32) NOT NULL,
-	@Description NVARCHAR(128) NOT NULL
+	@Id				NVARCHAR(32) NOT NULL,
+	@Description	NVARCHAR(128) NOT NULL
 )
 AS
 BEGIN

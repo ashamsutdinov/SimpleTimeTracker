@@ -1,6 +1,6 @@
 ﻿CREATE PROCEDURE [dbo].[DeleteTimeRecord]
 (
-	@Id BIT
+	@Id		BIT
 )
 AS
 BEGIN
