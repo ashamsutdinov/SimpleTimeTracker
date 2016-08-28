@@ -36,6 +36,8 @@ BEGIN
 	INSERT INTO [dbo].[UsersToRoles] SELECT @Id, [Id] FROM @Roles
 	INSERT INTO [dbo].[UsersToSettings] SELECT @Id, [Id], [Value] FROM @Settings
 
-	SELECT @Id
+	SELECT [u].[Id], [u].[Login], [u].[PasswordHash], [u].[PasswordSalt], [u].[Name], [u].[StateId]
+	FROM [dbo].[Users] [u]
+	WHERE [u].[Id] = @Id
 END
 GO

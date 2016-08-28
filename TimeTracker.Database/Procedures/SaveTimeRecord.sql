@@ -3,6 +3,7 @@
 	@Id			INT,
 	@UserId		INT,
 	@Date		DATE,
+	@Caption	NVARCHAR(256),
 	@Hours		INT
 )
 AS
@@ -19,15 +20,18 @@ BEGIN
 	BEGIN		
 		UPDATE [dbo].[TimeRecords] SET
 			[DayRecordId] = @DayRecordId,
+			[Caption] = @Caption,
 			[Hours] = @Hours 
 		WHERE [Id] = @Id
 	END
 	ELSE
 	BEGIN
-		INSERT INTO [dbo].[TimeRecords] ([DayRecordId], [Hours]) VALUES (@DayRecordId, @Hours)
+		INSERT INTO [dbo].[TimeRecords] ([DayRecordId], [Hours], [Caption]) VALUES (@DayRecordId, @Hours, @Caption)
 		SELECT @Id = @@IDENTITY
 	END
 
-	SELECT @Id
+	SELECT [t].[Id], [t].[DayRecordId], [t].[Hours], [t].[Caption], [t].[Deleted]
+	FROM [dbo].[TimeRecords] [t]
+	WHERE [t].[Id] = @Id
 END
 GO

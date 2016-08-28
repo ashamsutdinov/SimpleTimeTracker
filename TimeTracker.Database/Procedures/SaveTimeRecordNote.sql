@@ -24,6 +24,8 @@ BEGIN
 		SELECT @Id = @@IDENTITY
 	END
 
-	SELECT @Id
+	SELECT [tn].[Id], [tn].[TimeRecordId], [tn].[UserId], [tn].[DateTime], [tn].[Text], [tn].[Deleted]
+	FROM [dbo].[TimeRecordNotes] [tn]
+	WHERE [tn].[Id] = @Id
 END
 GO
