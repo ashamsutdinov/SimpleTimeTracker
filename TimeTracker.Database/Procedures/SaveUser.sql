@@ -1,13 +1,13 @@
 ﻿CREATE PROCEDURE [dbo].[SaveUser]
 (
-	@Id				INT NOT NULL,
-	@Login			NVARCHAR(64) NOT NULL,
-	@PasswordHash	NVARCHAR(64) NOT NULL,
-	@PasswordSalt	NVARCHAR(16) NOT NULL,
-	@Name			NVARCHAR(128) NOT NULL,
-	@StateId		NVARCHAR(16) NOT NULL,
-	@Roles			KeyCollection NOT NULL READONLY,
-	@Settings		KeyValueCollection NOT NULL READONLY
+	@Id				INT,
+	@Login			NVARCHAR(64),
+	@PasswordHash	NVARCHAR(64),
+	@PasswordSalt	NVARCHAR(16),
+	@Name			NVARCHAR(128),
+	@StateId		NVARCHAR(16),
+	@Roles			KeyCollection READONLY,
+	@Settings		KeyValueCollection READONLY
 )
 AS
 BEGIN

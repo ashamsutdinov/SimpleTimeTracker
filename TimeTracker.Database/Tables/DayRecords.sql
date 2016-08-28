@@ -1,7 +1,7 @@
 ﻿CREATE TABLE [dbo].[DayRecords]
 (
 	[Id]			INT NOT NULL IDENTITY PRIMARY KEY,
-	[UserId]		INT NOT NULL PRIMARY KEY,
+	[UserId]		INT NOT NULL,
 	[Date]			DATE NOT NULL,
 	[TotalHours]	INT NOT NULL DEFAULT 0,
 	CONSTRAINT [FK.DayRecords.UserId] FOREIGN KEY ([UserId]) REFERENCES [dbo].[Users]([Id])

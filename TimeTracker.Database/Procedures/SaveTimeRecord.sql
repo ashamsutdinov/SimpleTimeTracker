@@ -1,9 +1,9 @@
 ﻿CREATE PROCEDURE [dbo].[SaveTimeRecord]
 (
-	@Id			INT NOT NULL,
-	@UserId		INT NOT NULL,
-	@Date		DATE NOT NULL,
-	@Hours		INT NOT NULL
+	@Id			INT,
+	@UserId		INT,
+	@Date		DATE,
+	@Hours		INT
 )
 AS
 BEGIN

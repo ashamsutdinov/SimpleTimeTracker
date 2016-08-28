@@ -19,10 +19,11 @@ BEGIN
 	(
 		[DayRecordId]	INT,		
 		[UserId]		INT,
-		[Name]			NVARCHAR(128),
+		[UserName]		NVARCHAR(128),
 		[Date]			DATE,
 		[TotalHours]	INT,
 		[TimeRecordId]	INT,
+		[Caption]		NVARCHAR(256),
 		[Hours]			INT
 	)
 
@@ -50,16 +51,20 @@ BEGIN
 
 	WHILE @@FETCH_STATUS = 0
 	BEGIN
-		INSERT INTO #result ([DayRecordId], [UserId], [Name], [Date], [TotalHours], [TimeRecordId], [Hours])
-		SELECT @DayRecordId, @LoopUserId, @Name, @Date, @TotalHours, [t].[Id], [t].[Hours]
-		FROM [dbo].[TimeRecords] [t] WHERE [t].[DayRecordId] = @DayRecordId ORDER BY [t].[Id] ASC		
+		INSERT INTO #result ([DayRecordId], [UserId], [UserName], [Date], [TotalHours], [TimeRecordId], [Caption], [Hours])
+		SELECT @DayRecordId, @LoopUserId, @Name, @Date, @TotalHours, [t].[Id], [t].[Caption], [t].[Hours]
+		FROM [dbo].[TimeRecords] [t]
+		WHERE [t].[DayRecordId] = @DayRecordId AND [t].[Deleted] = 0		
+		ORDER BY [t].[Id] ASC		
+
 		FETCH DayRecordsLoop INTO @DayRecordId, @LoopUserId, @Name, @Date, @TotalHours
 	END
 
 	CLOSE DayRecordsLoop
 	DEALLOCATE DayRecordsLopp	
 	
-	SELECT * FROM #result
+	SELECT [DayRecordId], [UserId], [UserName], [Date], [TotalHours], [TimeRecordId], [Caption], [Hours]
+	FROM #result
 	DROP TABLE #result	
 END
 GO

@@ -3,6 +3,7 @@
 	[Id]			INT NOT NULL IDENTITY PRIMARY KEY,
 	[DayRecordId]	INT NOT NULL,
 	[Hours]			INT NOT NULL,
+	[Caption]		NVARCHAR(256) NOT NULL,
 	[Deleted]		BIT NOT NULL DEFAULT 0
 	CONSTRAINT [FK.TimeRecords.DayRecordId] FOREIGN KEY ([DayRecordId]) REFERENCES [dbo].[DayRecords] ([Id])
 )

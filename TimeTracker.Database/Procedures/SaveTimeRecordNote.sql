@@ -1,9 +1,9 @@
 ﻿CREATE PROCEDURE [dbo].[SaveTimeRecordNote]
 (
-	@Id				INT NOT NULL,
-	@TimeRecordId	INT NOT NULL,
-	@UserId			INT NOT NULL,
-	@Text			NVARCHAR(MAX) NOT NULL
+	@Id				INT,
+	@TimeRecordId	INT,
+	@UserId			INT,
+	@Text			NVARCHAR(MAX)
 )
 AS
 BEGIN

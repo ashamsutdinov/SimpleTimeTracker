@@ -62,7 +62,6 @@
     <Folder Include="Types" />
     <Folder Include="Scripts" />
     <Folder Include="Triggers" />
-    <Folder Include="Functions" />
   </ItemGroup>
   <ItemGroup>
     <None Include="TimeTracker.Database.publish.xml" />
@@ -84,9 +83,6 @@
     <Build Include="Types\KeyValueCollection.sql" />
     <None Include="Scripts\InitUserSettings.sql" />
     <Build Include="Tables\UsersToSettings.sql" />
-    <Build Include="Functions\GetUserSettingValue.sql" />
-    <Build Include="Functions\GetUserRoles.sql" />
-    <Build Include="Functions\GetUserSettings.sql" />
     <Build Include="Procedures\GetUsers.sql" />
     <Build Include="Tables\TimeRecords.sql" />
     <Build Include="Triggers\TimeRecordTrigger.sql" />
@@ -96,6 +92,15 @@
     <Build Include="Procedures\GetTimeRecords.sql" />
     <Build Include="Procedures\SaveTimeRecordNote.sql" />
     <Build Include="Procedures\DeleteTimeRecordNote.sql" />
+    <Build Include="Procedures\GetUserRoles.sql" />
+    <Build Include="Procedures\GetUserSettings.sql" />
+    <Build Include="Procedures\GetUserSettingValue.sql" />
+    <Build Include="Procedures\GetTimeRecordNotes.sql" />
+    <Build Include="Procedures\GetUser.sql" />
+    <Build Include="Tables\UserSessions.sql" />
+    <Build Include="Procedures\SaveUserSession.sql" />
+    <Build Include="Procedures\GetActiveSessions.sql" />
+    <Build Include="Procedures\AbandonSession.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="PostDeploy.sql" />
