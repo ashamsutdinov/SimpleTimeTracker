@@ -6,3 +6,4 @@
 /TimeTracker.Database/obj/Debug
 *.user
 *.suo
+/TimeTracker.Dal/obj/Debug
