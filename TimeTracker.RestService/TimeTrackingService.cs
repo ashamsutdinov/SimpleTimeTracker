@@ -11,62 +11,112 @@ using TimeTracker.RestService.Utils;
 namespace TimeTracker.RestService
 {
     [ServiceBehavior(InstanceContextMode = InstanceContextMode.Single, ConcurrencyMode = ConcurrencyMode.Multiple)]
-    public class TimeTrackingService : 
+    public class TimeTrackingService :
         ITimeTrackingService
     {
-        private readonly AuthenticationHelper _authenticationHelper = new AuthenticationHelper();
+        private readonly CryptographyHelper _cryptographyHelper = new CryptographyHelper();
 
         public Response<string> GetNonce(Request request)
         {
-            return SafeInvoke(() => _authenticationHelper.GetNonce(request.ClientId));
+            return SafeInvoke(r => _cryptographyHelper.GetNonce(request.ClientId), request);
         }
 
         public Response<TicketData> Login(Request<LoginData> request)
         {
-            return SafeInvoke(() =>
+            return SafeInvoke(r =>
             {
                 var login = request.Data.Login;
-                var passwordComponents = _authenticationHelper.Xor(request.Data.Password).Split('#');
-                var password = passwordComponents[0];
-                var clientId = passwordComponents[1];
-                var nonce = passwordComponents[2];
+                DecryptedPasswordData paswordData;
+                var validPasswordSyntax = _cryptographyHelper.VerifyPasswordSyntax(request.Data.Password, out paswordData);
+                if (!validPasswordSyntax)
+                {
+                    throw new AuthenticationException("Invalid authentication nonce");
+                }
 
-                return new TicketData();
-            });
+                //lookup user
+                //throw new AuthenticationException("User not found");
+
+                //check password
+                //throw new AuthenticationException("Invalid login or password");
+
+                //check user status
+                //throw new AuthenticationException("User was disabled or deleted");
+
+                //create session
+                var sessionId = 0;
+                var userId = 0;
+
+                //create ticket
+                var ticket = _cryptographyHelper.GetSessionTicket(sessionId, userId, paswordData.ClientId);
+
+                return new TicketData
+                {
+                    Ticket = ticket
+                };
+            }, request);
         }
 
-        private static Response<TData> SafeInvoke<TData>(Func<TData> action)
+        private Response<TData> SafeInvoke<TData>(Func<Request, TData> action, Request request)
         {
             try
             {
-                var data = action();
+                if (!string.IsNullOrEmpty(request.Ticket))
+                {
+                    DecryptedTicketData ticketData;
+                    if (!_cryptographyHelper.VerifyTicketSyntax(request.Ticket, out ticketData))
+                    {
+                        return Response<TData>.NotAcceptable("Invalid ticket");
+                    }
+
+                    //check if session-to-user binding is correct
+                    //return Response<TData>.NotAcceptable("Invalid ticket");
+
+                    //check if ticket stored in db is correct
+                    //return Response<TData>.NotAcceptable("Invalid ticket");
+                }
+
+                var data = action(request);
                 return Response<TData>.Success(data);
             }
             catch (UnauthorizedAccessException uaex)
             {
-                var color = Console.ForegroundColor;
-                Console.ForegroundColor = ConsoleColor.Cyan;
-                Console.WriteLine(uaex.ToString());
-                Console.ForegroundColor = color;
-                return Response<TData>.Forbidden(uaex.Message);
+                return TraceUnauthorizedException<TData>(uaex);
             }
             catch (AuthenticationException aex)
             {
-                var color = Console.ForegroundColor;
-                Console.ForegroundColor = ConsoleColor.DarkYellow;
-                Console.WriteLine(aex.ToString());
-                Console.ForegroundColor = color;
-                return Response<TData>.Unauthorized(aex.Message);
-
+                return TraceAuthenticationException<TData>(aex);
             }
             catch (Exception ex)
             {
-                var color = Console.ForegroundColor;
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine(ex.ToString());
-                Console.ForegroundColor = color;
-                return Response<TData>.Fail(ex.Message);
+                return TraceException<TData>(ex);
             }
+        }
+
+        private static Response<TData> TraceException<TData>(Exception ex)
+        {
+            var color = Console.ForegroundColor;
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine(ex.ToString());
+            Console.ForegroundColor = color;
+            return Response<TData>.Fail(ex.Message);
+        }
+
+        private static Response<TData> TraceUnauthorizedException<TData>(UnauthorizedAccessException uaex)
+        {
+            var color = Console.ForegroundColor;
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.WriteLine(uaex.ToString());
+            Console.ForegroundColor = color;
+            return Response<TData>.Forbidden(uaex.Message);
+        }
+
+        private static Response<TData> TraceAuthenticationException<TData>(AuthenticationException aex)
+        {
+            var color = Console.ForegroundColor;
+            Console.ForegroundColor = ConsoleColor.DarkYellow;
+            Console.WriteLine(aex.ToString());
+            Console.ForegroundColor = color;
+            return Response<TData>.Unauthorized(aex.Message);
         }
     }
 }

@@ -1,3 +1,4 @@
+using System.Dynamic;
 using System.Runtime.Serialization;
 
 namespace TimeTracker.Contract.Requests

@@ -7,6 +7,9 @@ namespace TimeTracker.Contract.Requests.Base
     {
         [DataMember]
         public string ClientId { get; set; }
+
+        [DataMember]
+        public string Ticket { get; set; }
     }
 
     [DataContract]

@@ -45,8 +45,10 @@
     <Compile Include="Attributes\AnonymousAttribute.cs" />
     <Compile Include="ITimeTrackingService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Requests\DecryptedTicketData.cs" />
     <Compile Include="Requests\LoginData.cs" />
     <Compile Include="Requests\Base\Request.cs" />
+    <Compile Include="Requests\DecryptedPasswordData.cs" />
     <Compile Include="Responses\Base\Response.cs" />
     <Compile Include="Responses\TicketData.cs" />
   </ItemGroup>
