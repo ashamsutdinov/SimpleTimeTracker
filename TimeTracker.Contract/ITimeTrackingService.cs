@@ -1,6 +1,8 @@
 ﻿using System.ServiceModel;
 using System.ServiceModel.Web;
 using TimeTracker.Contract.Attributes;
+using TimeTracker.Contract.Requests.Base;
+using TimeTracker.Contract.Responses.Base;
 
 namespace TimeTracker.Contract
 {

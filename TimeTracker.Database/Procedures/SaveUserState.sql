@@ -5,7 +5,7 @@
 )
 AS
 BEGIN
-	IF NOT EXISTS (SELECT TOP 1 * FROM [dbo].[UserStates] WHERE [Id] = @Id)
+	IF EXISTS (SELECT TOP 1 * FROM [dbo].[UserStates] WHERE [Id] = @Id)
 		UPDATE [dbo].[UserStates] SET [Description] = @Description WHERE [Id] = @Id		
 	ELSE
 		INSERT INTO [dbo].[UserStates] ([Id], [Description]) VALUES (@Id, @Description)

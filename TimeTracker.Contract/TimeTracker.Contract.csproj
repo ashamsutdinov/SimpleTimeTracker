@@ -45,8 +45,10 @@
     <Compile Include="Attributes\AnonimousAttribute.cs" />
     <Compile Include="ITimeTrackingService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Request.cs" />
-    <Compile Include="Response.cs" />
+    <Compile Include="Requests\LoginData.cs" />
+    <Compile Include="Requests\LoginRequest.cs" />
+    <Compile Include="Requests\Base\Request.cs" />
+    <Compile Include="Responses\Base\Response.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

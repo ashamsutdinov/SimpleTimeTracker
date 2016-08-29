@@ -2,6 +2,7 @@
 (
 	[Id]			INT NOT NULL IDENTITY PRIMARY KEY,
 	[Login]			NVARCHAR(64) NOT NULL,
+	-- sha1(password+salt)
 	[PasswordHash]	NVARCHAR(64) NOT NULL,
 	[PasswordSalt]	NVARCHAR(16) NOT NULL,
 	[Name]			NVARCHAR(128) NOT NULL,

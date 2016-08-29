@@ -67,6 +67,7 @@
     <None Include="TimeTracker.Database.publish.xml" />
     <None Include="Scripts\InitUserStates.sql" />
     <None Include="Scripts\InitUserRoles.sql" />
+    <None Include="Scripts\InitUsers.sql" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Tables\Users.sql" />

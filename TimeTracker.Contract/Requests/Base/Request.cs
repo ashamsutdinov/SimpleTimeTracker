@@ -1,6 +1,6 @@
 using System.Runtime.Serialization;
 
-namespace TimeTracker.Contract
+namespace TimeTracker.Contract.Requests.Base
 {
     [DataContract]
     public class Request

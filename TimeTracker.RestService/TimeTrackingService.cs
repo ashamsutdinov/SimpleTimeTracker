@@ -1,6 +1,8 @@
 ﻿using System;
 using System.ServiceModel;
 using TimeTracker.Contract;
+using TimeTracker.Contract.Requests.Base;
+using TimeTracker.Contract.Responses.Base;
 using TimeTracker.RestService.Utils;
 
 namespace TimeTracker.RestService
