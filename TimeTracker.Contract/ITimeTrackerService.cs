@@ -6,7 +6,7 @@ using TimeTracker.Contract.Responses;
 namespace TimeTracker.Contract
 {
     [ServiceContract(Namespace = "http://simple-time-tracking-service/")]
-    public interface ITimeTrackingService
+    public interface ITimeTrackerService
     {
         [OperationContract]
         [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]

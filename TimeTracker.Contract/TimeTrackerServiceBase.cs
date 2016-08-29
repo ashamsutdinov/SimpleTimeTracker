@@ -7,8 +7,8 @@ using TimeTracker.Contract.Utils;
 
 namespace TimeTracker.Contract
 {
-    public abstract class TimeTrackingServiceBase : 
-        ITimeTrackingService
+    public abstract class TimeTrackerServiceBase : 
+        ITimeTrackerService
     {
         private readonly CryptographyHelper _cryptographyHelper = new CryptographyHelper();
 
@@ -16,7 +16,7 @@ namespace TimeTracker.Contract
 
         protected readonly ITimeRecordDataProvider TimeTrackingDataProvider;
 
-        protected TimeTrackingServiceBase(IUserDataProvider userDataProvider, ITimeRecordDataProvider timeRecordDataProvider)
+        protected TimeTrackerServiceBase(IUserDataProvider userDataProvider, ITimeRecordDataProvider timeRecordDataProvider)
         {
             UserDataProvider = userDataProvider;
             TimeTrackingDataProvider = timeRecordDataProvider;

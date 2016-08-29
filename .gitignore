@@ -15,3 +15,5 @@
 /TimeTracker.Data/obj/Debug
 /packages
 /TimeTracker.Data/bin/Debug
+*.dbmdl
+*.jfm

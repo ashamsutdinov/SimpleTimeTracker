@@ -44,7 +44,7 @@ namespace TimeTracker.RestService
         private static void OpenServiceHost()
         {
             CloseServiceHost();
-            _serviceHost = new WebServiceHost(typeof (TimeTrackingService));
+            _serviceHost = new WebServiceHost(typeof (TimeTrackerService));
             _serviceHost.Open();
         }
 

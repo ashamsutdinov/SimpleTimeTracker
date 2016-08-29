@@ -6,10 +6,10 @@ using TimeTracker.RestService.Utils;
 namespace TimeTracker.RestService
 {
     [ServiceBehavior(InstanceContextMode = InstanceContextMode.Single, ConcurrencyMode = ConcurrencyMode.Multiple)]
-    public class TimeTrackingService :
-        TimeTrackingServiceBase
+    public class TimeTrackerService :
+        TimeTrackerServiceBase
     {
-        public TimeTrackingService() : 
+        public TimeTrackerService() : 
             base(UnityHelper.Resolve<IUserDataProvider>(), UnityHelper.Resolve<ITimeRecordDataProvider>())
         {
         }
