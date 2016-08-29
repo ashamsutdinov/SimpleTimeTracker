@@ -11,8 +11,16 @@
     UserCreated: 9,
     UserUpdated: 10,
     UserDeleted: 11,
+    Message: 100,
     LoadFailed: 1000
 };
+
+var MessageType = {
+    Success: 0,
+    Information: 1,
+    Warning: 2,
+    Error: 3
+}
 
 window.MessageBus = function() {
     var self = this;

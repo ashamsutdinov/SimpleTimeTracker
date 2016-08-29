@@ -4,7 +4,8 @@ var Config = {
     ApiRoot: "http://localhost:81/",
     TicketKey: "AuthenticationTicket",
     HeartbitStartAfter: 1000,
-    HeartbitInterval: 10000
+    HeartbitInterval: 10000,
+    ShowAlertTimeout: 5000
 };
 
 var clientId = localStorage["ClientId"];

@@ -11,7 +11,7 @@
 </head>
 <body>
     <!--navigation bar-->
-    <nav class="navbar navbar-inverse navbar-fixed-top">
+    <nav class="navbar navbar-inverse navbar-fixed-top" id="navigationBar" data-bind="visible: loggedIn" style="display: none">
         <div class="container">
             <div class="navbar-header">
                 <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
@@ -28,17 +28,25 @@
                 </ul>
             </div>
         </div>
-        
     </nav>
+    <!--main container-->
     <div class="container main-container" role="main">
-        <div id="loaderContainer">
+        <!--loading container-->
+        <div id="applicationStateContainer" class="state-container">
             <div id="loader" data-bind="visible: loading"></div>
             <div class="alert alert-danger" role="alert" data-bind="visible: networkConnectionError" style="display: none">
-                <strong>Warning!</strong>Cannot connect to server, please check your network connection
+                <strong>Warning!</strong> Cannot connect to server, please check your network connection
             </div>
+            <div class="alert alert-success" data-bind="visible: successMessage() != null, text: successMessage" style="display: none"></div>
+            <div class="alert alert-info" data-bind="visible: informationMessage() != null, text: informationMessage" style="display: none"></div>
+            <div class="alert alert-warning" data-bind="visible: warningMessage() != null, text: warningMessage" style="display: none"></div>
+            <div class="alert alert-danger" data-bind="visible: errorMessage() != null, text: errorMessage" style="display: none"></div>
         </div>
-    </div>
+        <div id="timeRecordsContainer" data-bind="visible: loaded" style="display: none">
 
+        </div>
+        <div id="usersContainer" data-bind="visible: loaded" style="display: none"></div>
+    </div>
     <script src="https://code.jquery.com/jquery-3.1.0.min.js" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" crossorigin="anonymous"></script>
@@ -47,9 +55,13 @@
     <script type="text/javascript" language="javascript" src="./Scripts/config.js"></script>
     <script type="text/javascript" language="javascript" src="./Scripts/application.js"></script>
     <script type="text/javascript" language="javascript" src="./Scripts/messageBus.js"></script>
-    <script type="text/javascript" language="javascript" src="./Scripts/ViewModels/LoaderViewModel.js"></script>
+    <script type="text/javascript" language="javascript" src="./Scripts/ViewModels/NavigationViewModel.js"></script>
+    <script type="text/javascript" language="javascript" src="./Scripts/ViewModels/ApplicationStateViewModel.js"></script>
+    <script type="text/javascript" language="javascript" src="./Scripts/ViewModels/TimeRecordsViewModel.js"></script>
+    <script type="text/javascript" language="javascript" src="./Scripts/ViewModels/UsersViewModel.js"></script>
     <script type="text/javascript" language="javascript">
-        ko.applyBindings(new LoaderViewModel(), document.getElementById("loaderContainer"));
+        ko.applyBindings(new NavigationViewModel(), document.getElementById("navigationBar"));
+        ko.applyBindings(new ApplicationStateViewModel(), document.getElementById("applicationStateContainer"));
     </script>
 </body>
 </html>
