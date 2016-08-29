@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using TimeTracker.Dal.Entities;
@@ -6,7 +6,7 @@ using TimeTracker.Dal.Utils;
 
 namespace TimeTracker.Dal
 {
-    public class UserSessionDa :
+    public class UserDa :
         BaseDa
     {
         public int AbandonSession(int id)

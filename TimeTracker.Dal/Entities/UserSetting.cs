@@ -4,7 +4,7 @@ using TimeTracker.Dal.Entities.Base;
 namespace TimeTracker.Dal.Entities
 {
     public class UserSetting : 
-        IdAndDescriptionEntity
+        KeyAndDescriptionEntity
     {
         public UserSetting()
         {

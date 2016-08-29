@@ -5,7 +5,7 @@ using System.Security.Cryptography;
 using System.Text;
 using TimeTracker.Contract.Requests;
 
-namespace TimeTracker.RestService.Utils
+namespace TimeTracker.Contract.Utils
 {
     internal class CryptographyHelper
     {

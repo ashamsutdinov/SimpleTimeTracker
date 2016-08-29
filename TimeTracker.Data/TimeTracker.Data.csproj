@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{72918956-3BFE-4607-ACD3-270D2570F303}</ProjectGuid>
+    <ProjectGuid>{D5AC170D-A3C9-47D4-BA3B-891E5523D1A0}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>TimeTracker.Contract</RootNamespace>
-    <AssemblyName>TimeTracker.Contract</AssemblyName>
+    <RootNamespace>TimeTracker.Data</RootNamespace>
+    <AssemblyName>TimeTracker.Data</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -31,11 +31,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
-    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Runtime.Serialization" />
-    <Reference Include="System.ServiceModel" />
-    <Reference Include="System.ServiceModel.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -43,33 +39,20 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Attributes\AnonymousAttribute.cs" />
-    <Compile Include="Data\Entities\Base\IEntity.cs" />
-    <Compile Include="Data\Entities\Base\IKeyAndDescriptionEntity.cs" />
-    <Compile Include="Data\Entities\IDayRecord.cs" />
-    <Compile Include="Data\Entities\ITimeRecord.cs" />
-    <Compile Include="Data\Entities\ITimeRecordItem.cs" />
-    <Compile Include="Data\Entities\ITimeRecordNote.cs" />
-    <Compile Include="Data\Entities\IUser.cs" />
-    <Compile Include="Data\Entities\IUserRole.cs" />
-    <Compile Include="Data\Entities\IUserSession.cs" />
-    <Compile Include="Data\Entities\IUserSetting.cs" />
-    <Compile Include="Data\Entities\IUserState.cs" />
-    <Compile Include="Data\Entities\IUserToSetting.cs" />
-    <Compile Include="Data\ITimeRecordDataProvider.cs" />
-    <Compile Include="Data\IUserDataProvider.cs" />
-    <Compile Include="ITimeTrackingService.cs" />
+    <Compile Include="TimeRecordDataProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Requests\DecryptedTicketData.cs" />
-    <Compile Include="Requests\LoginData.cs" />
-    <Compile Include="Requests\Request.cs" />
-    <Compile Include="Requests\DecryptedPasswordData.cs" />
-    <Compile Include="Responses\Response.cs" />
-    <Compile Include="Responses\TicketData.cs" />
-    <Compile Include="TimeTrackingServiceBase.cs" />
-    <Compile Include="Utils\CryptographyHelper.cs" />
+    <Compile Include="UserDataProvider.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\TimeTracker.Contract\TimeTracker.Contract.csproj">
+      <Project>{72918956-3bfe-4607-acd3-270d2570f303}</Project>
+      <Name>TimeTracker.Contract</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\TimeTracker.Dal\TimeTracker.Dal.csproj">
+      <Project>{2021ad22-24ab-45c9-9991-22215b498d40}</Project>
+      <Name>TimeTracker.Dal</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

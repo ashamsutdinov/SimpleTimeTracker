@@ -2,17 +2,17 @@
 
 namespace TimeTracker.Dal.Entities.Base
 {
-    public abstract class IdAndDescriptionEntity : 
+    public abstract class KeyAndDescriptionEntity : 
         Entity<string>
     {
         public string Description { get; set; }
 
-        protected IdAndDescriptionEntity()
+        protected KeyAndDescriptionEntity()
         {
             
         }
 
-        protected IdAndDescriptionEntity(IDataRecord reader) : 
+        protected KeyAndDescriptionEntity(IDataRecord reader) : 
             base(reader)
         {
             Description = (string) reader["Description"];

@@ -12,3 +12,6 @@
 /TimeTracker.RestService/bin/Debug
 /TimeTracker.Contract/bin/Debug
 /TimeTracker.Contract/obj/Debug
+/TimeTracker.Data/obj/Debug
+/packages
+/TimeTracker.Data/bin/Debug

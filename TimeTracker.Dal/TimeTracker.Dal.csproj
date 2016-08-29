@@ -42,7 +42,7 @@
   <ItemGroup>
     <Compile Include="Entities\Base\Entity.cs" />
     <Compile Include="Entities\DayRecord.cs" />
-    <Compile Include="Entities\Base\IdAndDescriptionEntity.cs" />
+    <Compile Include="Entities\Base\KeyAndDescriptionEntity.cs" />
     <Compile Include="Entities\TimeRecord.cs" />
     <Compile Include="Entities\TimeRecordItem.cs" />
     <Compile Include="Entities\TimeRecordNote.cs" />
@@ -54,7 +54,7 @@
     <Compile Include="Entities\UserToSetting.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TimeRecordDa.cs" />
-    <Compile Include="UserSessionDa.cs" />
+    <Compile Include="UserDa.cs" />
     <Compile Include="Utils\BaseDa.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
