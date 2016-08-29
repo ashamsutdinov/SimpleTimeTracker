@@ -46,10 +46,8 @@
     <Compile Include="ITimeTrackingService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Requests\LoginData.cs" />
-    <Compile Include="Requests\LoginRequest.cs" />
     <Compile Include="Requests\Base\Request.cs" />
     <Compile Include="Responses\Base\Response.cs" />
-    <Compile Include="Responses\LoginResponse.cs" />
     <Compile Include="Responses\TicketData.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

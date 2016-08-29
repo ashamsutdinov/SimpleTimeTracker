@@ -19,6 +19,6 @@ namespace TimeTracker.Contract
         [Anonymous]
         [OperationContract]
         [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
-        Response<LoginResponse> Login(LoginRequest request);
+        Response<TicketData> Login(Request<LoginData> request);
     }
 }

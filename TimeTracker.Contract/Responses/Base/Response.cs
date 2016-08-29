@@ -24,6 +24,24 @@ namespace TimeTracker.Contract.Responses.Base
             };
         }
 
+        public static Response<TData> Unauthorized(string message)
+        {
+            return new Response<TData>
+            {
+                Message = message,
+                StatusCode = HttpStatusCode.Unauthorized
+            };
+        }
+
+        public static Response<TData> Forbidden(string message)
+        {
+            return new Response<TData>
+            {
+                Message = message,
+                StatusCode = HttpStatusCode.Forbidden
+            };
+        }
+
         public static Response<TData> Fail(string message)
         {
             return new Response<TData>

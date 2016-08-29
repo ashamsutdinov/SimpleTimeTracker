@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Security.Authentication;
 using System.ServiceModel;
 using TimeTracker.Contract;
 using TimeTracker.Contract.Requests;
@@ -20,7 +21,7 @@ namespace TimeTracker.RestService
             return SafeInvoke(() => _authenticationHelper.GetNonce(request.ClientId));
         }
 
-        public Response<LoginResponse> Login(LoginRequest request)
+        public Response<TicketData> Login(Request<LoginData> request)
         {
             return SafeInvoke(() =>
             {
@@ -30,7 +31,7 @@ namespace TimeTracker.RestService
                 var clientId = passwordComponents[1];
                 var nonce = passwordComponents[2];
 
-                return new LoginResponse();
+                return new TicketData();
             });
         }
 
@@ -40,6 +41,23 @@ namespace TimeTracker.RestService
             {
                 var data = action();
                 return Response<TData>.Success(data);
+            }
+            catch (UnauthorizedAccessException uaex)
+            {
+                var color = Console.ForegroundColor;
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                Console.WriteLine(uaex.ToString());
+                Console.ForegroundColor = color;
+                return Response<TData>.Forbidden(uaex.Message);
+            }
+            catch (AuthenticationException aex)
+            {
+                var color = Console.ForegroundColor;
+                Console.ForegroundColor = ConsoleColor.DarkYellow;
+                Console.WriteLine(aex.ToString());
+                Console.ForegroundColor = color;
+                return Response<TData>.Unauthorized(aex.Message);
+
             }
             catch (Exception ex)
             {

@@ -39,5 +39,10 @@ namespace TimeTracker.RestService.Utils
                 result.Append((char)((uint)text[c] ^ _apiKey[c % _apiKey.Length]));
            return result.ToString();
         }
+
+        public string GetTicket(int sessionId, string clientId, string apiKey)
+        {
+            return string.Empty;
+        }
     }
 }
