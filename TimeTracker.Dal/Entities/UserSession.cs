@@ -1,12 +1,12 @@
 ﻿using System;
-using System.Data.SqlClient;
+using System.Data;
+using TimeTracker.Dal.Entities.Base;
 
 namespace TimeTracker.Dal.Entities
 {
-    public class UserSession
+    public class UserSession :
+        Entity<int>
     {
-        public int Id { get; set; }
-
         public int UserId { get; set; }
 
         public string Ticket { get; set; }
@@ -17,17 +17,19 @@ namespace TimeTracker.Dal.Entities
 
         public int Expiration { get; set; }
 
-        public UserSession Read(SqlDataReader reader)
+        public UserSession()
         {
-            return new UserSession
-            {
-                Id = (int) reader["Id"],
-                UserId = (int) reader["UserId"],
-                Ticket = (string) reader["Ticket"],
-                Expired = (bool) reader["Expired"],
-                DateTime = (DateTime) reader["DateTime"],
-                Expiration = (int) reader["Expiration"]
-            };
+
+        }
+
+        public UserSession(IDataRecord reader) :
+            base(reader)
+        {
+            UserId = (int)reader["UserId"];
+            Ticket = (string)reader["Ticket"];
+            Expired = (bool)reader["Expired"];
+            DateTime = (DateTime)reader["DateTime"];
+            Expiration = (int)reader["Expiration"];
         }
     }
 }

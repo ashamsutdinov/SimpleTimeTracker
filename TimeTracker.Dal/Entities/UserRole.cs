@@ -1,20 +1,20 @@
-﻿using System.Data.SqlClient;
+﻿using System.Data;
+using TimeTracker.Dal.Entities.Base;
 
 namespace TimeTracker.Dal.Entities
 {
-    public class UserRole
+    public class UserRole :
+        IdAndDescriptionEntity
     {
-        public string Id { get; set; }
-
-        public string Description { get; set; }
-
-        public static UserRole Read(SqlDataReader reader)
+        public UserRole()
         {
-            return new UserRole
-            {
-                Id = (string) reader["Id"],
-                Description = (string) reader["Description"]
-            };
+            
+        }
+
+        public UserRole(IDataRecord reader) :
+            base(reader)
+        {
+            
         }
     }
 }

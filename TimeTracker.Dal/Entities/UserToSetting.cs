@@ -1,4 +1,4 @@
-﻿using System.Data.SqlClient;
+﻿using System.Data;
 
 namespace TimeTracker.Dal.Entities
 {
@@ -7,18 +7,15 @@ namespace TimeTracker.Dal.Entities
     {
         public string Value { get; set; }
 
-        public UserToSetting(UserSetting baseObject)
+        public UserToSetting()
         {
-            Id = baseObject.Id;
-            Description = baseObject.Description;
+
         }
 
-        public new static UserToSetting Read(SqlDataReader reader)
+        public UserToSetting(IDataRecord reader) :
+            base(reader)
         {
-            return new UserToSetting(UserSetting.Read(reader))
-            {
-                Value = (string)reader["Value"]
-            };
+            Value = (string)reader["Value"];
         }
     }
 }

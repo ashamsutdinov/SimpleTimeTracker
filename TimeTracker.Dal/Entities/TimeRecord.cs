@@ -1,11 +1,11 @@
-﻿using System.Data.SqlClient;
+﻿using System.Data;
+using TimeTracker.Dal.Entities.Base;
 
 namespace TimeTracker.Dal.Entities
 {
-    public class TimeRecord
+    public class TimeRecord :
+        Entity<int>
     {
-        public int Id { get; set; }
-
         public int DayRecordId { get; set; }
 
         public int Hours { get; set; }
@@ -14,16 +14,18 @@ namespace TimeTracker.Dal.Entities
 
         public bool Deleted { get; set; }
 
-        public static TimeRecord Read(SqlDataReader reader)
+        public TimeRecord()
         {
-            return new TimeRecord
-            {
-                Id = (int) reader["Id"],
-                DayRecordId = (int) reader["DayRecordId"],
-                Hours = (int) reader["Hours"],
-                Caption = (string) reader["Caption"],
-                Deleted = (bool) reader["Deleted"]
-            };
+
+        }
+
+        public TimeRecord(IDataRecord reader) :
+            base(reader)
+        {
+            DayRecordId = (int)reader["DayRecordId"];
+            Hours = (int)reader["Hours"];
+            Caption = (string)reader["Caption"];
+            Deleted = (bool)reader["Deleted"];
         }
     }
 }

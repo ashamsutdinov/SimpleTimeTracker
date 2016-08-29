@@ -4,7 +4,7 @@
 )
 AS
 BEGIN
-	SELECT [us].[Id], [us].[Ticket] 
+	SELECT [us].[Id], [us].[UserId], [us].[Ticket], [us].[Expired], [us].[DateTime], [us].[Expiration]
 	FROM [dbo].[UserSessions] [us]
 	WHERE
 	[us].[UserId] = @UserId AND

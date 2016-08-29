@@ -1,27 +1,29 @@
 ﻿using System;
-using System.Data.SqlClient;
+using System.Data;
+using TimeTracker.Dal.Entities.Base;
 
 namespace TimeTracker.Dal.Entities
 {
-    public class DayRecord
+    public class DayRecord :
+        Entity<int>
     {
-        public int Id { get; set; }
-
         public int UserId { get; set; }
 
         public DateTime Date { get; set; }
 
         public int TotalHours { get; set; }
 
-        public static DayRecord Read(SqlDataReader reader)
+        public DayRecord()
         {
-            return new DayRecord
-            {
-                Id = (int) reader["Id"],
-                UserId = (int) reader["UserId"],
-                Date = (DateTime) reader["Date"],
-                TotalHours = (int) reader["TotalHours"]
-            };
+
+        }
+
+        public DayRecord(IDataRecord reader) :
+            base(reader)
+        {
+            UserId = (int)reader["UserId"];
+            Date = (DateTime)reader["Date"];
+            TotalHours = (int)reader["TotalHours"];
         }
     }
 }

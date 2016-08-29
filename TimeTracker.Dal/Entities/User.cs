@@ -1,11 +1,13 @@
-﻿using System.Data.SqlClient;
+﻿using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
+using TimeTracker.Dal.Entities.Base;
 
 namespace TimeTracker.Dal.Entities
 {
-    public class User
+    public class User :
+        Entity<int>
     {
-        public int Id { get; set; }
-
         public string Login { get; set; }
 
         public string PasswordHash { get; set; }
@@ -16,17 +18,53 @@ namespace TimeTracker.Dal.Entities
 
         public string StateId { get; set; }
 
-        public static User Read(SqlDataReader reader)
+        public UserState State { get; set; }
+
+        public IList<UserRole> Roles { get; set; }
+
+        public IList<UserToSetting> Settings { get; set; }
+
+        public User()
         {
-            return new User
+
+        }
+
+        public User(IDataRecord reader, bool singleUser = false) :
+            base(reader)
+        {
+            Login = (string)reader["Login"];
+            PasswordHash = (string)reader["PasswordHash"];
+            PasswordSalt = (string)reader["PasswordSalt"];
+            Name = (string)reader["Name"];
+            StateId = (string)reader["StateId"];
+
+            State = new UserState
             {
-                Id = (int) reader["Id"],
-                Login = (string) reader["Login"],
-                PasswordHash = (string) reader["PasswordHash"],
-                PasswordSalt = (string) reader["PasswordSalt"],
-                Name = (string) reader["Name"],
-                StateId = (string) reader["StateId"]
+                Id = StateId,
+                Description = (string)reader["StateDescription"]
             };
+
+            if (singleUser)
+            {
+                Roles = new List<UserRole>();
+                Settings = new List<UserToSetting>();
+
+                var sqlReader = reader as SqlDataReader;
+                if (sqlReader != null && sqlReader.NextResult())
+                {
+                    while (sqlReader.Read())
+                    {
+                        Roles.Add(new UserRole(sqlReader));
+                    }
+                }
+                if (sqlReader != null && sqlReader.NextResult())
+                {
+                    while (sqlReader.Read())
+                    {
+                        Settings.Add(new UserToSetting(sqlReader));
+                    }
+                }
+            }
         }
     }
 }

@@ -3,18 +3,18 @@ using TimeTracker.Dal.Entities.Base;
 
 namespace TimeTracker.Dal.Entities
 {
-    public class UserSetting : 
+    public class UserState :
         IdAndDescriptionEntity
     {
-        public UserSetting()
+        public UserState()
         {
-            
+
         }
 
-        public UserSetting(IDataRecord reader) :
+        public UserState(IDataRecord reader) :
             base(reader)
         {
-            
+
         }
     }
 }

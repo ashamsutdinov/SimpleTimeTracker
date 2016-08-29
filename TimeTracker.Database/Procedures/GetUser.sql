@@ -4,7 +4,7 @@
 )
 AS
 BEGIN
-	SELECT [u].[Id], [u].[Login], [u].[PasswordHash], [u].[PasswordSalt], [u].[Name], [u].[StateId], [s].[Description]	
+	SELECT [u].[Id], [u].[Login], [u].[PasswordHash], [u].[PasswordSalt], [u].[Name], [u].[StateId], [s].[Description] as [StateDescription]
 	FROM [dbo].[Users] [u]
 	INNER JOIN [dbo].[UserStates] [s] ON [u].[StateId] = [s].[Id]
 	WHERE [u].[Id] = @Id
