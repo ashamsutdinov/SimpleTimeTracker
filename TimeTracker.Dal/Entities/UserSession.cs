@@ -9,6 +9,8 @@ namespace TimeTracker.Dal.Entities
     {
         public int UserId { get; set; }
 
+        public string ClientId { get; set; }
+
         public string Ticket { get; set; }
 
         public bool Expired { get; set; }
@@ -26,6 +28,7 @@ namespace TimeTracker.Dal.Entities
             base(reader)
         {
             UserId = (int)reader["UserId"];
+            ClientId = (string) reader["ClientId"];
             Ticket = (string)reader["Ticket"];
             Expired = (bool)reader["Expired"];
             DateTime = (DateTime)reader["DateTime"];

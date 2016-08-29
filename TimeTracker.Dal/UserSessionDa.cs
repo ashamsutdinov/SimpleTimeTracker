@@ -31,6 +31,7 @@ namespace TimeTracker.Dal
         {
             var idParameter = new SqlParameter("@Id", SqlDbType.Int) { Value = session.Id };
             var userIdParameter = new SqlParameter("@UserId", SqlDbType.Int) { Value = session.UserId };
+            var clientIdParameter = new SqlParameter("@ClientId", SqlDbType.NVarChar) { Value = session.ClientId };
             var dateTimeParameter = new SqlParameter("@DateTime", SqlDbType.DateTime2) { Value = session.DateTime };
             var expirationParameter = new SqlParameter("@Expiration", SqlDbType.Int) { Value = session.Expiration };
             var reader = ExecuteReader("[dbo].[SaveUserSession]", idParameter, userIdParameter, dateTimeParameter, expirationParameter);

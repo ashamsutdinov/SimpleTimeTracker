@@ -2,6 +2,9 @@
 (
 	[Id]			INT NOT NULL IDENTITY PRIMARY KEY,
 	[UserId]		INT NOT NULL,
+	--unique id assigned by client
+	[ClientId]		NVARCHAR(256),
+	--ticket=md5(id + clientId + apikey)
 	[Ticket]		NVARCHAR(256) NOT NULL,
 	[Expired]		BIT NOT NULL DEFAULT 0,
 	-- datetime user last accessed the session
