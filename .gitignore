@@ -8,3 +8,5 @@
 *.suo
 /TimeTracker.Dal/obj/Debug
 /TimeTracker.Dal/bin/Debug
+/TimeTracker.RestService/obj/Debug
+/TimeTracker.RestService/bin/Debug

@@ -1,11 +1,35 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.40302.0
+VisualStudioVersion = 12.0.40629.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "TimeTracker.Database", "TimeTracker.Database\TimeTracker.Database.sqlproj", "{4D5DFDDB-8489-444A-AC5D-5A8B9CE544AD}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TimeTracker.Dal", "TimeTracker.Dal\TimeTracker.Dal.csproj", "{2021AD22-24AB-45C9-9991-22215B498D40}"
+EndProject
+Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "TimeTracker.Web", "http://localhost:36238", "{34408792-403B-4F92-8B97-056F51E67C84}"
+	ProjectSection(WebsiteProperties) = preProject
+		UseIISExpress = "true"
+		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.5"
+		Debug.AspNetCompiler.VirtualPath = "/localhost_36238"
+		Debug.AspNetCompiler.PhysicalPath = "TimeTracker.Web\"
+		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_36238\"
+		Debug.AspNetCompiler.Updateable = "true"
+		Debug.AspNetCompiler.ForceOverwrite = "true"
+		Debug.AspNetCompiler.FixedNames = "false"
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.VirtualPath = "/localhost_36238"
+		Release.AspNetCompiler.PhysicalPath = "TimeTracker.Web\"
+		Release.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_36238\"
+		Release.AspNetCompiler.Updateable = "true"
+		Release.AspNetCompiler.ForceOverwrite = "true"
+		Release.AspNetCompiler.FixedNames = "false"
+		Release.AspNetCompiler.Debug = "False"
+		SlnRelativePath = "TimeTracker.Web\"
+		DefaultWebSiteLanguage = "Visual C#"
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TimeTracker.RestService", "TimeTracker.RestService\TimeTracker.RestService.csproj", "{3C11D15B-DDC0-4E73-B85F-DF3B80102182}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,6 +47,14 @@ Global
 		{2021AD22-24AB-45C9-9991-22215B498D40}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2021AD22-24AB-45C9-9991-22215B498D40}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2021AD22-24AB-45C9-9991-22215B498D40}.Release|Any CPU.Build.0 = Release|Any CPU
+		{34408792-403B-4F92-8B97-056F51E67C84}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{34408792-403B-4F92-8B97-056F51E67C84}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{34408792-403B-4F92-8B97-056F51E67C84}.Release|Any CPU.ActiveCfg = Debug|Any CPU
+		{34408792-403B-4F92-8B97-056F51E67C84}.Release|Any CPU.Build.0 = Debug|Any CPU
+		{3C11D15B-DDC0-4E73-B85F-DF3B80102182}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3C11D15B-DDC0-4E73-B85F-DF3B80102182}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3C11D15B-DDC0-4E73-B85F-DF3B80102182}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3C11D15B-DDC0-4E73-B85F-DF3B80102182}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
