@@ -66,6 +66,8 @@
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TimeTrackerService.cs" />
+    <Compile Include="Utils\CustomHeaderMessageInspector.cs" />
+    <Compile Include="Utils\EnableCrossOriginResourceSharingBehavior.cs" />
     <Compile Include="Utils\UnityHelper.cs" />
   </ItemGroup>
   <ItemGroup>

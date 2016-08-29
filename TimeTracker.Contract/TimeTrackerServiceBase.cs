@@ -22,6 +22,11 @@ namespace TimeTracker.Contract
             TimeTrackingDataProvider = timeRecordDataProvider;
         }
 
+        public Response<long> Heartbit(Request<long> request)
+        {
+            return SafeInvoke(r => DateTime.UtcNow.Ticks, request);
+        }
+
         public virtual Response<string> GetNonce(Request request)
         {
             return SafeInvoke(r => _cryptographyHelper.GetNonce(request.ClientId), request);
