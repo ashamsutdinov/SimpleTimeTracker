@@ -33,6 +33,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.ServiceModel.Web" />
@@ -49,7 +50,7 @@
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TimeTrackingService.cs" />
-    <Compile Include="Utils\NonceGenerator.cs" />
+    <Compile Include="Utils\AuthenticationHelper.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

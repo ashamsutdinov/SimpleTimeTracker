@@ -2,7 +2,7 @@
 
 namespace TimeTracker.Contract.Attributes
 {
-    public class AnonimousAttribute : 
+    public class AnonymousAttribute : 
         Attribute
     {
     }

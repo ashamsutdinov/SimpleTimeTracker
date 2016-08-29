@@ -8,7 +8,7 @@ namespace TimeTracker.Contract.Requests
         [DataMember]
         public string Login { get; set; }
 
-        //rsa(password+clientid+nonce)
+        //base64(xor(password+clientId+nonce), apikey)
         [DataMember]
         public string Password { get; set; }
     }
