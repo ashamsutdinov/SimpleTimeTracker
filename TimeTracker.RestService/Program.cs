@@ -1,15 +1,60 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.ServiceModel;
+using System.ServiceModel.Web;
+using System.ServiceProcess;
 
 namespace TimeTracker.RestService
 {
-    class Program
+    public class Program : 
+        ServiceBase
     {
-        static void Main(string[] args)
+        private static ServiceHost _serviceHost;
+
+        public Program()
         {
+            ServiceName = "SimpleTimeTrackingService";
+        }
+
+        private static void Main()
+        {
+            if (!Environment.UserInteractive)
+            {
+                Run(new Program());
+            }
+            else
+            {
+                OpenServiceHost();
+                Console.WriteLine("Press any key to exit");
+                Console.ReadKey();
+            }
+        }
+
+        protected override void OnStart(string[] args)
+        {
+            base.OnStart(args);
+            OpenServiceHost();
+        }
+
+        protected override void OnStop()
+        {
+            base.OnStop();
+            CloseServiceHost();
+        }
+
+        private static void OpenServiceHost()
+        {
+            CloseServiceHost();
+            _serviceHost = new WebServiceHost(typeof (TimeTrackingService));
+            _serviceHost.Open();
+        }
+
+        private static void CloseServiceHost()
+        {
+            if (_serviceHost != null)
+            {
+                _serviceHost.Close();
+                _serviceHost = null;
+            }
         }
     }
 }

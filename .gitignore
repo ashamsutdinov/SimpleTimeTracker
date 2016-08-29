@@ -10,3 +10,5 @@
 /TimeTracker.Dal/bin/Debug
 /TimeTracker.RestService/obj/Debug
 /TimeTracker.RestService/bin/Debug
+/TimeTracker.Contract/bin/Debug
+/TimeTracker.Contract/obj/Debug
