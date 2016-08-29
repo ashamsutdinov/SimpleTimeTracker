@@ -103,11 +103,12 @@
     <Build Include="Procedures\GetActiveSessions.sql" />
     <Build Include="Procedures\AbandonSession.sql" />
     <Build Include="Procedures\GetAllUserRoles.sql" />
-    <Build Include="Procedures\GetAllUserStatuses.sql" />
+    <Build Include="Procedures\GetAllUserStates.sql" />
     <Build Include="Procedures\GetAllUserSettings.sql" />
     <Build Include="Procedures\GetTimeRecord.sql" />
     <Build Include="Procedures\GetDayRecord.sql" />
     <Build Include="Procedures\GetUserByLogin.sql" />
+    <Build Include="Procedures\GetUserSession.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="PostDeploy.sql" />

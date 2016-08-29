@@ -1,4 +1,4 @@
-﻿CREATE PROCEDURE [dbo].[GetAllUserStatuses]
+﻿CREATE PROCEDURE [dbo].[GetAllUserStates]
 AS
 BEGIN
 	SELECT [s].[Id], [s].[Description]

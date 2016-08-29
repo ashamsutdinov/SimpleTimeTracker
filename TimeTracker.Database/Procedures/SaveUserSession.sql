@@ -3,6 +3,7 @@
 	@Id			INT,
 	@UserId		INT,
 	@ClientId	NVARCHAR(256),
+	@Ticket		NVARCHAR(256),
 	@DateTime	DATETIME2,
 	@Expiration	INT
 )
@@ -18,8 +19,8 @@ BEGIN
 	END
 	ELSE
 	BEGIN
-		INSERT INTO [dbo].[UserSessions] ([UserId], [ClientId], [DateTime], [Expiration])
-		VALUES (@UserId, @ClientId, @DateTime, @Expiration)
+		INSERT INTO [dbo].[UserSessions] ([UserId], [ClientId], [Ticket], [DateTime], [Expiration])
+		VALUES (@UserId, @ClientId, @Ticket, @DateTime, @Expiration)
 		SELECT @Id = @@IDENTITY
 	END
 

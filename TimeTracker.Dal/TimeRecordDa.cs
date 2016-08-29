@@ -43,11 +43,39 @@ namespace TimeTracker.Dal
             var captionParameter = new SqlParameter("@Caption", SqlDbType.NVarChar) { Value = caption };
             var hoursParameter = new SqlParameter("@Hours", SqlDbType.Int) { Value = hours };
             var reader = ExecuteReader("[dbo].[SaveTimeRecord]", idParameter, userIdParameter, dateParameter, captionParameter, hoursParameter);
-            if (reader.Read())
+            return reader.Read() ? new TimeRecord(reader) : null;
+        }
+
+        public TimeRecord GetTimeRecord(int id)
+        {
+            var idParameter = new SqlParameter("@Id", SqlDbType.Int) { Value = id };
+            var reader = ExecuteReader("[dbo].[GetTimeRecord]", idParameter);
+            return reader.Read() ? new TimeRecord(reader) : null;
+        }
+
+        public int DeleteTimeRecordNote(int id)
+        {
+            var idParameter = new SqlParameter("@Id", SqlDbType.Int) { Value = id };
+            return ExecuteNonQuery("[dbo].[DeleteTimeRecordNote]", idParameter);
+        }
+
+        public List<TimeRecordNote> GetTimeRecordNotes(int timeRecordId)
+        {
+            var timeRecordIdParameter = new SqlParameter("@TimeRecordId", SqlDbType.Int) {Value = timeRecordId};
+            var reader = ExecuteReader("[dbo].[GetTimeRecordNotes]", timeRecordIdParameter);
+            var result = new List<TimeRecordNote>();
+            while (reader.Read())
             {
-                return new TimeRecord(reader);
+                result.Add(new TimeRecordNote(reader));
             }
-            return null;
+            return result;
+        }
+
+        public DayRecord GetDayRecord(int id)
+        {
+            var idParameter = new SqlParameter("@Id", SqlDbType.Int) { Value = id };
+            var reader = ExecuteReader("[dbo].[GetDayRecord]", idParameter);
+            return reader.Read() ? new DayRecord(reader) : null;
         }
     }
 }

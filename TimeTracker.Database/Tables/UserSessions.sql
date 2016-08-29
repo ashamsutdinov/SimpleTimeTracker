@@ -5,7 +5,7 @@
 	--unique id assigned by client
 	[ClientId]		NVARCHAR(256),
 	--ticket=xor(id+userId+clientId+salt+md5(id+userId+clientid+salt), privateKey)
-	[Ticket]		NVARCHAR(256) NOT NULL,
+	[Ticket]		NVARCHAR(256) DEFAULT NULL,
 	[Expired]		BIT NOT NULL DEFAULT 0,
 	-- datetime user last accessed the session
 	[DateTime]		DATETIME2 NOT NULL,
