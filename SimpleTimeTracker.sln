@@ -35,6 +35,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TimeTracker.Contract", "Tim
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TimeTracker.Data", "TimeTracker.Data\TimeTracker.Data.csproj", "{D5AC170D-A3C9-47D4-BA3B-891E5523D1A0}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Lib", "Lib", "{056185CC-368E-4A59-9C93-1E4AC43EEC64}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -70,5 +72,10 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{2021AD22-24AB-45C9-9991-22215B498D40} = {056185CC-368E-4A59-9C93-1E4AC43EEC64}
+		{72918956-3BFE-4607-ACD3-270D2570F303} = {056185CC-368E-4A59-9C93-1E4AC43EEC64}
+		{D5AC170D-A3C9-47D4-BA3B-891E5523D1A0} = {056185CC-368E-4A59-9C93-1E4AC43EEC64}
 	EndGlobalSection
 EndGlobal
