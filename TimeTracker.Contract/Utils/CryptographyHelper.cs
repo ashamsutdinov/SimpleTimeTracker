@@ -3,7 +3,7 @@ using System.Collections.Concurrent;
 using System.Configuration;
 using System.Security.Cryptography;
 using System.Text;
-using TimeTracker.Contract.Requests;
+using TimeTracker.Contract.Api;
 
 namespace TimeTracker.Contract.Utils
 {
@@ -16,10 +16,6 @@ namespace TimeTracker.Contract.Utils
         private readonly string _privateKey;
 
         private readonly MD5CryptoServiceProvider _md5 = new MD5CryptoServiceProvider();
-
-        private const string Chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-
-        private readonly Random _random = new Random((int)DateTime.UtcNow.Ticks);
 
         private const int SaltLength = 6;
 
@@ -36,9 +32,9 @@ namespace TimeTracker.Contract.Utils
             return nonce;
         }
 
-        public bool VerifyPasswordSyntax(string password, out DecryptedPasswordData passwordData)
+        public bool VerifyPasswordSyntax(string password, out PasswordData passwordData)
         {
-            passwordData = DecodePassword(password);
+            passwordData = DecodeXorPassword(password);
             string nonce;
             if (_nonces.TryGetValue(passwordData.ClientId, out nonce))
             {
@@ -54,10 +50,20 @@ namespace TimeTracker.Contract.Utils
             return Xor(text, key);
         }
 
-        public DecryptedPasswordData DecodePassword(string password)
+        public string HashPassword(string password, string salt)
+        {
+            var stringToHash = password + salt;
+            HashAlgorithm algorithm = new SHA256Managed();
+            var passwordData = Encoding.UTF8.GetBytes(stringToHash);
+            var hashed = algorithm.ComputeHash(passwordData);
+            var hash = Convert.ToBase64String(hashed);
+            return hash;
+        }
+
+        public PasswordData DecodeXorPassword(string password)
         {
             var decoded = XorDecode(password, _apiKey).Split('#');
-            return new DecryptedPasswordData
+            return new PasswordData
             {
                 Password = decoded[0],
                 ClientId = decoded[1],
@@ -65,10 +71,10 @@ namespace TimeTracker.Contract.Utils
             };
         }
 
-        public DecryptedTicketData DecodeTicket(string ticket)
+        public SessionData DecodeXorTicket(string ticket)
         {
             var decoded = XorDecode(ticket, _privateKey).Split('#');
-            return new DecryptedTicketData
+            return new SessionData
             {
                 Id = int.Parse(decoded[0]),
                 UserId = int.Parse(decoded[1]),
@@ -103,29 +109,26 @@ namespace TimeTracker.Contract.Utils
             return Encoding.UTF8.GetString(hashData);
         }
 
-        public string GetRandomString(int length)
+        public string CreateSalt(int length)
         {
-            var stringChars = new char[length];
-            for (var i = 0; i < stringChars.Length; i++)
-            {
-                stringChars[i] = Chars[_random.Next(Chars.Length)];
-            }
-            var finalString = new string(stringChars);
-            return finalString;
+            var rng = new RNGCryptoServiceProvider();
+            var buff = new byte[length];
+            rng.GetBytes(buff);
+            return Convert.ToBase64String(buff);
         }
 
         public string GetSessionTicket(int id, int userId, string clientId)
         {
-            var ticketSalt = GetRandomString(SaltLength);
+            var ticketSalt = CreateSalt(SaltLength);
             var ticket = string.Format("{0}#{1}#{2}#{3}", id, userId, clientId, ticketSalt);
             var hash = MD5(ticket);
             var ticketWithHash = string.Format("{0}#{1}#{2}#{3}#{4}", id, userId, clientId, hash, ticketSalt);
             return XorEncode(ticketWithHash, _privateKey);
         }
 
-        public bool VerifyTicketSyntax(string ticket, out DecryptedTicketData data)
+        public bool VerifyTicketSyntax(string ticket, out SessionData data)
         {
-            data = DecodeTicket(ticket);
+            data = DecodeXorTicket(ticket);
             var decoded = string.Format("{0}#{1}#{2}#{3}", data.Id, data.UserId, data.ClientId, data.TicketSalt);
             return data.TicketHash == MD5(decoded);
         }

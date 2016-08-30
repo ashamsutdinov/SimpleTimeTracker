@@ -1,19 +1,21 @@
 using Microsoft.Practices.Unity;
 using Microsoft.Practices.Unity.Configuration;
+using TimeTracker.Contract.IoC;
 
-namespace TimeTracker.RestService.Utils
+namespace TimeTracker.RestService.IoC
 {
-    public static class UnityHelper
+    public class UnityServiceResolver :
+        IServiceResolver
     {
         private static readonly UnityContainer Container;
 
-        static UnityHelper()
+        static UnityServiceResolver()
         {
             Container = new UnityContainer();
             Container.LoadConfiguration();
         }
-        
-        public static TInterface Resolve<TInterface>()
+
+        public TInterface Resolve<TInterface>()
         {
             return Container.Resolve<TInterface>();
         }

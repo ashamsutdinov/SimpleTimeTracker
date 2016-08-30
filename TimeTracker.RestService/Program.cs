@@ -2,6 +2,8 @@
 using System.ServiceModel;
 using System.ServiceModel.Web;
 using System.ServiceProcess;
+using TimeTracker.Contract.IoC;
+using TimeTracker.RestService.IoC;
 
 namespace TimeTracker.RestService
 {
@@ -17,6 +19,9 @@ namespace TimeTracker.RestService
 
         private static void Main()
         {
+            //register IoC container...
+            ServiceResolverFactory.Setup(new UnityServiceResolver());
+
             if (!Environment.UserInteractive)
             {
                 Run(new Program());

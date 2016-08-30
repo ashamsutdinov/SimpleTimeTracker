@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System;
+using AutoMapper;
 using TimeTracker.Contract.Data;
 using TimeTracker.Contract.Data.Entities;
 using TimeTracker.Dal;
@@ -35,6 +36,36 @@ namespace TimeTracker.Data
         {
             var dalUser = _userDa.GetUser(id);
             return Mapper.Map<DalUser, IUser>(dalUser);
+        }
+
+        public IUser GetUser(string login)
+        {
+            var dalUser = _userDa.GetUserByLogin(login);
+            return Mapper.Map<DalUser, IUser>(dalUser);
+        }
+
+        public IUserSession CreateNewSession(int userId, string clientId)
+        {
+            var session = new DtoUserSession
+            {
+                ClientId = clientId,
+                DateTime = DateTime.UtcNow,
+                //todo: configure!
+                Expiration = 1800,
+                Expired = false,
+                Ticket = null,
+                UserId = userId
+            };
+            var dalSession = Mapper.Map<IUserSession, DalUserSession>(session);
+            dalSession = _userDa.SaveUserSession(dalSession);
+            return Mapper.Map<DalUserSession, IUserSession>(dalSession);
+        }
+
+        public IUserSession SaveSession(IUserSession session)
+        {
+            var dalSession = Mapper.Map<IUserSession, DalUserSession>(session);
+            dalSession = _userDa.SaveUserSession(dalSession);
+            return Mapper.Map<DalUserSession, IUserSession>(dalSession);
         }
     }
 }

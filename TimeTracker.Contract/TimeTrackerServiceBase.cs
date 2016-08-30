@@ -2,10 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Authentication;
+using TimeTracker.Contract.Api;
+using TimeTracker.Contract.Api.Base;
 using TimeTracker.Contract.Data;
 using TimeTracker.Contract.Data.Entities;
-using TimeTracker.Contract.Requests;
-using TimeTracker.Contract.Responses;
+using TimeTracker.Contract.IoC;
+using TimeTracker.Contract.Log;
 using TimeTracker.Contract.Utils;
 
 namespace TimeTracker.Contract
@@ -19,70 +21,92 @@ namespace TimeTracker.Contract
 
         protected readonly ITimeRecordDataProvider TimeTrackingDataProvider;
 
-        protected TimeTrackerServiceBase(IUserDataProvider userDataProvider, ITimeRecordDataProvider timeRecordDataProvider)
+        protected readonly ILogger Log;
+
+        protected TimeTrackerServiceBase()
         {
-            UserDataProvider = userDataProvider;
-            TimeTrackingDataProvider = timeRecordDataProvider;
+            var serviceResolver = ServiceResolverFactory.Get();
+            Log = serviceResolver.Resolve<ILogger>();
+            Log.Debug(this, "Creating TimeTrackerServiceBase...");
+            UserDataProvider = serviceResolver.Resolve<IUserDataProvider>();
+            TimeTrackingDataProvider = serviceResolver.Resolve<ITimeRecordDataProvider>();
+            Log.Debug(this, "TimeTrackerServiceBase created");
         }
 
         public Response<long> Heartbit(Request<long> request)
         {
-            return SafeInvoke((r, u) => DateTime.UtcNow.Ticks, request);
+            return SafeInvoke(user => DateTime.UtcNow.Ticks, request);
         }
 
         public Response<SessionState[]> Handshake(Request request)
         {
-            return SafeInvoke((req, user) =>
+            return SafeInvoke(user =>
             {
                 if (user == null)
                 {
-                    return new []{SessionState.Anonymous};
+                    Log.Info(this, "Anonymous user connected: {0}", request.ClientId);
+                    return new[] { SessionState.Anonymous };
                 }
-                var result = new List<SessionState>{SessionState.LoggedInUser};
+                var result = new List<SessionState> { SessionState.LoggedInUser };
                 if (user.Roles.Any(r => r.Id == "administrator"))
                 {
-                    result.Add(SessionState.LoggedInAdministrator);    
+                    result.Add(SessionState.LoggedInAdministrator);
                 }
                 if (user.Roles.Any(r => r.Id == "manager"))
                 {
                     result.Add(SessionState.LoggedInManager);
                 }
+                Log.Info(this, "User connected: {0}", result.Cast<object>());
                 return result.ToArray();
             }, request);
         }
 
         public virtual Response<string> GetNonce(Request request)
         {
-            return SafeInvoke((r, u) => _cryptographyHelper.GetNonce(request.ClientId), request);
+            return SafeInvoke(user => _cryptographyHelper.GetNonce(request.ClientId), request);
         }
 
         public virtual Response<TicketData> Login(Request<LoginData> request)
         {
-            return SafeInvoke((r, u) =>
+            return SafeInvoke(userNull =>
             {
                 var login = request.Data.Login;
-                DecryptedPasswordData paswordData;
+                PasswordData paswordData;
                 var validPasswordSyntax = _cryptographyHelper.VerifyPasswordSyntax(request.Data.Password, out paswordData);
                 if (!validPasswordSyntax)
                 {
                     throw new AuthenticationException("Invalid authentication nonce");
                 }
 
-                //lookup user
-                //throw new AuthenticationException("User not found");
+                //check if user already logged in
+                if (userNull != null)
+                {
+                    throw new AuthenticationException("User already logged in");
+                }
 
-                //check password
-                //throw new AuthenticationException("Invalid login or password");
+                //check if user exists
+                var user = UserDataProvider.GetUser(login);
+                if (user == null)
+                {
+                    throw new AuthenticationException("Invalid login or password");
+                }
 
-                //check user status
-                //throw new AuthenticationException("User was disabled or deleted");
+                var hash = _cryptographyHelper.HashPassword(paswordData.Password, user.PasswordSalt);
+                if (hash != user.PasswordHash)
+                {
+                    throw new AuthenticationException("Invalid login or password");
+                }
 
-                //create session
-                var sessionId = 0;
-                var userId = 0;
+                if (user.StateId != "active")
+                {
+                    throw new AuthenticationException("User was disabled or deleted");
+                }
 
+                var session = UserDataProvider.CreateNewSession(user.Id, request.ClientId);
                 //create ticket
-                var ticket = _cryptographyHelper.GetSessionTicket(sessionId, userId, paswordData.ClientId);
+                var ticket = _cryptographyHelper.GetSessionTicket(session.Id, user.Id, paswordData.ClientId);
+                session.Ticket = ticket;
+                UserDataProvider.SaveSession(session);
 
                 return new TicketData
                 {
@@ -91,29 +115,69 @@ namespace TimeTracker.Contract
             }, request);
         }
 
-        private Response<TData> SafeInvoke<TData>(Func<Request, IUser, TData> action, Request request)
+        private Response<TData> SafeInvoke<TData>(Func<IUser, TData> action, Request request)
         {
             try
             {
                 IUser user = null;
                 if (!string.IsNullOrEmpty(request.Ticket))
                 {
-                    DecryptedTicketData ticketData;
-                    if (!_cryptographyHelper.VerifyTicketSyntax(request.Ticket, out ticketData))
+                    SessionData sessionData;
+
+                    //verify ticket syntax
+                    if (!_cryptographyHelper.VerifyTicketSyntax(request.Ticket, out sessionData))
                     {
+                        Log.Warning(this, "Invalid ticket: {0}", request.Ticket);
                         return Response<TData>.NotAcceptable("Invalid ticket");
                     }
 
-                    user = UserDataProvider.GetUser(ticketData.UserId);
+                    //check if session exists
+                    var session = UserDataProvider.GetUserSession(sessionData.Id);
+                    if (session == null)
+                    {
+                        Log.Warning(this, "Session was not found: {0}", sessionData.Id);
+                        return Response<TData>.NotAcceptable("Invalid session");
+                    }
 
-                    //check if session-to-user binding is correct
-                    //return Response<TData>.NotAcceptable("Invalid ticket");
+                    //check if received ticket is equal with ticket stored in db
+                    if (session.Ticket != request.Ticket)
+                    {
+                        Log.Warning(this, "Invalid ticket: {0}, expected: {1}", request.Ticket, session.Ticket);
+                        return Response<TData>.NotAcceptable("Invalid ticket");
+                    }
 
-                    //check if ticket stored in db is correct
-                    //return Response<TData>.NotAcceptable("Invalid ticket");
+                    //check if user exists
+                    user = UserDataProvider.GetUser(sessionData.UserId);
+                    if (user == null)
+                    {
+                        Log.Warning(this, "User was not found: {0}", sessionData.UserId);
+                        return Response<TData>.Unauthorized("User was not found");
+                    }
+
+                    //check if session and owned by user
+                    if (user.Id != session.UserId)
+                    {
+                        Log.Warning(this, "User have no access to requested session: {0}, sessionId: {1}", user.Id, session.Id);
+                        return Response<TData>.Forbidden("User have no access to requested session");
+                    }
+
+                    //check if session was expired
+                    if (session.Expired || session.DateTime.AddSeconds(session.Expiration) < DateTime.UtcNow)
+                    {
+                        session.Expired = true;
+                        UserDataProvider.SaveSession(session);
+                        Log.Warning(this, "Session was expired: {0}", session.Id);
+                        return Response<TData>.NotAcceptable("Session was expired");
+                    }
+
+                    //ticket/session is valid, authentication passed
+
+                    //advance session
+                    session.DateTime = DateTime.UtcNow;
+                    UserDataProvider.SaveSession(session);
                 }
 
-                var data = action(request, user);
+                var data = action(user);
                 return Response<TData>.Success(data);
             }
             catch (UnauthorizedAccessException uaex)
@@ -130,31 +194,22 @@ namespace TimeTracker.Contract
             }
         }
 
-        private static Response<TData> TraceException<TData>(Exception ex)
+        private Response<TData> TraceException<TData>(Exception ex)
         {
-            var color = Console.ForegroundColor;
-            Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine(ex.ToString());
-            Console.ForegroundColor = color;
+            Log.Error(this, ex, "Unhandled exception");
             return Response<TData>.Fail(ex.Message);
         }
 
-        private static Response<TData> TraceUnauthorizedException<TData>(UnauthorizedAccessException uaex)
+        private Response<TData> TraceUnauthorizedException<TData>(UnauthorizedAccessException ex)
         {
-            var color = Console.ForegroundColor;
-            Console.ForegroundColor = ConsoleColor.Cyan;
-            Console.WriteLine(uaex.ToString());
-            Console.ForegroundColor = color;
-            return Response<TData>.Forbidden(uaex.Message);
+            Log.Error(this, ex, "Unauthorized exception");
+            return Response<TData>.Forbidden(ex.Message);
         }
 
-        private static Response<TData> TraceAuthenticationException<TData>(AuthenticationException aex)
+        private Response<TData> TraceAuthenticationException<TData>(AuthenticationException ex)
         {
-            var color = Console.ForegroundColor;
-            Console.ForegroundColor = ConsoleColor.DarkYellow;
-            Console.WriteLine(aex.ToString());
-            Console.ForegroundColor = color;
-            return Response<TData>.Unauthorized(aex.Message);
+            Log.Error(this, ex, "Authentication exception");
+            return Response<TData>.Unauthorized(ex.Message);
         }
     }
 }

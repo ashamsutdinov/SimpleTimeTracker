@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.Design;
 using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
-using TimeTracker.Dal.Entities.Base;
 
 namespace TimeTracker.Dal.Utils
 {
@@ -31,19 +29,27 @@ namespace TimeTracker.Dal.Utils
             return ExecuteCommand(commandText, command => command.ExecuteNonQuery(), parameters);
         }
 
-        protected IDataReader ExecuteReader(string commandText, params IDataParameter[] parameters)
+        protected TResult ExecuteReader<TResult>(string commandText, Func<IDataReader, TResult> readerAction, params IDataParameter[] parameters)
         {
-            return ExecuteCommand(commandText, command => command.ExecuteReader(), parameters);
+            return ExecuteCommand(commandText, command =>
+            {
+                var reader = command.ExecuteReader();
+                return readerAction(reader);
+            }, parameters);
         }
 
-        protected IDataReader ExecuteReader(string commandText, out IDbCommand outCommand, params IDataParameter[] parameters)
+        protected TResult ExecuteReader<TResult>(string commandText, Func<IDataReader, TResult> readerAction,  out IDbCommand outCommand, params IDataParameter[] parameters)
         {
-            return ExecuteCommand(commandText, command => command.ExecuteReader(), out outCommand, parameters);
+            return ExecuteCommand(commandText, command =>
+            {
+                var reader = command.ExecuteReader();
+                return readerAction(reader);
+            }, out outCommand, parameters);
         }
 
         protected IDbDataParameter CreateParameter(string name, SqlDbType type, object value)
         {
-            var parameter = new SqlParameter(name, type) {Value = value ?? DBNull.Value};
+            var parameter = new SqlParameter(name, type) { Value = value ?? DBNull.Value };
             return parameter;
         }
 
@@ -63,7 +69,7 @@ namespace TimeTracker.Dal.Utils
             return parameter;
         }
 
-        protected IDbDataParameter CreateKeyValueCollectionParameter(string name, IEnumerable<KeyValuePair<string,string>> values)
+        protected IDbDataParameter CreateKeyValueCollectionParameter(string name, IEnumerable<KeyValuePair<string, string>> values)
         {
             var dataTable = new DataTable();
             dataTable.Columns.Add("[Id]");
@@ -95,7 +101,7 @@ namespace TimeTracker.Dal.Utils
 
         protected TEntity ReadSingle<TEntity>(IDataReader reader, Func<IDataRecord, TEntity> read)
         {
-            return reader.Read() ? read(reader) : default (TEntity);
+            return reader.Read() ? read(reader) : default(TEntity);
         }
 
         protected TValue GetOutputValue<TValue>(IDbCommand command, string key)
@@ -103,7 +109,7 @@ namespace TimeTracker.Dal.Utils
             var parameter = command.Parameters["key"] as SqlParameter;
             if (parameter != null)
             {
-                return (TValue) parameter.Value;
+                return (TValue)parameter.Value;
             }
             return default(TValue);
         }

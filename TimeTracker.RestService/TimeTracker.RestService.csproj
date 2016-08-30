@@ -61,6 +61,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="IoC\UnityServiceResolver.cs" />
+    <Compile Include="Log\ConsoleLogger.cs" />
     <Compile Include="Program.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -68,7 +70,6 @@
     <Compile Include="TimeTrackerService.cs" />
     <Compile Include="Utils\CustomHeaderMessageInspector.cs" />
     <Compile Include="Utils\EnableCrossOriginResourceSharingBehavior.cs" />
-    <Compile Include="Utils\UnityHelper.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

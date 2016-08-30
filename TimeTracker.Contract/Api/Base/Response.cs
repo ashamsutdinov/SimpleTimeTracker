@@ -1,7 +1,7 @@
 ﻿using System.Net;
 using System.Runtime.Serialization;
 
-namespace TimeTracker.Contract.Responses
+namespace TimeTracker.Contract.Api.Base
 {
     [DataContract]
     public class Response<TData>

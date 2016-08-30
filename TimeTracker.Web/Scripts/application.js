@@ -29,18 +29,19 @@ window.Application = function () {
                 if (response.StatusCode === StatusCode.OK) {
                     callbackOk(response.Data);
                 } else {
-                    callbackFailure(response);
+                    callbackError(response);
                 }
             }
         }).fail(function() {
-            callbackError();
+            
+            callbackFailure();
         });
     };
 
     var handshake = function () {
         self.apiCall("Handshake", {}, {
-            success: function(response) {
-                window.messageBus.fire(Event.SessionStateChanged, response.Data);
+            success: function(states) {
+                window.messageBus.fire(Event.SessionStateChanged, states);
             },
             error: function() {
                 window.messageBus.fire(Event.SessionStateChanged, [SessionState.Undefined]);
@@ -57,18 +58,15 @@ window.Application = function () {
                     connected = true;
                 }
             },
-            error: function () {
+            failure: function () {
                 window.messageBus.fire(Event.Disconnected);
                 connected = false;
             }
         });
     };
 
-    
-
     var init = function () {
         window.messageBus.fire(Event.SessionStateChanged, [SessionState.Undefined]);
-
         setTimeout(function() {
             heartbit();
             setInterval(heartbit, Config.HeartbitInterval);

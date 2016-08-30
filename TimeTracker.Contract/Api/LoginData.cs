@@ -1,7 +1,6 @@
-using System.Dynamic;
 using System.Runtime.Serialization;
 
-namespace TimeTracker.Contract.Requests
+namespace TimeTracker.Contract.Api
 {
     [DataContract]
     public class LoginData

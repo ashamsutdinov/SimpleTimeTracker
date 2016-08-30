@@ -72,3 +72,7 @@
     /*todo: check why default bootstrap css is not operational*/
     margin-top: 60px;
 }
+
+.center-container {
+    text-align: center;
+}

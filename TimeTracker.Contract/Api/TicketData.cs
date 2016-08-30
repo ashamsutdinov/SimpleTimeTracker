@@ -1,6 +1,6 @@
 using System.Runtime.Serialization;
 
-namespace TimeTracker.Contract.Responses
+namespace TimeTracker.Contract.Api
 {
     [DataContract]
     public class TicketData

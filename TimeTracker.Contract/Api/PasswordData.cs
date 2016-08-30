@@ -1,9 +1,9 @@
 using System.Runtime.Serialization;
 
-namespace TimeTracker.Contract.Requests
+namespace TimeTracker.Contract.Api
 {
     [DataContract]
-    public class DecryptedPasswordData
+    public class PasswordData
     {
         [DataMember]
         public string Password { get; set; }

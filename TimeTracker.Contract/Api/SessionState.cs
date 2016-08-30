@@ -1,4 +1,4 @@
-namespace TimeTracker.Contract.Responses
+namespace TimeTracker.Contract.Api
 {
     public enum SessionState
     {

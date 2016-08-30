@@ -1,9 +1,9 @@
 using System.Runtime.Serialization;
 
-namespace TimeTracker.Contract.Requests
+namespace TimeTracker.Contract.Api
 {
     [DataContract]
-    public class DecryptedTicketData
+    public class SessionData
     {
         [DataMember]
         public int Id { get; set; }
