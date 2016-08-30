@@ -46,6 +46,7 @@
     <Compile Include="Entities\TimeRecord.cs" />
     <Compile Include="Entities\TimeRecordItem.cs" />
     <Compile Include="Entities\TimeRecordNote.cs" />
+    <Compile Include="Entities\TimeRecordNoteItem.cs" />
     <Compile Include="Entities\User.cs" />
     <Compile Include="Entities\UserRole.cs" />
     <Compile Include="Entities\UserSession.cs" />

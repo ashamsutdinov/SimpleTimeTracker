@@ -50,6 +50,7 @@
     <Compile Include="Data\Entities\ITimeRecord.cs" />
     <Compile Include="Data\Entities\ITimeRecordItem.cs" />
     <Compile Include="Data\Entities\ITimeRecordNote.cs" />
+    <Compile Include="Data\Entities\ITimeRecordNoteItem.cs" />
     <Compile Include="Data\Entities\IUser.cs" />
     <Compile Include="Data\Entities\IUserRole.cs" />
     <Compile Include="Data\Entities\IUserSession.cs" />

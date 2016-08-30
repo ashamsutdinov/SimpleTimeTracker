@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.Design;
 using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
+using TimeTracker.Dal.Entities.Base;
 
 namespace TimeTracker.Dal.Utils
 {
@@ -37,6 +39,73 @@ namespace TimeTracker.Dal.Utils
         protected IDataReader ExecuteReader(string commandText, out IDbCommand outCommand, params IDataParameter[] parameters)
         {
             return ExecuteCommand(commandText, command => command.ExecuteReader(), out outCommand, parameters);
+        }
+
+        protected IDbDataParameter CreateParameter(string name, SqlDbType type, object value)
+        {
+            var parameter = new SqlParameter(name, type) {Value = value ?? DBNull.Value};
+            return parameter;
+        }
+
+        protected IDbDataParameter CreateKeyCollectionParameter(string name, IEnumerable<string> values)
+        {
+            var dataTable = new DataTable();
+            dataTable.Columns.Add("[Id]");
+            foreach (var value in values)
+            {
+                dataTable.Rows.Add(value);
+            }
+            var parameter = new SqlParameter(name, SqlDbType.Structured)
+            {
+                TypeName = "[dbo].[KeyCollection]",
+                Value = dataTable
+            };
+            return parameter;
+        }
+
+        protected IDbDataParameter CreateKeyValueCollectionParameter(string name, IEnumerable<KeyValuePair<string,string>> values)
+        {
+            var dataTable = new DataTable();
+            dataTable.Columns.Add("[Id]");
+            dataTable.Columns.Add("[Value]");
+            foreach (var value in values)
+            {
+                var row = dataTable.NewRow();
+                row["[Id]"] = value.Key;
+                row["[Value]"] = value.Value;
+                dataTable.Rows.Add(row);
+            }
+            var parameter = new SqlParameter(name, SqlDbType.Structured)
+            {
+                TypeName = "[dbo].[KeyValueCollection]",
+                Value = dataTable
+            };
+            return parameter;
+        }
+
+        protected List<TEntity> Read<TEntity>(IDataReader reader, Func<IDataRecord, TEntity> read)
+        {
+            var result = new List<TEntity>();
+            while (reader.Read())
+            {
+                result.Add(read(reader));
+            }
+            return result;
+        }
+
+        protected TEntity ReadSingle<TEntity>(IDataReader reader, Func<IDataRecord, TEntity> read)
+        {
+            return reader.Read() ? read(reader) : default (TEntity);
+        }
+
+        protected TValue GetOutputValue<TValue>(IDbCommand command, string key)
+        {
+            var parameter = command.Parameters["key"] as SqlParameter;
+            if (parameter != null)
+            {
+                return (TValue) parameter.Value;
+            }
+            return default(TValue);
         }
 
         private IDbConnection CreateConnection()
