@@ -45,6 +45,9 @@
             },
             error: function (r) {
                 self.error(r.Message);
+                setTimeout(function () {
+                    self.error(null);
+                }, Config.ShowAlertTimeout);
             },
             failure: unexpectedError,
             done: function () {
@@ -99,10 +102,16 @@
         window.application.apiCall("Register", data, {
             success: function (r) {
                 self.registered(true);
+                setTimeout(function() {
+                    self.registered(false);
+                }, Config.ShowAlertTimeout);
                 window.messageBus.fire(Event.UserCreated);
             },
             error: function (r) {
                 self.error(r.Message);
+                setTimeout(function () {
+                    self.error(null);
+                }, Config.ShowAlertTimeout);
             },
             failure: unexpectedError,
             done: function () {
