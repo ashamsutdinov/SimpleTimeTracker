@@ -53,8 +53,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.4.0/knockout-min.js" crossorigin="anonymous"></script>
     <script type="text/javascript" language="javascript" src="./Scripts/cryptography.js"></script>
     <script type="text/javascript" language="javascript" src="./Scripts/config.js"></script>
-    <script type="text/javascript" language="javascript" src="./Scripts/application.js"></script>
     <script type="text/javascript" language="javascript" src="./Scripts/messageBus.js"></script>
+    <script type="text/javascript" language="javascript" src="./Scripts/application.js"></script>
     <script type="text/javascript" language="javascript" src="./Scripts/ViewModels/NavigationViewModel.js"></script>
     <script type="text/javascript" language="javascript" src="./Scripts/ViewModels/ApplicationStateViewModel.js"></script>
     <script type="text/javascript" language="javascript" src="./Scripts/ViewModels/TimeRecordsViewModel.js"></script>
@@ -62,6 +62,9 @@
     <script type="text/javascript" language="javascript">
         ko.applyBindings(new NavigationViewModel(), document.getElementById("navigationBar"));
         ko.applyBindings(new ApplicationStateViewModel(), document.getElementById("applicationStateContainer"));
+        ko.applyBindings(new TimeRecordsViewModel(), document.getElementById("timeRecordsContainer"));
+        ko.applyBindings(new UsersViewModel(), document.getElementById("usersContainer"));
+        window.messageBus.fire(Event.Ready);
     </script>
 </body>
 </html>

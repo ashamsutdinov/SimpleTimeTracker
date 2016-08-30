@@ -9,16 +9,16 @@
     self.errorMessage = ko.observable(null);
 
     function init() {
-        window.messageBus.subscribe(Event.Message, function(data) {
+        window.messageBus.subscribe(Event.Alert, function(data) {
             var targetObservable = null;
             switch (data.Type) {
-                case MessageType.Success:
+                case AlertType.Success:
                     targetObservable = self.successMessage;
                     break;
-                case MessageType.Information:
+                case AlertType.Information:
                     targetObservable = self.informationMessage;
                     break;
-                case MessageType.Warning:
+                case AlertType.Warning:
                     targetObservable = self.warningMessage;
                     break;
                 default:
@@ -30,11 +30,11 @@
                 targetObservable(null);
             }, Config.ShowAlertTimeout);
         });
-        window.messageBus.subscribe(Event.Loaded, function() {
+        window.messageBus.subscribe(Event.Connected, function() {
             self.loading(false);
             self.networkConnectionError(false);
         });
-        window.messageBus.subscribe(Event.LoadFailed, function() {
+        window.messageBus.subscribe(Event.Disconnected, function() {
             self.networkConnectionError(true);
         });
     };

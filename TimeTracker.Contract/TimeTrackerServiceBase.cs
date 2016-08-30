@@ -1,13 +1,16 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Security.Authentication;
 using TimeTracker.Contract.Data;
+using TimeTracker.Contract.Data.Entities;
 using TimeTracker.Contract.Requests;
 using TimeTracker.Contract.Responses;
 using TimeTracker.Contract.Utils;
 
 namespace TimeTracker.Contract
 {
-    public abstract class TimeTrackerServiceBase : 
+    public abstract class TimeTrackerServiceBase :
         ITimeTrackerService
     {
         private readonly CryptographyHelper _cryptographyHelper = new CryptographyHelper();
@@ -24,17 +27,38 @@ namespace TimeTracker.Contract
 
         public Response<long> Heartbit(Request<long> request)
         {
-            return SafeInvoke(r => DateTime.UtcNow.Ticks, request);
+            return SafeInvoke((r, u) => DateTime.UtcNow.Ticks, request);
+        }
+
+        public Response<SessionState[]> Handshake(Request request)
+        {
+            return SafeInvoke((req, user) =>
+            {
+                if (user == null)
+                {
+                    return new []{SessionState.Anonymous};
+                }
+                var result = new List<SessionState>{SessionState.LoggedInUser};
+                if (user.Roles.Any(r => r.Id == "administrator"))
+                {
+                    result.Add(SessionState.LoggedInAdministrator);    
+                }
+                if (user.Roles.Any(r => r.Id == "manager"))
+                {
+                    result.Add(SessionState.LoggedInManager);
+                }
+                return result.ToArray();
+            }, request);
         }
 
         public virtual Response<string> GetNonce(Request request)
         {
-            return SafeInvoke(r => _cryptographyHelper.GetNonce(request.ClientId), request);
+            return SafeInvoke((r, u) => _cryptographyHelper.GetNonce(request.ClientId), request);
         }
 
         public virtual Response<TicketData> Login(Request<LoginData> request)
         {
-            return SafeInvoke(r =>
+            return SafeInvoke((r, u) =>
             {
                 var login = request.Data.Login;
                 DecryptedPasswordData paswordData;
@@ -67,10 +91,11 @@ namespace TimeTracker.Contract
             }, request);
         }
 
-        private Response<TData> SafeInvoke<TData>(Func<Request, TData> action, Request request)
+        private Response<TData> SafeInvoke<TData>(Func<Request, IUser, TData> action, Request request)
         {
             try
             {
+                IUser user = null;
                 if (!string.IsNullOrEmpty(request.Ticket))
                 {
                     DecryptedTicketData ticketData;
@@ -79,6 +104,8 @@ namespace TimeTracker.Contract
                         return Response<TData>.NotAcceptable("Invalid ticket");
                     }
 
+                    user = UserDataProvider.GetUser(ticketData.UserId);
+
                     //check if session-to-user binding is correct
                     //return Response<TData>.NotAcceptable("Invalid ticket");
 
@@ -86,7 +113,7 @@ namespace TimeTracker.Contract
                     //return Response<TData>.NotAcceptable("Invalid ticket");
                 }
 
-                var data = action(request);
+                var data = action(request, user);
                 return Response<TData>.Success(data);
             }
             catch (UnauthorizedAccessException uaex)

@@ -5,6 +5,8 @@
 window.Application = function () {
     var self = this;
 
+    var connected = false;
+
     self.apiCall = function (method, data, callback) {
         var request = {
             Data: data,
@@ -35,25 +37,45 @@ window.Application = function () {
         });
     };
 
-    var heartbit = function() {
-        self.apiCall("Heartbit", new Date().getTime(), {
-            success: function () {
-                messageBus.fire(Event.Loaded);
+    var handshake = function () {
+        self.apiCall("Handshake", {}, {
+            success: function(response) {
+                window.messageBus.fire(Event.SessionStateChanged, response.Data);
             },
-            error: function () {
-                messageBus.fire(Event.LoadFailed);
+            error: function() {
+                window.messageBus.fire(Event.SessionStateChanged, [SessionState.Undefined]);
             }
         });
     };
 
+    var heartbit = function() {
+        self.apiCall("Heartbit", new Date().getTime(), {
+            success: function () {
+                window.messageBus.fire(Event.Connected);
+                if (!connected) {
+                    handshake();
+                    connected = true;
+                }
+            },
+            error: function () {
+                window.messageBus.fire(Event.Disconnected);
+                connected = false;
+            }
+        });
+    };
+
+    
+
     var init = function () {
+        window.messageBus.fire(Event.SessionStateChanged, [SessionState.Undefined]);
+
         setTimeout(function() {
             heartbit();
             setInterval(heartbit, Config.HeartbitInterval);
         }, Config.HeartbitStartAfter);
     };
 
-    init();
+    window.messageBus.subscribe(Event.Ready, init);
    
     return self;
 };

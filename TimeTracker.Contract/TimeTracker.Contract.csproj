@@ -66,6 +66,7 @@
     <Compile Include="Requests\Request.cs" />
     <Compile Include="Requests\DecryptedPasswordData.cs" />
     <Compile Include="Responses\Response.cs" />
+    <Compile Include="Responses\SessionState.cs" />
     <Compile Include="Responses\TicketData.cs" />
     <Compile Include="TimeTrackerServiceBase.cs" />
     <Compile Include="Utils\CryptographyHelper.cs" />

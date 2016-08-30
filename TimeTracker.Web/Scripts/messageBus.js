@@ -1,21 +1,36 @@
 ﻿var Event = {
-    Loaded: 0,
-    LoggedIn: 1,
-    LoggedOut: 2,
-    TimeRecordCreated: 3,
-    TimeRecordUpdated: 4,
-    TimeRecordDeleted: 5,
-    TimeRecordNoteCreated: 6,
-    TimeRecordNoteUpdated: 7,
-    TimeRecordNoteDeleted: 8,
-    UserCreated: 9,
-    UserUpdated: 10,
-    UserDeleted: 11,
-    Message: 100,
-    LoadFailed: 1000
+    Ready : 0,
+    Connected: 1,
+    Disconnected: 2,
+    SessionStateChanged: 3,
+
+    LoggedIn: 11,
+    LoggedOut: 12,
+
+    TimeRecordCreated: 21,
+    TimeRecordUpdated: 22,
+    TimeRecordDeleted: 23,
+
+    TimeRecordNoteCreated: 31,
+    TimeRecordNoteUpdated: 32,
+    TimeRecordNoteDeleted: 33,
+
+    UserCreated: 41,
+    UserUpdated: 42,
+    UserDeleted: 43,
+
+    Alert: 51
 };
 
-var MessageType = {
+var SessionState = {
+    Undefined: 0,
+    Anonymous: 1,
+    LoggedInUser: 2,
+    LoggedInManager: 3,
+    LoggedInAdministrator: 4
+};
+
+var AlertType = {
     Success: 0,
     Information: 1,
     Warning: 2,
