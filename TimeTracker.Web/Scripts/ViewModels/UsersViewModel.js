@@ -1,7 +1,5 @@
 ﻿window.UsersViewModel = function() {
-    var self = this;
-
-    self.loaded = ko.observable(false);
+    var self = new DataContainerViewModelBase(DataRequest.ManageUsers);
 
     return self;
 };

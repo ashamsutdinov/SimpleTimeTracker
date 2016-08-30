@@ -13,5 +13,7 @@ namespace TimeTracker.Contract.Data
         IUserSession CreateNewSession(int userId, string clientId);
 
         IUserSession SaveSession(IUserSession session);
+
+        IUser RegisterUser(string login, string name, string passwordHash, string passwordSalt);
     }
 }

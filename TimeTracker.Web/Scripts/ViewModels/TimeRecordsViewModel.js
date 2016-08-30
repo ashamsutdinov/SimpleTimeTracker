@@ -1,7 +1,5 @@
-﻿window.TimeRecordsViewModel = function() {
-    var self = this;
-
-    self.loaded = ko.observable(false);
+﻿window.TimeRecordsViewModel = function(dataId) {
+    var self = new DataContainerViewModelBase(dataId);
 
     return self;
 };

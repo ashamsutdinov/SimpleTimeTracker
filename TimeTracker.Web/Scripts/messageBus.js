@@ -6,6 +6,7 @@
 
     LoggedIn: 11,
     LoggedOut: 12,
+    LogoutRequested: 13,
 
     TimeRecordCreated: 21,
     TimeRecordUpdated: 22,
@@ -19,7 +20,9 @@
     UserUpdated: 42,
     UserDeleted: 43,
 
-    Alert: 51
+    Alert: 51,
+
+    DataRequested: 61
 };
 
 var SessionState = {
@@ -35,7 +38,13 @@ var AlertType = {
     Information: 1,
     Warning: 2,
     Error: 3
-}
+};
+
+var DataRequest = {
+    UserTimesheets: 0,
+    ManageUsers: 1,
+    ManageTimeshets: 2
+};
 
 window.MessageBus = function() {
     var self = this;

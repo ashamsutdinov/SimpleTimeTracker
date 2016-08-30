@@ -38,11 +38,21 @@ window.Application = function () {
 
     self.handshake = function () {
         self.apiCall("Handshake", {}, {
-            success: function(states) {
+            success: function (states) {
+                var loggedIn = true;
+                for (var i = 0; i < states.length; i++) {
+                    if (states[i] === SessionState.Anonymous || states[i] === SessionState.Undefined) {
+                        loggedIn = false;
+                    }
+                }
+                if (loggedIn) {
+                    window.messageBus.fire(Event.LoggedIn);
+                }
                 window.messageBus.fire(Event.SessionStateChanged, states);
             },
             error: function () {
-                localStorage[Config.TicketKey] = null;
+                localStorage.removeItem(Config.TicketKey);
+                window.messageBus.fire(Event.LoggedOut);
                 window.messageBus.fire(Event.SessionStateChanged, [SessionState.Anonymous]);
             }
         });

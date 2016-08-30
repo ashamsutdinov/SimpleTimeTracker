@@ -24,8 +24,13 @@
             </div>
             <div id="navbar" class="collapse navbar-collapse">
                 <ul class="nav navbar-nav">
-                    <li class="active"><a href="#">Home</a></li>
+                    <li data-bind="visible: isUser, click: requestUserTimesheets"><a href="#">My Timesheets</a></li>
+                    <li data-bind="visible: isManager, click: requestManageUsers"><a href="#">Manage Users</a></li>
+                    <li data-bind="visible: isAdministrator, click: requestManageTimesheets"><a href="#">Manage Timesheets</a></li>
                 </ul>
+                <p class="navbar-text">
+                    <a href="#" class="navbar-link logout" data-bind="click: requestLogout">Logout</a>&nbsp;
+                </p>  
             </div>
         </div>
     </nav>
@@ -42,6 +47,7 @@
             <div class="alert alert-warning" data-bind="visible: warningMessage() != null, text: warningMessage" style="display: none"></div>
             <div class="alert alert-danger" data-bind="visible: errorMessage() != null, text: errorMessage" style="display: none"></div>
         </div>
+        <!--login/register container-->
         <div id="loginContainer" data-bind="visible: isAnonymous" style="display: none">
             <!--login prompt-->
             <div class="container center-container">
@@ -50,7 +56,7 @@
                 <button class="btn btn-primary btn-lg" href="#signup" data-toggle="modal" data-target=".bs-modal-sm">Login/Register</button>
             </div>
             <!-- Sign In / Register Modal window -->
-            <div class="modal fade bs-modal-sm" id="myModal" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
+            <div class="modal fade bs-modal-sm" id="loginRegisterModelWindow" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
                 <div class="modal-dialog modal-sm">
                     <div class="modal-content">
                         <br>
@@ -110,7 +116,7 @@
                                             <div class="control-group">
                                                 <label class="control-label" for="register-button"></label>
                                                 <div class="controls">
-                                                    <button id="register-button" class="btn btn-success">Register</button>
+                                                    <button id="register-button" class="btn btn-success" data-bind="click: register">Register</button>
                                                 </div>
                                             </div>
                                         </fieldset>
@@ -120,17 +126,21 @@
                         </div>
                         <div class="modal-footer center-container">
                             <p class="alert alert-danger" data-bind="visible: error() !== null, text: error"></p>
+                            <p class="alert alert-success" data-bind="visible: registered">User successfully registered</p>
                             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        <div id="timeRecordsContainer" data-bind="visible: loaded" style="display: none">
-
+        <div id="userTimeRecordsContainer" data-bind="visible: loaded" style="display: none">
+            Tab 1
         </div>
         <div id="usersContainer" data-bind="visible: loaded" style="display: none">
-
+            Tab 2
+        </div>
+        <div id="manageTimeRecordsContainer" data-bind="visible: loaded" style="display: none">
+            Tab 3
         </div>
     </div>
     <script src="https://code.jquery.com/jquery-3.1.0.min.js" crossorigin="anonymous"></script>
@@ -145,14 +155,21 @@
     <script type="text/javascript" language="javascript" src="./Scripts/ViewModels/NavigationViewModel.js"></script>
     <script type="text/javascript" language="javascript" src="./Scripts/ViewModels/ApplicationStateViewModel.js"></script>
     <script type="text/javascript" language="javascript" src="./Scripts/ViewModels/LoginViewModel.js"></script>
+    <script type="text/javascript" language="javascript" src="./Scripts/ViewModels/DataContainerViewModelBase.js"></script>
     <script type="text/javascript" language="javascript" src="./Scripts/ViewModels/TimeRecordsViewModel.js"></script>
+    <script type="text/javascript" language="javascript" src="./Scripts/ViewModels/UserTimeRecordsViewModel.js"></script>
+    <script type="text/javascript" language="javascript" src="./Scripts/ViewModels/ManageTimeRecordsViewModel.js"></script>
     <script type="text/javascript" language="javascript" src="./Scripts/ViewModels/UsersViewModel.js"></script>
     <script type="text/javascript" language="javascript">
         ko.applyBindings(new NavigationViewModel(), document.getElementById("navigationBar"));
         ko.applyBindings(new ApplicationStateViewModel(), document.getElementById("applicationStateContainer"));
-        ko.applyBindings(new LoginViewModel(), document.getElementById("loginContainer"));
-        ko.applyBindings(new TimeRecordsViewModel(), document.getElementById("timeRecordsContainer"));
+        ko.applyBindings(new LoginViewModel(function () {
+            //we call hide modal window here to prevent adding any markup references to view models
+            $("#loginRegisterModelWindow").modal("hide");
+        }), document.getElementById("loginContainer"));
+        ko.applyBindings(new UserTimeRecordsViewModel(), document.getElementById("userTimeRecordsContainer"));
         ko.applyBindings(new UsersViewModel(), document.getElementById("usersContainer"));
+        ko.applyBindings(new ManageTimeRecordsViewModel(), document.getElementById("manageTimeRecordsContainer"));
         window.messageBus.fire(Event.Ready);
     </script>
 </body>

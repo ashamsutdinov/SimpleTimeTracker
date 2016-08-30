@@ -109,7 +109,7 @@ namespace TimeTracker.Contract.Utils
             return Convert.ToBase64String(hashData);
         }
 
-        public string CreateSalt(int length)
+        public string CreateSalt(int length = SaltLength)
         {
             var rng = new RNGCryptoServiceProvider();
             var buff = new byte[length];
@@ -119,7 +119,7 @@ namespace TimeTracker.Contract.Utils
 
         public string GetSessionTicket(int id, int userId, string clientId)
         {
-            var ticketSalt = CreateSalt(SaltLength);
+            var ticketSalt = CreateSalt();
             var ticket = string.Format("{0}#{1}#{2}#{3}", id, userId, clientId, ticketSalt);
             var hash = MD5(ticket);
             var ticketWithHash = string.Format("{0}#{1}#{2}#{3}#{4}", id, userId, clientId,  ticketSalt, hash);

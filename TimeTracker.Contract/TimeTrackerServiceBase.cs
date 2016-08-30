@@ -35,12 +35,12 @@ namespace TimeTracker.Contract
 
         public Response<long> Heartbit(Request<long> request)
         {
-            return SafeInvoke(user => DateTime.UtcNow.Ticks, request, true);
+            return SafeInvoke((user, session) => DateTime.UtcNow.Ticks, request, true);
         }
 
         public Response<SessionState[]> Handshake(Request request)
         {
-            return SafeInvoke(user =>
+            return SafeInvoke((user, session) =>
             {
                 if (user == null)
                 {
@@ -56,42 +56,43 @@ namespace TimeTracker.Contract
                 {
                     result.Add(SessionState.LoggedInManager);
                 }
-                Log.Info(this, "User connected: {0}", result.Cast<object>());
+                Log.Info(this, "User connected: {0}", result.Cast<object>().ToArray());
                 return result.ToArray();
             }, request);
         }
 
         public virtual Response<string> GetNonce(Request request)
         {
-            return SafeInvoke(user => _cryptographyHelper.GetNonce(request.ClientId), request, true);
+            return SafeInvoke((user, session) => _cryptographyHelper.GetNonce(request.ClientId), request, true);
         }
 
         public virtual Response<TicketData> Login(Request<LoginData> request)
         {
-            return SafeInvoke(userNull =>
+            return SafeInvoke((userNull, sessionNull) =>
             {
-                var login = request.Data.Login;
-                PasswordData paswordData;
-                var validPasswordSyntax = _cryptographyHelper.VerifyPasswordSyntax(request.Data.Password, out paswordData);
-                if (!validPasswordSyntax)
-                {
-                    throw new AuthenticationException("Invalid authentication nonce");
-                }
-
                 //check if user already logged in
                 if (userNull != null)
                 {
                     throw new AuthenticationException("User already logged in");
                 }
+                
+                //check password syntax
+                PasswordData passwordData;
+                var validPasswordSyntax = _cryptographyHelper.VerifyPasswordSyntax(request.Data.Password, out passwordData);
+                if (!validPasswordSyntax)
+                {
+                    throw new AuthenticationException("Invalid request");
+                }
 
                 //check if user exists
+                var login = request.Data.Login;
                 var user = UserDataProvider.GetUser(login);
                 if (user == null)
                 {
                     throw new AuthenticationException("Invalid login or password");
                 }
 
-                var hash = _cryptographyHelper.HashPassword(paswordData.Password, user.PasswordSalt);
+                var hash = _cryptographyHelper.HashPassword(passwordData.Password, user.PasswordSalt);
                 if (hash != user.PasswordHash)
                 {
                     throw new AuthenticationException("Invalid login or password");
@@ -104,7 +105,7 @@ namespace TimeTracker.Contract
 
                 var session = UserDataProvider.CreateNewSession(user.Id, request.ClientId);
                 //create ticket
-                var ticket = _cryptographyHelper.GetSessionTicket(session.Id, user.Id, paswordData.ClientId);
+                var ticket = _cryptographyHelper.GetSessionTicket(session.Id, user.Id, passwordData.ClientId);
                 session.Ticket = ticket;
                 UserDataProvider.SaveSession(session);
 
@@ -115,12 +116,58 @@ namespace TimeTracker.Contract
             }, request);
         }
 
-        private Response<TData> SafeInvoke<TData>(Func<IUser, TData> action, Request request, bool skipTicketValidation = false)
+        public Response<string> Logout(Request request)
+        {
+            return SafeInvoke((user, session) =>
+            {
+                session.Expired = true;
+                UserDataProvider.SaveSession(session);
+                return "Bye";
+            }, request);
+        }
+
+        public Response<int> Register(Request<RegistrationData> request)
+        {
+            return SafeInvoke((userNull, session) =>
+            {
+                //check if user already logged in
+                if (userNull != null)
+                {
+                    throw new AuthenticationException("User already logged in");
+                }
+
+                //check password syntax
+                PasswordData passwordData;
+                var validPasswordSyntax = _cryptographyHelper.VerifyPasswordSyntax(request.Data.Password, out passwordData);
+                if (!validPasswordSyntax)
+                {
+                    throw new AuthenticationException("Invalid request");
+                }
+
+                //check if user exists
+                var login = request.Data.Login;
+                var existingUser = UserDataProvider.GetUser(login);
+                if (existingUser != null)
+                {
+                    throw new AuthenticationException("Login cannot be used");
+                }
+
+                var salt = _cryptographyHelper.CreateSalt();
+                var hash = _cryptographyHelper.HashPassword(passwordData.Password, salt);
+                var user = UserDataProvider.RegisterUser(login, request.Data.Name, hash, salt);
+
+                return user.Id;
+            }, request);
+        }
+
+        private Response<TData> SafeInvoke<TData>(Func<IUser, IUserSession, TData> action, Request request, bool skipTicketValidation = false)
         {
             try
             {
                 IUser user = null;
-                if (!string.IsNullOrEmpty(request.Ticket) && !skipTicketValidation)
+                IUserSession session = null;
+                var ticketIsNotEmpty = !string.IsNullOrEmpty(request.Ticket);
+                if (ticketIsNotEmpty && !skipTicketValidation)
                 {
                     SessionData sessionData;
 
@@ -132,7 +179,7 @@ namespace TimeTracker.Contract
                     }
 
                     //check if session exists
-                    var session = UserDataProvider.GetUserSession(sessionData.Id);
+                    session = UserDataProvider.GetUserSession(sessionData.Id);
                     if (session == null)
                     {
                         Log.Warning(this, "Session was not found: {0}", sessionData.Id);
@@ -177,7 +224,7 @@ namespace TimeTracker.Contract
                     UserDataProvider.SaveSession(session);
                 }
 
-                var data = action(user);
+                var data = action(user, session);
                 return Response<TData>.Success(data);
             }
             catch (UnauthorizedAccessException uaex)

@@ -30,7 +30,7 @@ namespace TimeTracker.Data.Utils
     public class MappingProfile :
         Profile
     {
-        public MappingProfile()
+        protected override void Configure()
         {
             CreateMap<DalDayRecord, IDayRecord>().As<DtoDayRecord>();
             CreateMap<IDayRecord, DalDayRecord>();

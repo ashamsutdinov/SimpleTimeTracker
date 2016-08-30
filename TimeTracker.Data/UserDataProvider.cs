@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using AutoMapper;
 using TimeTracker.Contract.Data;
 using TimeTracker.Contract.Data.Entities;
@@ -66,6 +67,22 @@ namespace TimeTracker.Data
             var dalSession = Mapper.Map<IUserSession, DalUserSession>(session);
             dalSession = _userDa.SaveUserSession(dalSession);
             return Mapper.Map<DalUserSession, IUserSession>(dalSession);
+        }
+
+        public IUser RegisterUser(string login, string name, string passwordHash, string passwordSalt)
+        {
+            var dalUser = new DalUser
+            {
+                Login = login,
+                Name = name,
+                PasswordHash = passwordHash,
+                PasswordSalt = passwordSalt,
+                StateId = "active",
+                Roles = new List<DalUserRole> {new DalUserRole {Id = "user"}},
+                Settings = new List<DalUserToSetting>()
+            };
+            dalUser = _userDa.SaveUser(dalUser);
+            return Mapper.Map<DalUser, IUser>(dalUser);
         }
     }
 }

@@ -7,13 +7,13 @@ namespace TimeTracker.Contract.Api.Base
     public class Response<TData>
     {
         [DataMember]
-        public TData Data { get; set; }
-
-        [DataMember]
         public HttpStatusCode StatusCode { get; set; }
 
         [DataMember]
         public string Message { get; set; }
+
+        [DataMember]
+        public TData Data { get; set; }
 
         public static Response<TData> Success(TData data)
         {
