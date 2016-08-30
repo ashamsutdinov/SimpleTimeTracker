@@ -17,10 +17,10 @@ namespace TimeTracker.Dal.Entities
         public TimeRecordItem(IDataRecord reader) :
             base(reader)
         {
-            UserName = (string)reader["UserName"];
-            TimeRecordId = (int)reader["TimeRecordId"];
-            Caption = (string)reader["Caption"];
-            Hours = (int)reader["Hours"];
+            UserName = Read<string>(reader, "UserName");
+            TimeRecordId = Read<int>(reader, "TimeRecordId");
+            Caption = Read<string>(reader, "Caption");
+            Hours = Read<int>(reader, "Hours");
         }
     }
 }

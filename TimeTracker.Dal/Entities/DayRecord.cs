@@ -21,9 +21,9 @@ namespace TimeTracker.Dal.Entities
         public DayRecord(IDataRecord reader) :
             base(reader)
         {
-            UserId = (int)reader["UserId"];
-            Date = (DateTime)reader["Date"];
-            TotalHours = (int)reader["TotalHours"];
+            UserId = Read<int>(reader, "Userid");
+            Date = Read<DateTime>(reader, "Date");
+            TotalHours = Read<int>(reader, "TotalHours");
         }
     }
 }

@@ -35,12 +35,18 @@
         };
         window.application.apiCall("Login", data, {
             success: function(r) {
-                alert(r);
+                localStorage[Config.TicketKey] = r.Ticket;
+                window.messageBus.fire(Event.LoggedIn);
+                window.application.handshake();
             },
             error: function(r) {
-                alert(r);
+                self.error(r.Message);
             },
-            failure: unexpectedError
+            failure: unexpectedError,
+            done: function() {
+                self.loginLogin(null);
+                self.loginPassword(null);
+            }
         });
     }
 

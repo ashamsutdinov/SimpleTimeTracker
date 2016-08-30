@@ -22,10 +22,10 @@ namespace TimeTracker.Dal.Entities
         public TimeRecord(IDataRecord reader) :
             base(reader)
         {
-            DayRecordId = (int)reader["DayRecordId"];
-            Hours = (int)reader["Hours"];
-            Caption = (string)reader["Caption"];
-            Deleted = (bool)reader["Deleted"];
+            DayRecordId = Read<int>(reader, "DayRecordId");
+            Hours = Read<int>(reader, "Hours");
+            Caption = Read<string>(reader, "Caption");
+            Deleted = Read<bool>(reader, "Deleted");
         }
     }
 }

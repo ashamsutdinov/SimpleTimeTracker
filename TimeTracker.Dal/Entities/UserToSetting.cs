@@ -15,7 +15,7 @@ namespace TimeTracker.Dal.Entities
         public UserToSetting(IDataRecord reader) :
             base(reader)
         {
-            Value = (string)reader["Value"];
+            Value = Read<string>(reader, "Value");
         }
     }
 }

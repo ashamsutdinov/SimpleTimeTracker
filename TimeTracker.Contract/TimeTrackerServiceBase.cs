@@ -35,7 +35,7 @@ namespace TimeTracker.Contract
 
         public Response<long> Heartbit(Request<long> request)
         {
-            return SafeInvoke(user => DateTime.UtcNow.Ticks, request);
+            return SafeInvoke(user => DateTime.UtcNow.Ticks, request, true);
         }
 
         public Response<SessionState[]> Handshake(Request request)
@@ -63,7 +63,7 @@ namespace TimeTracker.Contract
 
         public virtual Response<string> GetNonce(Request request)
         {
-            return SafeInvoke(user => _cryptographyHelper.GetNonce(request.ClientId), request);
+            return SafeInvoke(user => _cryptographyHelper.GetNonce(request.ClientId), request, true);
         }
 
         public virtual Response<TicketData> Login(Request<LoginData> request)
@@ -115,12 +115,12 @@ namespace TimeTracker.Contract
             }, request);
         }
 
-        private Response<TData> SafeInvoke<TData>(Func<IUser, TData> action, Request request)
+        private Response<TData> SafeInvoke<TData>(Func<IUser, TData> action, Request request, bool skipTicketValidation = false)
         {
             try
             {
                 IUser user = null;
-                if (!string.IsNullOrEmpty(request.Ticket))
+                if (!string.IsNullOrEmpty(request.Ticket) && !skipTicketValidation)
                 {
                     SessionData sessionData;
 

@@ -25,11 +25,11 @@ namespace TimeTracker.Dal.Entities
         public TimeRecordNote(IDataRecord reader) :
             base(reader)
         {
-            TimeRecordId = (int)reader["TimeRecordId"];
-            UserId = (int)reader["UserId"];
-            DateTime = (DateTime)reader["DateTime"];
-            Text = (string)reader["Text"];
-            Deleted = (bool)reader["Deleted"];
+            TimeRecordId = Read<int>(reader, "TimeRecordId");
+            UserId = Read<int>(reader, "userId");
+            DateTime = Read<DateTime>(reader, "DateTime");
+            Text = Read<string>(reader, "Text");
+            Deleted = Read<bool>(reader, "Deleted");
         }
     }
 }

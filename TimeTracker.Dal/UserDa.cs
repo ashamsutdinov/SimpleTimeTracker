@@ -18,8 +18,10 @@ namespace TimeTracker.Dal
         public List<UserSession> GetActiveSessions(int userId)
         {
             var userIdParameter = CreateParameter("@UserId", SqlDbType.Int, userId);
-            var reader = ExecuteReader("[dbo].[GetActiveSessions]", userIdParameter);
-            return Read(reader, r => new UserSession(r));
+            var result = ExecuteReader("[dbo].[GetActiveSessions]",
+                reader => Read(reader, r => new UserSession(r)),
+                userIdParameter);
+            return result;
         }
 
         public UserSession SaveUserSession(UserSession session)
@@ -30,41 +32,56 @@ namespace TimeTracker.Dal
             var ticketParameter = CreateParameter("@Ticket", SqlDbType.NVarChar, session.Ticket);
             var dateTimeParameter = CreateParameter("@DateTime", SqlDbType.DateTime2, session.DateTime);
             var expirationParameter = CreateParameter("@Expiration", SqlDbType.Int, session.Expiration);
-            var reader = ExecuteReader("[dbo].[SaveUserSession]", idParameter, userIdParameter, clientIdParameter, ticketParameter, dateTimeParameter, expirationParameter);
-            return ReadSingle(reader, r => new UserSession(r));
+            var result = ExecuteReader("[dbo].[SaveUserSession]",
+                reader => ReadSingle(reader, r => new UserSession(r)),
+                idParameter,
+                userIdParameter,
+                clientIdParameter,
+                ticketParameter,
+                dateTimeParameter,
+                expirationParameter);
+            return result;
         }
 
         public UserSession GetUserSession(int id)
         {
             var idParameter = CreateParameter("@Id", SqlDbType.Int, id);
-            var reader = ExecuteReader("[dbo].[GetUserSession]", idParameter);
-            return ReadSingle(reader, r => new UserSession(r));
+            var result = ExecuteReader("[dbo].[GetUserSession]",
+                reader => ReadSingle(reader, r => new UserSession(r)),
+                idParameter);
+            return result;
         }
 
         public List<UserRole> GetAllUserRoles()
         {
-            var reader = ExecuteReader("[dbo].[GetAllUserRoles]");
-            return Read(reader, r => new UserRole(r));
+            var result = ExecuteReader("[dbo].[GetAllUserRoles]",
+                reader => Read(reader, r => new UserRole(r)));
+            return result;
         }
 
         public List<UserRole> GetUserRoles(int userId)
         {
             var userIdParameter = CreateParameter("@UserId", SqlDbType.Int, userId);
-            var reader = ExecuteReader("[dbo].[GetUserRoles]", userIdParameter);
-            return Read(reader, r => new UserRole(r));
+            var result = ExecuteReader("[dbo].[GetUserRoles]",
+                reader => Read(reader, r => new UserRole(r)),
+                userIdParameter);
+            return result;
         }
 
         public List<UserSetting> GetAllUserSettings()
         {
-            var reader = ExecuteReader("[dbo].[GetAllUserSettings]");
-            return Read(reader, r => new UserSetting(r));
+            var result = ExecuteReader("[dbo].[GetAllUserSettings]",
+                reader => Read(reader, r => new UserSetting(r)));
+            return result;
         }
 
         public List<UserToSetting> GetUserSessings(int userId)
         {
             var userIdParameter = CreateParameter("@UserId", SqlDbType.Int, userId);
-            var reader = ExecuteReader("[dbo].[GetUserSettings]", userIdParameter);
-            return Read(reader, r => new UserToSetting(r));
+            var result = ExecuteReader("[dbo].[GetUserSettings]",
+                reader => Read(reader, r => new UserToSetting(r)),
+                userIdParameter);
+            return result;
         }
 
         public string GetUserSettingValue(int userId, string settingId)
@@ -76,22 +93,27 @@ namespace TimeTracker.Dal
 
         public List<UserState> GetAllUserStates()
         {
-            var reader = ExecuteReader("[dbo].[GetAllUserStates]");
-            return Read(reader, r => new UserState(r));
+            var result = ExecuteReader("[dbo].[GetAllUserStates]",
+                reader => Read(reader, r => new UserState(r)));
+            return result;
         }
 
         public User GetUser(int id)
         {
             var idParameter = CreateParameter("@Id", SqlDbType.Int, id);
-            var reader = ExecuteReader("[dbo].[GetUser]", idParameter);
-            return ReadSingle(reader, r => new User(r, true));
+            var result = ExecuteReader("[dbo].[GetUser]",
+                reader => ReadSingle(reader, r => new User(r, true)),
+                idParameter);
+            return result;
         }
 
         public User GetUserByLogin(string login)
         {
             var idParameter = CreateParameter("@Login", SqlDbType.NVarChar, login);
-            var reader = ExecuteReader("[dbo].[GetUserByLogin]", idParameter);
-            return ReadSingle(reader, r => new User(r, true));
+            var result = ExecuteReader("[dbo].[GetUserByLogin]",
+                reader => ReadSingle(reader, r => new User(r, true)),
+                idParameter);
+            return result;
         }
 
         public List<User> GetUsers(int pageNumber, int pageSize, out int total)
@@ -99,8 +121,11 @@ namespace TimeTracker.Dal
             var pageNumberParameter = CreateParameter("@PageNumber", SqlDbType.Int, pageNumber);
             var pageSizeParameter = CreateParameter("@PageSize", SqlDbType.Int, pageSize);
             IDbCommand outCommand;
-            var reader = ExecuteReader("[dbo].[GetUsers]", out outCommand, pageNumberParameter, pageSizeParameter);
-            var result = Read(reader, r => new User(r));
+            var result = ExecuteReader("[dbo].[GetUsers]",
+                reader => Read(reader, r => new User(r)),
+                out outCommand,
+                pageNumberParameter,
+                pageSizeParameter);
             total = GetOutputValue<int>(outCommand, "@Total");
             return result;
         }
@@ -115,8 +140,17 @@ namespace TimeTracker.Dal
             var stateIdParameter = CreateParameter("@StateId", SqlDbType.NVarChar, user.StateId);
             var rolesParameter = CreateKeyCollectionParameter("@Roles", user.Roles.Select(r => r.Id));
             var settingsParameter = CreateKeyValueCollectionParameter("@Settings", user.Settings.Select(s => new KeyValuePair<string, string>(s.Id, s.Value)));
-            var reader = ExecuteReader("[dbo].[SaveUser]", idParameter, loginParameter, passwordHashParameter, passwordSaltParameter, nameParameter, stateIdParameter, rolesParameter, settingsParameter);
-            return ReadSingle(reader, r => new User(r, true));
+            var result = ExecuteReader("[dbo].[SaveUser]",
+                reader => ReadSingle(reader, r => new User(r, true)),
+                idParameter,
+                loginParameter,
+                passwordHashParameter,
+                passwordSaltParameter,
+                nameParameter,
+                stateIdParameter,
+                rolesParameter,
+                settingsParameter);
+            return result;
         }
     }
 }

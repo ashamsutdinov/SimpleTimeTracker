@@ -12,8 +12,10 @@ BEGIN
 	IF EXISTS (SELECT TOP 1 * FROM [dbo].[UserSessions] WHERE [Id] = @Id)
 	BEGIN
 		UPDATE [dbo].[UserSessions] SET
-			[DateTime] = @DateTime
-			-- UserId and Expiration are immutable
+			[DateTime] = @DateTime,
+			[Ticket] = @Ticket,
+			[Expiration] = @Expiration
+			-- UserId is immutable
 		WHERE
 			[Id] = @Id
 	END

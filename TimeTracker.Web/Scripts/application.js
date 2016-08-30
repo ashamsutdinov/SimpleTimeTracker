@@ -11,11 +11,12 @@ window.Application = function () {
         var request = {
             Data: data,
             ClientId: Config.ClientId,
-            Ticket: $.cookie(Config.TicketKey)
+            Ticket: localStorage[Config.TicketKey]
         };
         var callbackOk = callback.success || function() {};
-        var callbackFailure = callback.failure || function() {};
-        var callbackError = callback.error || function() {};
+        var callbackError = callback.error || function () { };
+        var callbackFailure = callback.failure || function () { };
+        var callbackDone = callback.done || function() {};
         var url = Config.ApiRoot + method;
         $.ajaxSetup({
             contentType: "application/json; charset=utf-8"
@@ -32,19 +33,17 @@ window.Application = function () {
                     callbackError(response);
                 }
             }
-        }).fail(function() {
-            
-            callbackFailure();
-        });
+        }).fail(callbackFailure).done(callbackDone);
     };
 
-    var handshake = function () {
+    self.handshake = function () {
         self.apiCall("Handshake", {}, {
             success: function(states) {
                 window.messageBus.fire(Event.SessionStateChanged, states);
             },
-            error: function() {
-                window.messageBus.fire(Event.SessionStateChanged, [SessionState.Undefined]);
+            error: function () {
+                localStorage[Config.TicketKey] = null;
+                window.messageBus.fire(Event.SessionStateChanged, [SessionState.Anonymous]);
             }
         });
     };
@@ -54,7 +53,7 @@ window.Application = function () {
             success: function () {
                 window.messageBus.fire(Event.Connected);
                 if (!connected) {
-                    handshake();
+                    self.handshake();
                     connected = true;
                 }
             },

@@ -1,3 +1,4 @@
+using System;
 using System.Data;
 
 namespace TimeTracker.Dal.Entities.Base
@@ -13,7 +14,17 @@ namespace TimeTracker.Dal.Entities.Base
 
         protected Entity(IDataRecord reader)
         {
-            Id = (TKey)reader["Id"];
+            Id = Read<TKey>(reader, "Id");
+        }
+
+        protected TValue Read<TValue>(IDataRecord reader, string key)
+        {
+            var value = reader[key];
+            if (value == DBNull.Value)
+            {
+                return default(TValue);
+            }
+            return (TValue) value;
         }
     }
 }

@@ -11,6 +11,12 @@
 )
 AS
 BEGIN
+	IF @Id IS NULL OR @Id = 0
+	BEGIN
+		SELECT @Id = [Id] FROM [dbo].[Users] WHERE [Login] = @Login
+		IF @Id IS NULL
+			SET @Id = 0
+	END
 	IF EXISTS (SELECT TOP 1 * FROM [dbo].[Users] WHERE [Id] = @Id)
 	BEGIN
 		UPDATE [dbo].[Users] SET

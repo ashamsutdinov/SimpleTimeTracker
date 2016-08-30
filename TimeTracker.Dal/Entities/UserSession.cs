@@ -27,12 +27,12 @@ namespace TimeTracker.Dal.Entities
         public UserSession(IDataRecord reader) :
             base(reader)
         {
-            UserId = (int)reader["UserId"];
-            ClientId = (string) reader["ClientId"];
-            Ticket = (string)reader["Ticket"];
-            Expired = (bool)reader["Expired"];
-            DateTime = (DateTime)reader["DateTime"];
-            Expiration = (int)reader["Expiration"];
+            UserId = Read<int>(reader, "UserId");
+            ClientId = Read<string>(reader, "ClientId");
+            Ticket = Read<string>(reader, "Ticket");
+            Expired = Read<bool>(reader, "Expired");
+            DateTime = Read<DateTime>(reader, "DateTime");
+            Expiration = Read<int>(reader, "Expiration");
         }
     }
 }

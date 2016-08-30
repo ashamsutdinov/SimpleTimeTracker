@@ -15,7 +15,7 @@ namespace TimeTracker.Dal.Entities.Base
         protected KeyAndDescriptionEntity(IDataRecord reader) : 
             base(reader)
         {
-            Description = (string) reader["Description"];
+            Description = Read<string>(reader, "Description");
         }
     }
 }

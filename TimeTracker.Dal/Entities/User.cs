@@ -32,16 +32,16 @@ namespace TimeTracker.Dal.Entities
         public User(IDataRecord reader, bool singleUser = false) :
             base(reader)
         {
-            Login = (string)reader["Login"];
-            PasswordHash = (string)reader["PasswordHash"];
-            PasswordSalt = (string)reader["PasswordSalt"];
-            Name = (string)reader["Name"];
-            StateId = (string)reader["StateId"];
+            Login = Read<string>(reader, "Login");
+            PasswordHash = Read<string>(reader, "PasswordHash");
+            PasswordSalt = Read<string>(reader, "PasswordSalt");
+            Name = Read<string>(reader, "Name");
+            StateId = Read<string>(reader, "StateId");
 
             State = new UserState
             {
                 Id = StateId,
-                Description = (string)reader["StateDescription"]
+                Description = Read<string>(reader, "StateDescription")
             };
 
             if (singleUser)
