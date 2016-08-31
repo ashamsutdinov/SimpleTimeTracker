@@ -1,28 +1,27 @@
 ﻿using AutoMapper;
 using TimeTracker.Contract.Data.Entities;
-
 using DalDayRecord = TimeTracker.Dal.Entities.DayRecord;
-using DtoDayRecord = TimeTracker.Data.Entities.DayRecord;
+using DtoDayRecord = TimeTracker.ServiceBase.Entities.DayRecord;
 using DalTimeRecord = TimeTracker.Dal.Entities.TimeRecord;
-using DtoTimeRecord = TimeTracker.Data.Entities.TimeRecord;
+using DtoTimeRecord = TimeTracker.ServiceBase.Entities.TimeRecord;
 using DalTimeRecordItem = TimeTracker.Dal.Entities.TimeRecordItem;
-using DtoTimeRecordItem = TimeTracker.Data.Entities.TimeRecordItem;
+using DtoTimeRecordItem = TimeTracker.ServiceBase.Entities.TimeRecordItem;
 using DalTimeRecordNote = TimeTracker.Dal.Entities.TimeRecordNote;
-using DtoTimeRecordNote = TimeTracker.Data.Entities.TimeRecordNote;
+using DtoTimeRecordNote = TimeTracker.ServiceBase.Entities.TimeRecordNote;
 using DalTimeRecordNoteItem = TimeTracker.Dal.Entities.TimeRecordNoteItem;
-using DtoTimeRecordNoteItem = TimeTracker.Data.Entities.TimeRecordNoteItem;
+using DtoTimeRecordNoteItem = TimeTracker.ServiceBase.Entities.TimeRecordNoteItem;
 using DalUser = TimeTracker.Dal.Entities.User;
-using DtoUser = TimeTracker.Data.Entities.User;
+using DtoUser = TimeTracker.ServiceBase.Entities.User;
 using DalUserRole = TimeTracker.Dal.Entities.UserRole;
-using DtoUserRole = TimeTracker.Data.Entities.UserRole;
+using DtoUserRole = TimeTracker.ServiceBase.Entities.UserRole;
 using DalUserSession = TimeTracker.Dal.Entities.UserSession;
-using DtoUserSession = TimeTracker.Data.Entities.UserSession;
+using DtoUserSession = TimeTracker.ServiceBase.Entities.UserSession;
 using DalUserSetting = TimeTracker.Dal.Entities.UserSetting;
-using DtoUserSetting = TimeTracker.Data.Entities.UserSetting;
+using DtoUserSetting = TimeTracker.ServiceBase.Entities.UserSetting;
 using DalUserState = TimeTracker.Dal.Entities.UserState;
-using DtoUserState = TimeTracker.Data.Entities.UserState;
+using DtoUserState = TimeTracker.ServiceBase.Entities.UserState;
 using DalUserToSetting = TimeTracker.Dal.Entities.UserToSetting;
-using DtoUserToSetting = TimeTracker.Data.Entities.UserToSetting;
+using DtoUserToSetting = TimeTracker.ServiceBase.Entities.UserToSetting;
 
 
 namespace TimeTracker.Data.Utils

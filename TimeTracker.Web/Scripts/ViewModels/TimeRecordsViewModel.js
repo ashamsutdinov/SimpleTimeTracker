@@ -1,10 +1,9 @@
 ﻿window.TimeRecordsViewModel = function (dataId) {
 
     var self = new DataContainerViewModelBase(dataId);
-
-    var now = new Date();
-    self.filterFromDate = ko.observable(new Date(now.setTime(now.getTime() + -30 * 86400000)));
-    self.filterToDate = ko.observable(new Date(now.setTime(now.getTime() + 1 * 86400000)));
+    
+    self.filterFromDate = ko.observable(new Date());
+    self.filterToDate = ko.observable(new Date());
     self.filterLoadAllUsers = ko.observable(false);
     self.filterPageSize = ko.observable(10);
     self.filterPageNumber = ko.observable(1);
@@ -12,10 +11,12 @@
 
     self.timeRecords = ko.observableArray([]);
 
-    self.filterTimeRecords = function() {
+    self.filterTimeRecords = function () {
+        var from = getDateOnly(self.filterFromDate());
+        var to = getDateOnly(self.filterToDate());
         var request = {
-            From: toMsDate(self.filterFromDate()),
-            To: toMsDate(self.filterToDate()),
+            From: toMsDate(from),
+            To: toMsDate(to),
             PageNumber: self.filterPageNumber(),
             PageSize: self.filterPageSize(),
             LoadAllUsers: self.filterLoadAllUsers()

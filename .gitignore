@@ -17,3 +17,5 @@
 /TimeTracker.Data/bin/Debug
 *.dbmdl
 *.jfm
+/TimeTracker.ServiceBase/bin/Debug
+/TimeTracker.ServiceBase/obj/Debug

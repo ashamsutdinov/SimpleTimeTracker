@@ -1,14 +1,14 @@
 ﻿using System;
 using System.ServiceModel;
 using System.ServiceModel.Web;
-using System.ServiceProcess;
-using TimeTracker.Contract.IoC;
 using TimeTracker.RestService.IoC;
+using TimeTracker.ServiceBase.Utils;
+using WindowsServiceBase = System.ServiceProcess.ServiceBase;
 
 namespace TimeTracker.RestService
 {
-    public class Program : 
-        ServiceBase
+    public class Program :
+        WindowsServiceBase
     {
         private static ServiceHost _serviceHost;
 

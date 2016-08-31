@@ -37,3 +37,15 @@ function nullNumber(n) {
 function toMsDate(date) {
     return "\/Date(" + date.valueOf() + ")\/";
 }
+
+function getDateOnly(date) {
+    date.setHours(0, 0, 0, 0, 0);
+    //return date;
+   
+    var year = date.getFullYear();
+    var month = date.getMonth();
+    var day = date.getDate();
+    var utcDate = new Date(Date.UTC(year, month, day));
+    return utcDate;
+    
+}

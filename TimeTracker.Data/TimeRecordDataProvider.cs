@@ -7,15 +7,15 @@ using TimeTracker.Contract.Data.Entities;
 using TimeTracker.Dal;
 
 using DalDayRecord = TimeTracker.Dal.Entities.DayRecord;
-using DtoDayRecord = TimeTracker.Data.Entities.DayRecord;
+using DtoDayRecord = TimeTracker.ServiceBase.Entities.DayRecord;
 using DalTimeRecord = TimeTracker.Dal.Entities.TimeRecord;
-using DtoTimeRecord = TimeTracker.Data.Entities.TimeRecord;
+using DtoTimeRecord = TimeTracker.ServiceBase.Entities.TimeRecord;
 using DalTimeRecordItem = TimeTracker.Dal.Entities.TimeRecordItem;
-using DtoTimeRecordItem = TimeTracker.Data.Entities.TimeRecordItem;
+using DtoTimeRecordItem = TimeTracker.ServiceBase.Entities.TimeRecordItem;
 using DalTimeRecordNote = TimeTracker.Dal.Entities.TimeRecordNote;
-using DtoTimeRecordNote = TimeTracker.Data.Entities.TimeRecordNote;
+using DtoTimeRecordNote = TimeTracker.ServiceBase.Entities.TimeRecordNote;
 using DalTimeRecordNoteItem = TimeTracker.Dal.Entities.TimeRecordNoteItem;
-using DtoTimeRecordNoteItem = TimeTracker.Data.Entities.TimeRecordNoteItem;
+using DtoTimeRecordNoteItem = TimeTracker.ServiceBase.Entities.TimeRecordNoteItem;
 
 namespace TimeTracker.Data
 {

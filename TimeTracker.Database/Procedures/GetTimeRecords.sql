@@ -9,11 +9,6 @@
 )
 AS
 BEGIN	
-	SELECT @Total = COUNT(*) FROM [dbo].[DayRecords] WHERE
-		(@UserId IS NULL OR [UserId] = @UserId) AND
-		(@FromDate IS NULL OR [Date] >= @FromDate) AND
-		(@ToDate IS NULL OR [Date] <= @ToDate) AND 
-		([TotalHours] > 0)
 		
 	CREATE TABLE #result
 	(
@@ -63,8 +58,12 @@ BEGIN
 	CLOSE DayRecordsLoop
 	DEALLOCATE DayRecordsLoop	
 	
-	SELECT [Id], [UserId], [UserName], [Date], [TotalHours], [TimeRecordId], [Caption], [Hours]
-	FROM #result
-	DROP TABLE #result	
+	SELECT [Id], [UserId], [UserName], [Date], [TotalHours], [TimeRecordId], [Caption], [Hours]	FROM #result
+
+	SELECT @Total = COUNT(*) FROM [dbo].[DayRecords] WHERE
+		(@UserId IS NULL OR [UserId] = @UserId) AND
+		(@FromDate IS NULL OR [Date] >= @FromDate) AND
+		(@ToDate IS NULL OR [Date] <= @ToDate) AND 
+		([TotalHours] > 0)
 END
 GO

@@ -34,10 +34,10 @@
             });
             return;
         }
-
+        var newRecordDate = getDateOnly(self.newRecordDate());
         var request = {
             Id: 0,
-            Date: toMsDate(self.newRecordDate()),
+            Date: toMsDate(newRecordDate),
             Caption: self.newRecordDescription(),
             Hours: self.newRecordHours()
         };

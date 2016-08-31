@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using TimeTracker.Contract.Data.Entities.Base;
 
 namespace TimeTracker.Contract.Data.Entities
 {
