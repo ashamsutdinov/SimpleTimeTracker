@@ -1,4 +1,5 @@
-﻿window.ApplicationStateViewModel = function() {
+﻿window.ApplicationStateViewModel = function () {
+
     var self = this;
 
     self.loading = ko.observable(true);
@@ -8,38 +9,36 @@
     self.warningMessage = ko.observable(null);
     self.errorMessage = ko.observable(null);
 
-    function init() {
-        window.messageBus.subscribe(Event.Alert, function(data) {
-            var targetObservable = null;
-            switch (data.Type) {
-                case AlertType.Success:
-                    targetObservable = self.successMessage;
-                    break;
-                case AlertType.Information:
-                    targetObservable = self.informationMessage;
-                    break;
-                case AlertType.Warning:
-                    targetObservable = self.warningMessage;
-                    break;
-                default:
-                    targetObservable = self.errorMessage;
-                    break;
-            }
-            targetObservable(data.Text);
-            setTimeout(function() {
-                targetObservable(null);
-            }, Config.ShowAlertTimeout);
-        });
-        window.messageBus.subscribe(Event.Connected, function() {
-            self.loading(false);
-            self.networkConnectionError(false);
-        });
-        window.messageBus.subscribe(Event.Disconnected, function() {
-            self.networkConnectionError(true);
-        });
-    };
+    window.messageBus.subscribe(Event.Alert, function (data) {
+        var targetObservable;
+        switch (data.Type) {
+            case AlertType.Success:
+                targetObservable = self.successMessage;
+                break;
+            case AlertType.Information:
+                targetObservable = self.informationMessage;
+                break;
+            case AlertType.Warning:
+                targetObservable = self.warningMessage;
+                break;
+            default:
+                targetObservable = self.errorMessage;
+                break;
+        }
+        targetObservable(data.Text);
+        setTimeout(function () {
+            targetObservable(null);
+        }, Config.ShowAlertTimeout);
+    });
 
-    init();
+    window.messageBus.subscribe(Event.Connected, function () {
+        self.loading(false);
+        self.networkConnectionError(false);
+    });
+
+    window.messageBus.subscribe(Event.Disconnected, function () {
+        self.networkConnectionError(true);
+    });
 
     return self;
 };

@@ -44,6 +44,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Api\RegistrationData.cs" />
+    <Compile Include="Api\TimeRecordData.cs" />
+    <Compile Include="Api\ItemList.cs" />
+    <Compile Include="Api\TimeRecordsFilterData.cs" />
     <Compile Include="Data\Entities\Base\IEntity.cs" />
     <Compile Include="Data\Entities\Base\IKeyAndDescriptionEntity.cs" />
     <Compile Include="Data\Entities\IDayRecord.cs" />

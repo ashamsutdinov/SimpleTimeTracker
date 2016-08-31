@@ -120,13 +120,13 @@ namespace TimeTracker.Dal
         {
             var pageNumberParameter = CreateParameter("@PageNumber", SqlDbType.Int, pageNumber);
             var pageSizeParameter = CreateParameter("@PageSize", SqlDbType.Int, pageSize);
-            IDbCommand outCommand;
+            var totalParameter = CreateOutputParameter("@Total", SqlDbType.Int);
             var result = ExecuteReader("[dbo].[GetUsers]",
                 reader => Read(reader, r => new User(r)),
-                out outCommand,
                 pageNumberParameter,
-                pageSizeParameter);
-            total = GetOutputValue<int>(outCommand, "@Total");
+                pageSizeParameter,
+                totalParameter);
+            total = GetOutputValue<int>(totalParameter);
             return result;
         }
 

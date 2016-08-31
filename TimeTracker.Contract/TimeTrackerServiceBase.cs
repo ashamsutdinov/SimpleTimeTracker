@@ -19,7 +19,7 @@ namespace TimeTracker.Contract
 
         protected readonly IUserDataProvider UserDataProvider;
 
-        protected readonly ITimeRecordDataProvider TimeTrackingDataProvider;
+        protected readonly ITimeRecordDataProvider TimeRecordDataProvider;
 
         protected readonly ILogger Log;
 
@@ -29,7 +29,7 @@ namespace TimeTracker.Contract
             Log = serviceResolver.Resolve<ILogger>();
             Log.Debug(this, "Creating TimeTrackerServiceBase...");
             UserDataProvider = serviceResolver.Resolve<IUserDataProvider>();
-            TimeTrackingDataProvider = serviceResolver.Resolve<ITimeRecordDataProvider>();
+            TimeRecordDataProvider = serviceResolver.Resolve<ITimeRecordDataProvider>();
             Log.Debug(this, "TimeTrackerServiceBase created");
         }
 
@@ -160,6 +160,59 @@ namespace TimeTracker.Contract
             }, request);
         }
 
+        public Response<int> CreateTimeRecord(Request<TimeRecordData> request)
+        {
+            return SafeInvoke((user, session) =>
+            {
+                var data = request.Data;
+                if (data.Hours > 24)
+                {
+                    throw new InvalidOperationException("The number of working hours per day may not exceed 24 hours");
+                }
+                if (data.Hours <= 0)
+                {
+                    throw new InvalidOperationException("Duration required");
+                }
+                var existingDayRecord = TimeRecordDataProvider.GetUserDayRecordByDate(user.Id, data.Date);
+                if (existingDayRecord != null && existingDayRecord.TotalHours + data.Hours > 24)
+                {
+                    throw new InvalidOperationException("The number of working hours per day may not exceed 24 hours");
+                }
+                var saved = TimeRecordDataProvider.SaveTimeRecord(0, user.Id, data.Date, data.Caption, data.Hours);
+                return saved.Id;
+            }, request);
+        }
+
+        public Response<ItemList<ITimeRecordItem>> LoadTimeRecords(Request<TimeRecordsFilterData> request)
+        {
+            return SafeInvoke((user, session) =>
+            {
+                var data = request.Data;
+                int? userId = null;
+                if (data.LoadAllUsers && user.Roles.All(r => r.Id != "administrator"))
+                {
+                    throw new UnauthorizedAccessException("Only administrator can request all user's time records");
+                }
+                if (!data.LoadAllUsers)
+                {
+                    userId = user.Id;
+                }
+
+                int total;
+                var timeRecords = TimeRecordDataProvider.GetTimeRecords(userId, data.From, data.To, data.PageSize, data.PageNumber, out total);
+                var result = new ItemList<ITimeRecordItem>
+                {
+                    Items = timeRecords,
+                    PageNumber = data.PageNumber,
+                    PageSize = data.PageSize,
+                    TotalItems = total,
+                    TotalPages = total / data.PageSize + 1
+                };
+                return result;
+            }, request);
+        }
+
+
         private Response<TData> SafeInvoke<TData>(Func<IUser, IUserSession, TData> action, Request request, bool skipTicketValidation = false)
         {
             try
@@ -178,6 +231,14 @@ namespace TimeTracker.Contract
                         return Response<TData>.NotAcceptable("Invalid ticket");
                     }
 
+                    //check if user exists
+                    user = UserDataProvider.GetUser(sessionData.UserId);
+                    if (user == null)
+                    {
+                        Log.Warning(this, "User was not found: {0}", sessionData.UserId);
+                        return Response<TData>.Unauthorized("User was not found");
+                    }
+
                     //check if session exists
                     session = UserDataProvider.GetUserSession(sessionData.Id);
                     if (session == null)
@@ -193,18 +254,11 @@ namespace TimeTracker.Contract
                         return Response<TData>.NotAcceptable("Invalid ticket");
                     }
 
-                    //check if user exists
-                    user = UserDataProvider.GetUser(sessionData.UserId);
-                    if (user == null)
-                    {
-                        Log.Warning(this, "User was not found: {0}", sessionData.UserId);
-                        return Response<TData>.Unauthorized("User was not found");
-                    }
-
                     //check if session and owned by user
                     if (user.Id != session.UserId)
                     {
-                        Log.Warning(this, "User have no access to requested session: {0}, sessionId: {1}", user.Id, session.Id);
+                        Log.Warning(this, "User have no access to requested session: {0}, sessionId: {1}", user.Id,
+                            session.Id);
                         return Response<TData>.Forbidden("User have no access to requested session");
                     }
 
@@ -227,36 +281,26 @@ namespace TimeTracker.Contract
                 var data = action(user, session);
                 return Response<TData>.Success(data);
             }
+            catch (InvalidOperationException ioex)
+            {
+                Log.Error(this, ioex, "Invalid operation");
+                return Response<TData>.NotAcceptable(ioex.Message);
+            }
             catch (UnauthorizedAccessException uaex)
             {
-                return TraceUnauthorizedException<TData>(uaex);
+                Log.Error(this, uaex, "Unauthorized exception");
+                return Response<TData>.Forbidden(uaex.Message);
             }
             catch (AuthenticationException aex)
             {
-                return TraceAuthenticationException<TData>(aex);
+                Log.Error(this, aex, "Authentication exception");
+                return Response<TData>.Unauthorized(aex.Message);
             }
             catch (Exception ex)
             {
-                return TraceException<TData>(ex);
+                Log.Error(this, ex, "Unhandled exception");
+                return Response<TData>.Fail(ex.Message);
             }
-        }
-
-        private Response<TData> TraceException<TData>(Exception ex)
-        {
-            Log.Error(this, ex, "Unhandled exception");
-            return Response<TData>.Fail(ex.Message);
-        }
-
-        private Response<TData> TraceUnauthorizedException<TData>(UnauthorizedAccessException ex)
-        {
-            Log.Error(this, ex, "Unauthorized exception");
-            return Response<TData>.Forbidden(ex.Message);
-        }
-
-        private Response<TData> TraceAuthenticationException<TData>(AuthenticationException ex)
-        {
-            Log.Error(this, ex, "Authentication exception");
-            return Response<TData>.Unauthorized(ex.Message);
         }
     }
 }

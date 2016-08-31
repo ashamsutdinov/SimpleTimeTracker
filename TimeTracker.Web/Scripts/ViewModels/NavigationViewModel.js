@@ -1,4 +1,5 @@
-﻿window.NavigationViewModel = function() {
+﻿window.NavigationViewModel = function () {
+
     var self = this;
 
     self.loggedIn = ko.observable(false);
@@ -18,6 +19,10 @@
         window.messageBus.fire(Event.DataRequested, DataRequest.ManageTimeshets);
     };
 
+    self.requestUserSettings = function() {
+        window.messageBus.fire(Event.DataRequested, DataRequest.UserSettings);
+    };
+
     self.requestLogout = function() {
         window.messageBus.fire(Event.LogoutRequested);
     };
@@ -29,31 +34,29 @@
         self.isAdministrator(false);
     };
 
-    var init = function() {
-        window.messageBus.subscribe(Event.LoggedIn, function() {
-            self.loggedIn(true);
-        });
-        window.messageBus.subscribe(Event.LoggedOut, function() {
-            flush();
-        });
-        window.messageBus.subscribe(Event.SessionStateChanged, function(states) {
-            for (var i = 0; i < states.length; i++) {
-                switch (states[i]) {
-                    case SessionState.LoggedInUser:
-                        self.isUser(true);
-                        break;
-                    case SessionState.LoggedInManager:
-                        self.isManager(true);
-                        break;
-                    case SessionState.LoggedInAdministrator:
-                        self.isAdministrator(true);
-                        break;
-                }
-            }
-        });
-    };
+    window.messageBus.subscribe(Event.LoggedIn, function () {
+        self.loggedIn(true);
+    });
 
-    init();
+    window.messageBus.subscribe(Event.LoggedOut, function () {
+        flush();
+    });
+
+    window.messageBus.subscribe(Event.SessionStateChanged, function (states) {
+        for (var i = 0; i < states.length; i++) {
+            switch (states[i]) {
+                case SessionState.LoggedInUser:
+                    self.isUser(true);
+                    break;
+                case SessionState.LoggedInManager:
+                    self.isManager(true);
+                    break;
+                case SessionState.LoggedInAdministrator:
+                    self.isAdministrator(true);
+                    break;
+            }
+        }
+    });
 
     return self;
 };

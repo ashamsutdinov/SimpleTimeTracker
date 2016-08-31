@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" crossorigin="anonymous">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" crossorigin="anonymous">
     <link rel="stylesheet" href="./Styles/Site.css" />
+    <link rel="stylesheet" href="./Styles/datepicker.css" />
 </head>
 <body>
     <!--navigation bar-->
@@ -27,10 +28,11 @@
                     <li data-bind="visible: isUser, click: requestUserTimesheets"><a href="#">My Timesheets</a></li>
                     <li data-bind="visible: isManager, click: requestManageUsers"><a href="#">Manage Users</a></li>
                     <li data-bind="visible: isAdministrator, click: requestManageTimesheets"><a href="#">Manage Timesheets</a></li>
+                    <li data-bind="visible: isUser, click: requestUserSettings"><a href="#">Settings</a></li>
                 </ul>
                 <p class="navbar-text">
                     <a href="#" class="navbar-link logout" data-bind="click: requestLogout">Logout</a>&nbsp;
-                </p>  
+                </p>
             </div>
         </div>
     </nav>
@@ -133,34 +135,109 @@
                 </div>
             </div>
         </div>
+        <!--user timesheets container-->
         <div id="userTimeRecordsContainer" data-bind="visible: loaded" style="display: none">
-            Tab 1
+            <!--filter form-->
+            <form class="form-inline">
+                <div class="form-group">
+                    <label for="filterFrom">From:</label>
+                    <input id="filterFrom" type="text" class="form-control" data-bind="datepicker: filterFromDate"/>
+                </div>
+                <div class="form-group">
+                    <label for="filterTo">To:</label>
+                    <input id="filterTo" type="text" class="form-control" data-bind="datepicker: filterFromDate"/>
+                </div>
+                <div class="form-group">
+                    <label for="filterPageSize">Page size:</label>
+                    <select id="filterPageSize" class="form-control" data-bind="options: filterPageSizeOptions, value: filterPageSize"></select>
+                </div>
+                <button class="btn btn-default" data-bind="click: filterTimeRecords">Filter time records</button>
+            </form>
+            <!--time records container-->
+            <div class="row">
+                <br/>
+                <p class="center-container" data-bind="visible: timeRecords().length == 0">Time records were not found</p>
+                <div data-bind="foreach: timeRecords">
+
+                </div>
+                <br/>
+            </div>
+            <!--new record form-->
+            <form class="form-inline">
+                <div class="form-group">
+                    <label for="newRecordDate">Date:</label>
+                    <input id="newRecordDate" type="text" class="form-control" required="" data-bind="datepicker: newRecordDate">
+                </div>
+                <div class="form-group">
+                    <label for="newRecordDescription">Description:</label>
+                    <input id="newRecordDescription" type="text" class="form-control" required="" data-bind="value: newRecordDescription">
+                </div>
+                <div class="form-group">
+                    <label for="newRecordHours">Hours:</label>
+                    <input id="newRecordHours" type="text" class="form-control" required="" data-bind="value: newRecordHours">
+                </div>
+                <button class="btn btn-default" data-bind="click: submitTimeRecord">Submit time record</button>
+            </form>
         </div>
+        <!--manage users container-->
         <div id="usersContainer" data-bind="visible: loaded" style="display: none">
             Tab 2
         </div>
+        <!--manage user timesheets container-->
         <div id="manageTimeRecordsContainer" data-bind="visible: loaded" style="display: none">
-            Tab 3
+            <!--filter form-->
+            <form class="form-inline">
+                <div class="form-group">
+                    <label for="manageFilterFrom">From:</label>
+                    <input id="manageFilterFrom" type="text" class="form-control" data-bind="datepicker: filterFromDate"/>
+                </div>
+                <div class="form-group">
+                    <label for="manageFilterTo">To:</label>
+                    <input id="manageFilterTo" type="text" class="form-control" data-bind="datepicker: filterFromDate"/>
+                </div>
+                <div class="form-group">
+                    <label for="manageFilterPageSize">Page size:</label>
+                    <select id="manageFilterPageSize" class="form-control" data-bind="options: filterPageSizeOptions, value: filterPageSize"></select>
+                </div>
+                <button class="btn btn-default" data-bind="click: filterTimeRecords">Filter time records</button>
+            </form>
+            <!--time records container-->
+            <div class="row">
+                <br/>
+                <p class="center-container" data-bind="visible: timeRecords().length == 0">Time records were not found</p>
+                <div data-bind="foreach: timeRecords">
+
+                </div>
+                <br/>
+            </div>
+        </div>
+        <!--user settings container-->
+        <div id="userSettingsContainer" data-bind="visible: loaded">
+            Tab 4
         </div>
     </div>
     <script src="https://code.jquery.com/jquery-3.1.0.min.js" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.4.0/knockout-min.js" crossorigin="anonymous"></script>
+    <script src="./Scripts/bootstrap-datepicker.js"></script>
     <!--consider script compression-->
-    <script type="text/javascript" language="javascript" src="./Scripts/cryptography.js"></script>
-    <script type="text/javascript" language="javascript" src="./Scripts/config.js"></script>
-    <script type="text/javascript" language="javascript" src="./Scripts/messageBus.js"></script>
-    <script type="text/javascript" language="javascript" src="./Scripts/application.js"></script>
-    <script type="text/javascript" language="javascript" src="./Scripts/ViewModels/NavigationViewModel.js"></script>
-    <script type="text/javascript" language="javascript" src="./Scripts/ViewModels/ApplicationStateViewModel.js"></script>
-    <script type="text/javascript" language="javascript" src="./Scripts/ViewModels/LoginViewModel.js"></script>
-    <script type="text/javascript" language="javascript" src="./Scripts/ViewModels/DataContainerViewModelBase.js"></script>
-    <script type="text/javascript" language="javascript" src="./Scripts/ViewModels/TimeRecordsViewModel.js"></script>
-    <script type="text/javascript" language="javascript" src="./Scripts/ViewModels/UserTimeRecordsViewModel.js"></script>
-    <script type="text/javascript" language="javascript" src="./Scripts/ViewModels/ManageTimeRecordsViewModel.js"></script>
-    <script type="text/javascript" language="javascript" src="./Scripts/ViewModels/UsersViewModel.js"></script>
-    <script type="text/javascript" language="javascript">
+    <script src="./Scripts/enums.js"></script>
+    <script src="./Scripts/ui.js"></script>
+    <script src="./Scripts/cryptography.js"></script>
+    <script src="./Scripts/config.js"></script>
+    <script src="./Scripts/messageBus.js"></script>
+    <script src="./Scripts/application.js"></script>
+    <script src="./Scripts/ViewModels/NavigationViewModel.js"></script>
+    <script src="./Scripts/ViewModels/ApplicationStateViewModel.js"></script>
+    <script src="./Scripts/ViewModels/LoginViewModel.js"></script>
+    <script src="./Scripts/ViewModels/DataContainerViewModelBase.js"></script>
+    <script src="./Scripts/ViewModels/TimeRecordsViewModel.js"></script>
+    <script src="./Scripts/ViewModels/UserTimeRecordsViewModel.js"></script>
+    <script src="./Scripts/ViewModels/ManageTimeRecordsViewModel.js"></script>
+    <script src="./Scripts/ViewModels/UsersViewModel.js"></script>
+    <script src="./Scripts/ViewModels/UserSettingsViewModel.js"></script>
+    <script>
         ko.applyBindings(new NavigationViewModel(), document.getElementById("navigationBar"));
         ko.applyBindings(new ApplicationStateViewModel(), document.getElementById("applicationStateContainer"));
         ko.applyBindings(new LoginViewModel(function () {
@@ -170,6 +247,7 @@
         ko.applyBindings(new UserTimeRecordsViewModel(), document.getElementById("userTimeRecordsContainer"));
         ko.applyBindings(new UsersViewModel(), document.getElementById("usersContainer"));
         ko.applyBindings(new ManageTimeRecordsViewModel(), document.getElementById("manageTimeRecordsContainer"));
+        ko.applyBindings(new UserSettingsViewModel(), document.getElementById("userSettingsContainer"));
         window.messageBus.fire(Event.Ready);
     </script>
 </body>

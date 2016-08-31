@@ -38,18 +38,18 @@ namespace TimeTracker.Dal.Utils
             }, parameters);
         }
 
-        protected TResult ExecuteReader<TResult>(string commandText, Func<IDataReader, TResult> readerAction,  out IDbCommand outCommand, params IDataParameter[] parameters)
-        {
-            return ExecuteCommand(commandText, command =>
-            {
-                var reader = command.ExecuteReader();
-                return readerAction(reader);
-            }, out outCommand, parameters);
-        }
-
         protected IDbDataParameter CreateParameter(string name, SqlDbType type, object value)
         {
             var parameter = new SqlParameter(name, type) { Value = value ?? DBNull.Value };
+            return parameter;
+        }
+
+        protected IDbDataParameter CreateOutputParameter(string name, SqlDbType type)
+        {
+            var parameter = new SqlParameter(name, type)
+            {
+                Direction = ParameterDirection.Output
+            };
             return parameter;
         }
 
@@ -104,12 +104,15 @@ namespace TimeTracker.Dal.Utils
             return reader.Read() ? read(reader) : default(TEntity);
         }
 
-        protected TValue GetOutputValue<TValue>(IDbCommand command, string key)
+        protected TValue GetOutputValue<TValue>(IDbDataParameter parameter)
         {
-            var parameter = command.Parameters["key"] as SqlParameter;
             if (parameter != null)
             {
-                return (TValue)parameter.Value;
+                var value = parameter.Value;
+                if (value != DBNull.Value)
+                {
+                    return (TValue) parameter.Value;
+                }
             }
             return default(TValue);
         }
@@ -129,12 +132,6 @@ namespace TimeTracker.Dal.Utils
 
         private TResult ExecuteCommand<TResult>(string commandText, Func<IDbCommand, TResult> action, params IDataParameter[] parameters)
         {
-            IDbCommand outCommand;
-            return ExecuteCommand(commandText, action, out outCommand, parameters);
-        }
-
-        private TResult ExecuteCommand<TResult>(string commandText, Func<IDbCommand, TResult> action, out IDbCommand outCommand, params IDataParameter[] parameters)
-        {
             try
             {
                 using (var connection = CreateConnection())
@@ -146,7 +143,6 @@ namespace TimeTracker.Dal.Utils
                         command.Parameters.Add(param);
                     }
                     var result = action(command);
-                    outCommand = command;
                     return result;
                 }
             }
@@ -156,7 +152,6 @@ namespace TimeTracker.Dal.Utils
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine(ex.ToString());
                 Console.ForegroundColor = color;
-                outCommand = null;
                 return default(TResult);
             }
         }

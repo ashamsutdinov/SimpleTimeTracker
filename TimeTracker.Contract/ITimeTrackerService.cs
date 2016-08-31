@@ -2,6 +2,7 @@
 using System.ServiceModel.Web;
 using TimeTracker.Contract.Api;
 using TimeTracker.Contract.Api.Base;
+using TimeTracker.Contract.Data.Entities;
 
 namespace TimeTracker.Contract
 {
@@ -31,5 +32,13 @@ namespace TimeTracker.Contract
         [OperationContract]
         [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
         Response<int> Register(Request<RegistrationData> request);
+
+        [OperationContract]
+        [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
+        Response<int> CreateTimeRecord(Request<TimeRecordData> request);
+
+        [OperationContract]
+        [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
+        Response<ItemList<ITimeRecordItem>> LoadTimeRecords(Request<TimeRecordsFilterData> request);
     }
 }

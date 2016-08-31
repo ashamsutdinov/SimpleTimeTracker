@@ -17,21 +17,21 @@ namespace TimeTracker.Dal
 
         public IList<TimeRecordItem> GetTimeRecords(int? userId, DateTime? fromDate, DateTime? toDate, int pageNumber, int pageSize, out int total)
         {
-            IDbCommand outCommand;
             var userIdParameter = CreateParameter("@UserId", SqlDbType.Int, userId);
             var fromDateParameter = CreateParameter("@FromDate", SqlDbType.Date, fromDate);
             var toDateParameter = CreateParameter("@ToDate", SqlDbType.Date, toDate);
             var pageNumberParameter = CreateParameter("@PageNumber", SqlDbType.Int, pageNumber);
             var pageSizeParameter = CreateParameter("@PageSize", SqlDbType.Int, pageSize);
+            var totalParameter = CreateOutputParameter("@Total", SqlDbType.Int);
             var result = ExecuteReader("[dbo].[GetTimeRecords]",
                 reader => Read(reader, r => new TimeRecordItem(r)),
-                out outCommand,
                 userIdParameter,
                 fromDateParameter,
                 toDateParameter,
                 pageNumberParameter,
-                pageSizeParameter);
-            total = GetOutputValue<int>(outCommand, "@Total");
+                pageSizeParameter,
+                totalParameter);
+            total = GetOutputValue<int>(totalParameter);
             return result;
         }
 
@@ -44,10 +44,10 @@ namespace TimeTracker.Dal
             var hoursParameter = CreateParameter("@Hours", SqlDbType.Int, hours);
             var result = ExecuteReader("[dbo].[SaveTimeRecord]",
                 reader => ReadSingle(reader, r => new TimeRecord(r)),
-                idParameter, 
-                userIdParameter, 
-                dateParameter, 
-                captionParameter, 
+                idParameter,
+                userIdParameter,
+                dateParameter,
+                captionParameter,
                 hoursParameter);
             return result;
         }
@@ -84,9 +84,9 @@ namespace TimeTracker.Dal
             var textParameter = CreateParameter("@Text", SqlDbType.NVarChar, note.Text);
             var result = ExecuteReader("[dbo].[SaveTimeRecordNote]",
                 reader => ReadSingle(reader, r => new TimeRecordNote(r)),
-                idParameter, 
-                timeRecordIdParameter, 
-                userIdParameter, 
+                idParameter,
+                timeRecordIdParameter,
+                userIdParameter,
                 textParameter);
             return result;
         }
@@ -97,6 +97,17 @@ namespace TimeTracker.Dal
             var result = ExecuteReader("[dbo].[GetDayRecord]",
                 reader => ReadSingle(reader, r => new DayRecord(r)),
                 idParameter);
+            return result;
+        }
+
+        public DayRecord GetUserDayRecordByDate(int userId, DateTime date)
+        {
+            var userIdParameter = CreateParameter("@UserId", SqlDbType.NVarChar, userId);
+            var dateParameter = CreateParameter("@Date", SqlDbType.Date, date);
+            var result = ExecuteReader("[dbo].[GetUserDayRecordByDate]",
+                reader => ReadSingle(reader, r => new DayRecord(r)),
+                userIdParameter,
+                dateParameter);
             return result;
         }
     }

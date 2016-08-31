@@ -61,7 +61,7 @@ BEGIN
 	END
 
 	CLOSE DayRecordsLoop
-	DEALLOCATE DayRecordsLopp	
+	DEALLOCATE DayRecordsLoop	
 	
 	SELECT [Id], [UserId], [UserName], [Date], [TotalHours], [TimeRecordId], [Caption], [Hours]
 	FROM #result

@@ -1,10 +1,6 @@
-﻿var StatusCode = {
-    OK : 200
-};
+﻿window.Application = function () {
 
-window.Application = function () {
     var self = this;
-
     var connected = false;
 
     self.apiCall = function (method, data, callback) {
@@ -13,9 +9,25 @@ window.Application = function () {
             ClientId: Config.ClientId,
             Ticket: localStorage[Config.TicketKey]
         };
-        var callbackOk = callback.success || function() {};
-        var callbackError = callback.error || function () { };
-        var callbackFailure = callback.failure || function () { };
+        var callbackOk = callback.success || function () { };
+        var callbackFail = callback.fail || function() {
+            window.messageBus.fire(Event.Alert, {
+                Type: AlertType.Error,
+                Text: "Unexpected server error (bad request)"
+            });
+        };
+        var callbackError = callback.error || function(r) {
+            var message;
+            if (r === null || r === undefined) {
+                message = "Unexpected error";
+            } else {
+                message = r.Message;
+            }
+            window.messageBus.fire(Event.Alert, {
+                Type: AlertType.Error,
+                Text: message
+            });
+        };
         var callbackDone = callback.done || function() {};
         var url = Config.ApiRoot + method;
         $.ajaxSetup({
@@ -33,7 +45,13 @@ window.Application = function () {
                     callbackError(response);
                 }
             }
-        }).fail(callbackFailure).done(callbackDone);
+        }).fail(callbackFail).done(callbackDone);
+    };
+
+    var handshakeFail = function() {
+        localStorage.removeItem(Config.TicketKey);
+        window.messageBus.fire(Event.LoggedOut);
+        window.messageBus.fire(Event.SessionStateChanged, [SessionState.Anonymous]);
     };
 
     self.handshake = function () {
@@ -50,12 +68,14 @@ window.Application = function () {
                 }
                 window.messageBus.fire(Event.SessionStateChanged, states);
             },
-            error: function () {
-                localStorage.removeItem(Config.TicketKey);
-                window.messageBus.fire(Event.LoggedOut);
-                window.messageBus.fire(Event.SessionStateChanged, [SessionState.Anonymous]);
-            }
+            error: handshakeFail,
+            fail: handshakeFail
         });
+    };
+
+    var heartbitFail = function() {
+        window.messageBus.fire(Event.Disconnected);
+        connected = false;
     };
 
     var heartbit = function() {
@@ -67,10 +87,8 @@ window.Application = function () {
                     connected = true;
                 }
             },
-            failure: function () {
-                window.messageBus.fire(Event.Disconnected);
-                connected = false;
-            }
+            error: heartbitFail,
+            fail: heartbitFail
         });
     };
 

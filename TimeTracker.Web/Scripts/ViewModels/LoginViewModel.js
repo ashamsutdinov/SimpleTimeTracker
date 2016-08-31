@@ -1,4 +1,5 @@
 ﻿window.LoginViewModel = function (loggedInCallback) {
+
     var self = this;
 
     self.isAnonymous = ko.observable(false);
@@ -13,19 +14,26 @@
     self.error = ko.observable(null);
     self.registered = ko.observable(false);
 
-    var unexpectedError = function () {
-        self.alert('Unexpected server error');
+    var errorHandler = function (r) {
+        if (r === null || r === undefined) {
+            self.error("Unexpected server error");
+        } else {
+            self.error(r.Message);
+            setTimeout(function () {
+                self.error(null);
+            }, Config.ShowAlertTimeout);
+        }
     };
 
     var loginNonceReceived = function (nonce) {
         var login = self.loginLogin();
-        if (login === null || login === '') {
-            self.error('Login required');
+        if (nullString(login)) {
+            self.error("Login required");
             return;
         }
         var password = self.loginPassword();
-        if (password === null || password === '') {
-            self.error('Password required');
+        if (nullString(password)) {
+            self.error("Password required");
             return;
         }
         var passwordData = password + "#" + Config.ClientId + "#" + nonce;
@@ -34,6 +42,7 @@
             Login: login,
             Password: encryptedPasswordData
         };
+       
         window.application.apiCall("Login", data, {
             success: function (r) {
                 localStorage[Config.TicketKey] = r.Ticket;
@@ -43,17 +52,12 @@
                     loggedInCallback();
                 }
             },
-            error: function (r) {
-                self.error(r.Message);
-                setTimeout(function () {
-                    self.error(null);
-                }, Config.ShowAlertTimeout);
-            },
-            failure: unexpectedError,
+            error: errorHandler,
             done: function () {
                 self.loginLogin(null);
                 self.loginPassword(null);
-            }
+            },
+            fail: errorHandler
         });
     }
 
@@ -61,14 +65,14 @@
         self.error(null);
         window.application.apiCall("GetNonce", {}, {
             success: loginNonceReceived,
-            failure: unexpectedError,
-            error: unexpectedError
+            error: errorHandler,
+            fail: errorHandler
         });
     };
 
     self.logout = function () {
         window.application.apiCall("Logout", {}, {
-            done: function() {
+            done: function () {
                 localStorage.removeItem(Config.TicketKey);
                 window.messageBus.fire(Event.LoggedOut);
                 window.application.handshake();
@@ -78,17 +82,17 @@
 
     var registerNonceReceived = function (nonce) {
         var login = self.registerLogin();
-        if (login === null || login === "") {
+        if (nullString(login)) {
             self.error("Login required");
             return;
         }
         var password = self.registerPassword();
-        if (password === null || password === "") {
+        if (nullString(password)) {
             self.error("Password required");
             return;
         }
         var name = self.registerName();
-        if (name === null || name === "") {
+        if (nullString(name)) {
             self.error("Name required");
             return;
         }
@@ -102,23 +106,18 @@
         window.application.apiCall("Register", data, {
             success: function (r) {
                 self.registered(true);
-                setTimeout(function() {
+                setTimeout(function () {
                     self.registered(false);
                 }, Config.ShowAlertTimeout);
                 window.messageBus.fire(Event.UserCreated);
             },
-            error: function (r) {
-                self.error(r.Message);
-                setTimeout(function () {
-                    self.error(null);
-                }, Config.ShowAlertTimeout);
-            },
-            failure: unexpectedError,
+            error: errorHandler,
             done: function () {
                 self.registerLogin(null);
                 self.registerName(null);
                 self.registerPassword(null);
-            }
+            },
+            fail: errorHandler
         });
     }
 
@@ -127,26 +126,23 @@
         self.registered(false);
         window.application.apiCall("GetNonce", {}, {
             success: registerNonceReceived,
-            failure: unexpectedError,
-            error: unexpectedError
+            error: errorHandler,
+            fail: errorHandler
         });
     };
 
-    var init = function () {
-        window.messageBus.subscribe(Event.SessionStateChanged, function (states) {
-            self.isAnonymous(false);
-            for (var i = 0; i < states.length; i++) {
-                if (states[i] === SessionState.Anonymous) {
-                    self.isAnonymous(true);
-                }
+    window.messageBus.subscribe(Event.SessionStateChanged, function (states) {
+        self.isAnonymous(false);
+        for (var i = 0; i < states.length; i++) {
+            if (states[i] === SessionState.Anonymous) {
+                self.isAnonymous(true);
             }
-        });
-        window.messageBus.subscribe(Event.LogoutRequested, function() {
-            self.logout();
-        });
-    };
+        }
+    });
 
-    init();
+    window.messageBus.subscribe(Event.LogoutRequested, function () {
+        self.logout();
+    });
 
     return self;
 };
