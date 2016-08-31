@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.40629.0
+VisualStudioVersion = 12.0.40302.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "TimeTracker.Database", "TimeTracker.Database\TimeTracker.Database.sqlproj", "{4D5DFDDB-8489-444A-AC5D-5A8B9CE544AD}"
 EndProject
@@ -37,7 +37,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TimeTracker.Data", "TimeTra
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Lib", "Lib", "{056185CC-368E-4A59-9C93-1E4AC43EEC64}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TimeTracker.ServiceBase", "TimeTracker.ServiceBase\TimeTracker.ServiceBase.csproj", "{573ACECD-6212-4F7F-8CA3-0ECCB895AD1E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TimeTracker.Service.Contract", "TimeTracker.Service.Contract\TimeTracker.Service.Contract.csproj", "{4109736B-AFF1-4798-B0C3-347777772059}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TimeTracker.Service.Base", "TimeTracker.Service.Base\TimeTracker.Service.Base.csproj", "{5F1C0FF4-7F5C-43F6-956F-45F5DD4F613C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -71,10 +73,14 @@ Global
 		{D5AC170D-A3C9-47D4-BA3B-891E5523D1A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D5AC170D-A3C9-47D4-BA3B-891E5523D1A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D5AC170D-A3C9-47D4-BA3B-891E5523D1A0}.Release|Any CPU.Build.0 = Release|Any CPU
-		{573ACECD-6212-4F7F-8CA3-0ECCB895AD1E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{573ACECD-6212-4F7F-8CA3-0ECCB895AD1E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{573ACECD-6212-4F7F-8CA3-0ECCB895AD1E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{573ACECD-6212-4F7F-8CA3-0ECCB895AD1E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4109736B-AFF1-4798-B0C3-347777772059}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4109736B-AFF1-4798-B0C3-347777772059}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4109736B-AFF1-4798-B0C3-347777772059}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4109736B-AFF1-4798-B0C3-347777772059}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5F1C0FF4-7F5C-43F6-956F-45F5DD4F613C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5F1C0FF4-7F5C-43F6-956F-45F5DD4F613C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5F1C0FF4-7F5C-43F6-956F-45F5DD4F613C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5F1C0FF4-7F5C-43F6-956F-45F5DD4F613C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -83,6 +89,7 @@ Global
 		{2021AD22-24AB-45C9-9991-22215B498D40} = {056185CC-368E-4A59-9C93-1E4AC43EEC64}
 		{72918956-3BFE-4607-ACD3-270D2570F303} = {056185CC-368E-4A59-9C93-1E4AC43EEC64}
 		{D5AC170D-A3C9-47D4-BA3B-891E5523D1A0} = {056185CC-368E-4A59-9C93-1E4AC43EEC64}
-		{573ACECD-6212-4F7F-8CA3-0ECCB895AD1E} = {056185CC-368E-4A59-9C93-1E4AC43EEC64}
+		{4109736B-AFF1-4798-B0C3-347777772059} = {056185CC-368E-4A59-9C93-1E4AC43EEC64}
+		{5F1C0FF4-7F5C-43F6-956F-45F5DD4F613C} = {056185CC-368E-4A59-9C93-1E4AC43EEC64}
 	EndGlobalSection
 EndGlobal

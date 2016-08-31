@@ -19,3 +19,7 @@
 *.jfm
 /TimeTracker.ServiceBase/bin/Debug
 /TimeTracker.ServiceBase/obj/Debug
+/TimeTracker.Service.Base/bin/Debug
+/TimeTracker.Service.Base/obj/Debug
+/TimeTracker.Service.Contract/bin/Debug
+/TimeTracker.Service.Contract/obj/Debug

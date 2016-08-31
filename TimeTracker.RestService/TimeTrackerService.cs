@@ -1,5 +1,5 @@
 ﻿using System.ServiceModel;
-using TimeTracker.ServiceBase;
+using TimeTracker.Service.Base;
 
 namespace TimeTracker.RestService
 {

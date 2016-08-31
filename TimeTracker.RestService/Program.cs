@@ -2,7 +2,7 @@
 using System.ServiceModel;
 using System.ServiceModel.Web;
 using TimeTracker.RestService.IoC;
-using TimeTracker.ServiceBase.Utils;
+using TimeTracker.Service.Base.Utils;
 using WindowsServiceBase = System.ServiceProcess.ServiceBase;
 
 namespace TimeTracker.RestService

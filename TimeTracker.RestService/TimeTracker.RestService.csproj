@@ -72,7 +72,9 @@
     <Compile Include="Utils\EnableCrossOriginResourceSharingBehavior.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\TimeTracker.Contract\TimeTracker.Contract.csproj">
@@ -83,9 +85,13 @@
       <Project>{d5ac170d-a3c9-47d4-ba3b-891e5523d1a0}</Project>
       <Name>TimeTracker.Data</Name>
     </ProjectReference>
-    <ProjectReference Include="..\TimeTracker.ServiceBase\TimeTracker.ServiceBase.csproj">
-      <Project>{573ACECD-6212-4F7F-8CA3-0ECCB895AD1E}</Project>
-      <Name>TimeTracker.ServiceBase</Name>
+    <ProjectReference Include="..\TimeTracker.Service.Base\TimeTracker.Service.Base.csproj">
+      <Project>{5F1C0FF4-7F5C-43F6-956F-45F5DD4F613C}</Project>
+      <Name>TimeTracker.Service.Base</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\TimeTracker.Service.Contract\TimeTracker.Service.Contract.csproj">
+      <Project>{4109736b-aff1-4798-b0c3-347777772059}</Project>
+      <Name>TimeTracker.Service.Contract</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

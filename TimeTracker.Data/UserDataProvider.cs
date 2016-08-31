@@ -7,17 +7,17 @@ using TimeTracker.Dal;
 using TimeTracker.Data.Base;
 
 using DalUser = TimeTracker.Dal.Entities.User;
-using DtoUser = TimeTracker.ServiceBase.Entities.User;
+using DtoUser = TimeTracker.Service.Contract.Data.Entities.User;
 using DalUserRole = TimeTracker.Dal.Entities.UserRole;
-using DtoUserRole = TimeTracker.ServiceBase.Entities.UserRole;
+using DtoUserRole = TimeTracker.Service.Contract.Data.Entities.UserRole;
 using DalUserSession = TimeTracker.Dal.Entities.UserSession;
-using DtoUserSession = TimeTracker.ServiceBase.Entities.UserSession;
+using DtoUserSession = TimeTracker.Service.Contract.Data.Entities.UserSession;
 using DalUserSetting = TimeTracker.Dal.Entities.UserSetting;
-using DtoUserSetting = TimeTracker.ServiceBase.Entities.UserSetting;
+using DtoUserSetting = TimeTracker.Service.Contract.Data.Entities.UserSetting;
 using DalUserState = TimeTracker.Dal.Entities.UserState;
-using DtoUserState = TimeTracker.ServiceBase.Entities.UserState;
+using DtoUserState = TimeTracker.Service.Contract.Data.Entities.UserState;
 using DalUserToSetting = TimeTracker.Dal.Entities.UserToSetting;
-using DtoUserToSetting = TimeTracker.ServiceBase.Entities.UserToSetting;
+using DtoUserToSetting = TimeTracker.Service.Contract.Data.Entities.UserToSetting;
 
 namespace TimeTracker.Data
 {

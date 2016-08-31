@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using TimeTracker.Data.Utils;
+using TimeTracker.Data.Mapping;
 
 namespace TimeTracker.Data.Base
 {

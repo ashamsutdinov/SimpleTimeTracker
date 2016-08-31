@@ -4,13 +4,14 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{D5AC170D-A3C9-47D4-BA3B-891E5523D1A0}</ProjectGuid>
+    <ProjectGuid>{5F1C0FF4-7F5C-43F6-956F-45F5DD4F613C}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>TimeTracker.Data</RootNamespace>
-    <AssemblyName>TimeTracker.Data</AssemblyName>
+    <RootNamespace>TimeTracker.Service.Base</RootNamespace>
+    <AssemblyName>TimeTracker.Service.Base</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -20,6 +21,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -28,15 +30,12 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="AutoMapper, Version=4.2.1.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\lib\AutoMapper.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -44,28 +43,19 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Base\DataProviderBase.cs" />
-    <Compile Include="TimeRecordDataProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="UserDataProvider.cs" />
-    <Compile Include="Mapping\MappingProfile.cs" />
+    <Compile Include="TimeTrackerServiceBase.cs" />
+    <Compile Include="Utils\CryptographyHelper.cs" />
+    <Compile Include="Utils\ServiceResolverFactory.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\TimeTracker.Contract\TimeTracker.Contract.csproj">
-      <Project>{72918956-3bfe-4607-acd3-270d2570f303}</Project>
+      <Project>{72918956-3BFE-4607-ACD3-270D2570F303}</Project>
       <Name>TimeTracker.Contract</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\TimeTracker.Dal\TimeTracker.Dal.csproj">
-      <Project>{2021ad22-24ab-45c9-9991-22215b498d40}</Project>
-      <Name>TimeTracker.Dal</Name>
     </ProjectReference>
     <ProjectReference Include="..\TimeTracker.Service.Contract\TimeTracker.Service.Contract.csproj">
       <Project>{4109736b-aff1-4798-b0c3-347777772059}</Project>
       <Name>TimeTracker.Service.Contract</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\TimeTracker.ServiceBase\TimeTracker.ServiceBase.csproj">
-      <Project>{573acecd-6212-4f7f-8ca3-0eccb895ad1e}</Project>
-      <Name>TimeTracker.ServiceBase</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
