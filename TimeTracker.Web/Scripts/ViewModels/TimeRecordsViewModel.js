@@ -44,6 +44,11 @@
         }
     };
 
+    self.pageSizeChanged = function(a) {
+        self.filterPageNumber(1);
+        self.filterTimeRecords();
+    };
+
     self.exportCurrentPage = function () {
         printElement(containerId);
     };

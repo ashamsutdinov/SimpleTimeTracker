@@ -150,7 +150,7 @@
                 </div>
                 <div class="form-group">
                     <label for="filterPageSize">Page size: </label>
-                    <select id="filterPageSize" class="form-control" data-bind="options: filterPageSizeOptions, value: filterPageSize"></select>
+                    <select id="filterPageSize" class="form-control" data-bind="options: filterPageSizeOptions, value: filterPageSize, event: {change: pageSizeChanged}"></select>
                 </div>
                 <button class="btn btn-default" data-bind="click: filterTimeRecords">Filter time records</button>
             </form>
@@ -230,7 +230,7 @@
                 </div>
                 <div class="form-group">
                     <label for="manageFilterPageSize">Page size:</label>
-                    <select id="manageFilterPageSize" class="form-control" data-bind="options: filterPageSizeOptions, value: filterPageSize"></select>
+                    <select id="manageFilterPageSize" class="form-control" data-bind="options: filterPageSizeOptions, value: filterPageSize, event: {change: pageSizeChanged}"></select>
                 </div>
                 <button class="btn btn-default" data-bind="click: filterTimeRecords">Filter time records</button>
             </form>
@@ -238,10 +238,41 @@
             <div class="row">
                 <br />
                 <p class="center-container" data-bind="visible: timeRecords().length == 0">Time records were not found</p>
-                <div data-bind="foreach: timeRecords">
-
+                <div id="manageTimeRecordsContainerContent">
+                    <div class="timesheets" data-bind="foreach: timeRecords">
+                        <div data-bind="css: $data.Warning == true ? 'row timesheet-row rate-overload' : ' row timesheet-row rate-normal'">
+                            <h5>Date: <span data-bind="text: fromMsDate($data.Date).format('Y-m-d')"></span>, Total hours: <span data-bind="text: $data.TotalHours"></span>, User: <span data-bind="text: $data.UserName"></span></h5>
+                            <hr />
+                            <div class="col-md-12" data-bind="foreach: $data.Items">
+                                <div class="col-md-3">
+                                    <div class="timesheet-cell">
+                                        <span data-bind="text: $data.Caption"></span>,
+                                        <span data-bind="text: $data.Hours"></span> hr.
+                                        <br />
+                                        <a class="crud-element" href="#" data-bind="click: $parent.editTimeRecord">Edit</a> <a class="crud-element" href="#" data-bind="click: $parent.deleteTimeRecord">Delete</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row"></div>
+                            <hr />
+                            <h5>Notes:</h5>
+                            <form class="form-inline">
+                                <div class="form-group">
+                                    <label>Add note: </label>
+                                    <input type="text" class="form-control" />
+                                </div>
+                                <button class="btn btn-default" data-bind="">Add note</button>
+                            </form>
+                        </div>
+                    </div>
                 </div>
-                <br />
+                <span>Page: </span>
+                <span data-bind="foreach: pages">
+                    <a href="#" data-bind="text: $data, click: $parent.changePage, css: $data == $parent.filterPageNumber() ? 'active' : ''"></a>
+                </span>
+                <span>
+                    <a href="#" data-bind="click: exportCurrentPage">Export current page</a>
+                </span>
             </div>
         </div>
         <!--user settings container-->
@@ -289,7 +320,7 @@
         }), document.getElementById("loginContainer"));
         ko.applyBindings(new UserTimeRecordsViewModel("userTimeRecordsContainerContent"), document.getElementById("userTimeRecordsContainer"));
         ko.applyBindings(new UsersViewModel(), document.getElementById("usersContainer"));
-        ko.applyBindings(new ManageTimeRecordsViewModel(), document.getElementById("manageTimeRecordsContainer"));
+        ko.applyBindings(new ManageTimeRecordsViewModel("manageTimeRecordsContainerContent"), document.getElementById("manageTimeRecordsContainer"));
         ko.applyBindings(new UserSettingsViewModel(), document.getElementById("userSettingsContainer"));
         window.messageBus.fire(Event.Ready);
     </script>
