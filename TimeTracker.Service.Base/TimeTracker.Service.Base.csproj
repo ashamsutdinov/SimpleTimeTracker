@@ -44,6 +44,22 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Security\AnonymousRequestSecurityPolicy.cs" />
+    <Compile Include="Security\PasswordHashMatchPolicy.cs" />
+    <Compile Include="Security\PasswordSyntaxOnRegistrationPolicy.cs" />
+    <Compile Include="Security\PasswordSyntaxPolicy.cs" />
+    <Compile Include="Security\RequestTicketSyntaxPolicy.cs" />
+    <Compile Include="Security\SecurityPolicy.cs" />
+    <Compile Include="Security\SessionExistsPolicy.cs" />
+    <Compile Include="Security\SessionExpicationPolicy.cs" />
+    <Compile Include="Security\SessionOwnershipPolicy.cs" />
+    <Compile Include="Security\SessionTicketConsistencyPolicy.cs" />
+    <Compile Include="Security\SpecificRequestSecurityPolicy.cs" />
+    <Compile Include="Security\UserActiveStatePolicy.cs" />
+    <Compile Include="Security\UserAlreadyLoggedInPolicy.cs" />
+    <Compile Include="Security\UserByLoginDoesExistsPolicy.cs" />
+    <Compile Include="Security\UserByLoginExistsPolicy.cs" />
+    <Compile Include="Security\UserExistsPolicy.cs" />
     <Compile Include="TimeTrackerServiceBase.cs" />
     <Compile Include="Utils\CryptographyHelper.cs" />
     <Compile Include="Utils\ServiceResolverFactory.cs" />

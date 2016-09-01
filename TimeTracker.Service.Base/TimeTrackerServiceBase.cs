@@ -5,6 +5,7 @@ using System.Security.Authentication;
 using TimeTracker.Contract.Data;
 using TimeTracker.Contract.Data.Entities;
 using TimeTracker.Contract.Log;
+using TimeTracker.Service.Base.Security;
 using TimeTracker.Service.Base.Utils;
 using TimeTracker.Service.Contract;
 using TimeTracker.Service.Contract.Data;
@@ -26,7 +27,6 @@ namespace TimeTracker.Service.Base
         {
             var serviceResolver = ServiceResolverFactory.Get();
             Log = serviceResolver.Resolve<ILogger>();
-            Log.Debug(this, "Creating TimeTrackerServiceBase...");
             UserDataProvider = serviceResolver.Resolve<IUserDataProvider>();
             TimeRecordDataProvider = serviceResolver.Resolve<ITimeRecordDataProvider>();
             Log.Debug(this, "TimeTrackerServiceBase created");
@@ -34,12 +34,12 @@ namespace TimeTracker.Service.Base
 
         public Response<long> Heartbit(Request<long> request)
         {
-            return SafeInvoke((user, session) => DateTime.UtcNow.Ticks, request, true);
+            return SafeInvoke(request, (user, session) => DateTime.UtcNow.Ticks, true);
         }
 
         public Response<SessionState[]> Handshake(Request request)
         {
-            return SafeInvoke((user, session) =>
+            return SafeInvoke(request, (user, session) =>
             {
                 if (user == null)
                 {
@@ -55,113 +55,67 @@ namespace TimeTracker.Service.Base
                 {
                     result.Add(SessionState.LoggedInManager);
                 }
-                Log.Info(this, "User connected: {0}", result.Cast<object>().ToArray());
+                Log.Info(this, "User connected: {0}", request.ClientId);
                 return result.ToArray();
-            }, request);
+            });
         }
 
         public virtual Response<string> GetNonce(Request request)
         {
-            return SafeInvoke((user, session) => _cryptographyHelper.GetNonce(request.ClientId), request, true);
+            return SafeInvoke(request, (user, session) => _cryptographyHelper.GetNonce(request.ClientId), true);
         }
 
         public virtual Response<TicketData> Login(Request<LoginData> request)
         {
-            return SafeInvoke((userNull, sessionNull) =>
+            return SafeInvoke(request, (userNull, sessionNull) =>
             {
-                //check if user already logged in
-                if (userNull != null)
-                {
-                    throw new AuthenticationException("User already logged in");
-                }
-
-                //check password syntax
-                PasswordData passwordData;
-                var validPasswordSyntax = _cryptographyHelper.VerifyPasswordSyntax(request.Data.Password, out passwordData);
-                if (!validPasswordSyntax)
-                {
-                    throw new AuthenticationException("Invalid request");
-                }
-
-                //check if user exists
-                var login = request.Data.Login;
-                var user = UserDataProvider.GetUser(login);
-                if (user == null)
-                {
-                    throw new AuthenticationException("Invalid login or password");
-                }
-
-                var hash = _cryptographyHelper.HashPassword(passwordData.Password, user.PasswordSalt);
-                if (hash != user.PasswordHash)
-                {
-                    throw new AuthenticationException("Invalid login or password");
-                }
-
-                if (user.StateId != "active")
-                {
-                    throw new AuthenticationException("User was disabled or deleted");
-                }
-
+                //at this point, login and password already passed validation by security policies
+                var user = UserDataProvider.GetUser(request.Data.Login);
                 var session = UserDataProvider.CreateNewSession(user.Id, request.ClientId);
-                //create ticket
-                var ticket = _cryptographyHelper.GetSessionTicket(session.Id, user.Id, passwordData.ClientId);
+                var ticket = _cryptographyHelper.GetSessionTicket(session.Id, user.Id, request.ClientId);
                 session.Ticket = ticket;
                 UserDataProvider.SaveSession(session);
-
                 return new TicketData
                 {
                     Ticket = ticket
                 };
-            }, request);
+            }, 
+            new UserAlreadyLoggedInPolicy(),
+            new PasswordSyntaxOnLoginPolicy(_cryptographyHelper),
+            new UserByLoginExistsPolicy(UserDataProvider),
+            new PasswordHashMatchPolicy(_cryptographyHelper, UserDataProvider),
+            new UserActiveStatePolicy(UserDataProvider));
         }
 
         public Response<string> Logout(Request request)
         {
-            return SafeInvoke((user, session) =>
+            return SafeInvoke(request, (user, session) =>
             {
                 session.Expired = true;
                 UserDataProvider.SaveSession(session);
                 return "Bye";
-            }, request);
+            });
         }
 
         public Response<int> Register(Request<RegistrationData> request)
         {
-            return SafeInvoke((userNull, session) =>
+            return SafeInvoke(request, (userNull, session) =>
             {
-                //check if user already logged in
-                if (userNull != null)
-                {
-                    throw new AuthenticationException("User already logged in");
-                }
-
-                //check password syntax
-                PasswordData passwordData;
-                var validPasswordSyntax = _cryptographyHelper.VerifyPasswordSyntax(request.Data.Password, out passwordData);
-                if (!validPasswordSyntax)
-                {
-                    throw new AuthenticationException("Invalid request");
-                }
-
-                //check if user exists
+                var passwordData = _cryptographyHelper.DecodeXorPassword(request.Data.Password);
                 var login = request.Data.Login;
-                var existingUser = UserDataProvider.GetUser(login);
-                if (existingUser != null)
-                {
-                    throw new AuthenticationException("Login cannot be used");
-                }
-
                 var salt = _cryptographyHelper.CreateSalt();
                 var hash = _cryptographyHelper.HashPassword(passwordData.Password, salt);
                 var user = UserDataProvider.RegisterUser(login, request.Data.Name, hash, salt);
-
                 return user.Id;
-            }, request);
+            }, 
+            new UserAlreadyLoggedInPolicy(),
+            new PasswordSyntaxOnRegistrationPolicy(_cryptographyHelper),
+            new UserByLoginDoesExistsPolicy(UserDataProvider));
         }
 
         public Response<int> CreateTimeRecord(Request<TimeRecordData> request)
         {
-            return SafeInvoke((user, session) =>
+            return SafeInvoke(request, (user, session) =>
             {
                 var data = request.Data;
                 if (data.Hours > 24)
@@ -179,12 +133,12 @@ namespace TimeTracker.Service.Base
                 }
                 var saved = TimeRecordDataProvider.SaveTimeRecord(0, user.Id, data.Date, data.Caption, data.Hours);
                 return saved.Id;
-            }, request);
+            });
         }
 
         public Response<TimeRecordItemList> GetTimeRecords(Request<TimeRecordsFilterData> request)
         {
-            return SafeInvoke((user, session) =>
+            return SafeInvoke(request, (user, session) =>
             {
                 var data = request.Data;
                 int? userId = null;
@@ -201,12 +155,12 @@ namespace TimeTracker.Service.Base
                 var timeRecords = TimeRecordDataProvider.GetTimeRecords(userId, data.From, data.To, data.PageNumber, data.PageSize, out total);
                 var result = new TimeRecordItemList(timeRecords.ToList(), data.PageNumber, data.PageSize, total, UserDataProvider, TimeRecordDataProvider);
                 return result;
-            }, request);
+            });
         }
 
         public Response<UserSettingItemList> GetUserSettings(Request<int> request)
         {
-            return SafeInvoke((user, session) =>
+            return SafeInvoke(request, (user, session) =>
             {
                 var requestedUserId = request.Data;
                 if (requestedUserId == 0)
@@ -231,12 +185,12 @@ namespace TimeTracker.Service.Base
                         Value = userSettings.Where(us => us.Id == s.Id).Select(us => us.Value).FirstOrDefault()
                     }).ToList()
                 };
-            }, request);
+            });
         }
 
         public Response<int> SaveUserSettings(Request<UserSettingItemList> request)
         {
-            return SafeInvoke((user, session) =>
+            return SafeInvoke(request, (user, session) =>
             {
                 var requestedUserId = request.Data.UserId;
                 if (requestedUserId == 0)
@@ -268,11 +222,16 @@ namespace TimeTracker.Service.Base
                 }
                 var updatedUser = UserDataProvider.SaveUser(requestedUser);
                 return updatedUser.Id;
-            }, request);
+            });
+        }
+
+        private Response<TData> SafeInvoke<TData>(Request request, Func<IUser, IUserSession, TData> action, params SecurityPolicy[] policies)
+        {
+            return SafeInvoke(request, action, false, policies);
         }
 
 
-        private Response<TData> SafeInvoke<TData>(Func<IUser, IUserSession, TData> action, Request request, bool skipTicketValidation = false)
+        private Response<TData> SafeInvoke<TData>(Request request, Func<IUser, IUserSession, TData> action, bool skipTicketValidation, params SecurityPolicy[] requestPolicies)
         {
             try
             {
@@ -281,60 +240,33 @@ namespace TimeTracker.Service.Base
                 var ticketIsNotEmpty = !string.IsNullOrEmpty(request.Ticket);
                 if (ticketIsNotEmpty && !skipTicketValidation)
                 {
-                    SessionData sessionData;
-
-                    //verify ticket syntax
-                    if (!_cryptographyHelper.VerifyTicketSyntax(request.Ticket, out sessionData))
-                    {
-                        Log.Warning(this, "Invalid ticket: {0}", request.Ticket);
-                        return Response<TData>.NotAcceptable("Invalid ticket");
-                    }
-
-                    //check if user exists
+                    var sessionData = _cryptographyHelper.DecodeXorTicket(request.Ticket);
                     user = UserDataProvider.GetUser(sessionData.UserId);
-                    if (user == null)
-                    {
-                        Log.Warning(this, "User was not found: {0}", sessionData.UserId);
-                        return Response<TData>.Unauthorized("User was not found");
-                    }
-
-                    //check if session exists
                     session = UserDataProvider.GetUserSession(sessionData.Id);
-                    if (session == null)
-                    {
-                        Log.Warning(this, "Session was not found: {0}", sessionData.Id);
-                        return Response<TData>.NotAcceptable("Invalid session");
-                    }
 
-                    //check if received ticket is equal with ticket stored in db
-                    if (session.Ticket != request.Ticket)
+                    var ticketPolicies = new SecurityPolicy[]
                     {
-                        Log.Warning(this, "Invalid ticket: {0}, expected: {1}", request.Ticket, session.Ticket);
-                        return Response<TData>.NotAcceptable("Invalid ticket");
-                    }
+                        new RequestTicketSyntaxPolicy(_cryptographyHelper),
+                        new UserExistsPolicy(),
+                        new SessionExistsPolicy(), 
+                        new SessionTicketConsistencyPolicy(request.Ticket),
+                        new SessionOwnershipPolicy(),
+                        new SessionExpicationPolicy(UserDataProvider), 
+                    };
 
-                    //check if session and owned by user
-                    if (user.Id != session.UserId)
+                    foreach (var ticketPolicy in ticketPolicies)
                     {
-                        Log.Warning(this, "User have no access to requested session: {0}, sessionId: {1}", user.Id,
-                            session.Id);
-                        return Response<TData>.Forbidden("User have no access to requested session");
+                        ticketPolicy.Evaluate(user, session, request);
                     }
-
-                    //check if session was expired
-                    if (session.Expired || session.DateTime.AddSeconds(session.Expiration) < DateTime.UtcNow)
-                    {
-                        session.Expired = true;
-                        UserDataProvider.SaveSession(session);
-                        Log.Warning(this, "Session was expired: {0}", session.Id);
-                        return Response<TData>.NotAcceptable("Session was expired");
-                    }
-
-                    //ticket/session is valid, authentication passed
 
                     //advance session
                     session.DateTime = DateTime.UtcNow;
                     UserDataProvider.SaveSession(session);
+                }
+
+                foreach (var requestPolicy in requestPolicies)
+                {
+                    requestPolicy.Evaluate(user, session, request);
                 }
 
                 var data = action(user, session);

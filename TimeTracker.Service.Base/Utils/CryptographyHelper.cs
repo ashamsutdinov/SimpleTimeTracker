@@ -32,9 +32,8 @@ namespace TimeTracker.Service.Base.Utils
             return nonce;
         }
 
-        public bool VerifyPasswordSyntax(string password, out PasswordData passwordData)
+        public bool VerifyPasswordSyntax(PasswordData passwordData)
         {
-            passwordData = DecodeXorPassword(password);
             string nonce;
             if (_nonces.TryGetValue(passwordData.ClientId, out nonce))
             {
@@ -96,7 +95,7 @@ namespace TimeTracker.Service.Base.Utils
             var result = new StringBuilder();
             for (var c = 0; c < text.Length; c++)
             {
-                result.Append((char) ((uint) text[c] ^ key[c%key.Length]));
+                result.Append((char)((uint)text[c] ^ key[c % key.Length]));
             }
 
             return result.ToString();
@@ -122,13 +121,12 @@ namespace TimeTracker.Service.Base.Utils
             var ticketSalt = CreateSalt();
             var ticket = string.Format("{0}#{1}#{2}#{3}", id, userId, clientId, ticketSalt);
             var hash = MD5(ticket);
-            var ticketWithHash = string.Format("{0}#{1}#{2}#{3}#{4}", id, userId, clientId,  ticketSalt, hash);
+            var ticketWithHash = string.Format("{0}#{1}#{2}#{3}#{4}", id, userId, clientId, ticketSalt, hash);
             return XorEncode(ticketWithHash, _privateKey);
         }
 
-        public bool VerifyTicketSyntax(string ticket, out SessionData data)
+        public bool VerifyTicketSyntax(SessionData data)
         {
-            data = DecodeXorTicket(ticket);
             var decoded = string.Format("{0}#{1}#{2}#{3}", data.Id, data.UserId, data.ClientId, data.TicketSalt);
             var hashDecoded = MD5(decoded);
             return data.TicketHash == hashDecoded;
