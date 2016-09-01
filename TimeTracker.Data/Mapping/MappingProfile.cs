@@ -2,28 +2,28 @@
 using TimeTracker.Contract.Data.Entities;
 
 using DalUser = TimeTracker.Dal.Entities.User;
-using DtoUser = TimeTracker.Service.Contract.Data.Entities.User;
+using DtoUser = TimeTracker.Data.Entities.User;
 using DalUserRole = TimeTracker.Dal.Entities.UserRole;
-using DtoUserRole = TimeTracker.Service.Contract.Data.Entities.UserRole;
+using DtoUserRole = TimeTracker.Data.Entities.UserRole;
 using DalUserSession = TimeTracker.Dal.Entities.UserSession;
-using DtoUserSession = TimeTracker.Service.Contract.Data.Entities.UserSession;
+using DtoUserSession = TimeTracker.Data.Entities.UserSession;
 using DalUserSetting = TimeTracker.Dal.Entities.UserSetting;
-using DtoUserSetting = TimeTracker.Service.Contract.Data.Entities.UserSetting;
+using DtoUserSetting = TimeTracker.Data.Entities.UserSetting;
 using DalUserState = TimeTracker.Dal.Entities.UserState;
-using DtoUserState = TimeTracker.Service.Contract.Data.Entities.UserState;
+using DtoUserState = TimeTracker.Data.Entities.UserState;
 using DalUserToSetting = TimeTracker.Dal.Entities.UserToSetting;
-using DtoUserToSetting = TimeTracker.Service.Contract.Data.Entities.UserToSetting;
+using DtoUserToSetting = TimeTracker.Data.Entities.UserToSetting;
 
 using DalDayRecord = TimeTracker.Dal.Entities.DayRecord;
-using DtoDayRecord = TimeTracker.Service.Contract.Data.Entities.DayRecord;
+using DtoDayRecord = TimeTracker.Data.Entities.DayRecord;
 using DalTimeRecord = TimeTracker.Dal.Entities.TimeRecord;
-using DtoTimeRecord = TimeTracker.Service.Contract.Data.Entities.TimeRecord;
+using DtoTimeRecord = TimeTracker.Data.Entities.TimeRecord;
 using DalTimeRecordItem = TimeTracker.Dal.Entities.TimeRecordItem;
-using DtoTimeRecordItem = TimeTracker.Service.Contract.Data.Entities.TimeRecordItem;
+using DtoTimeRecordItem = TimeTracker.Data.Entities.TimeRecordItem;
 using DalTimeRecordNote = TimeTracker.Dal.Entities.TimeRecordNote;
-using DtoTimeRecordNote = TimeTracker.Service.Contract.Data.Entities.TimeRecordNote;
+using DtoTimeRecordNote = TimeTracker.Data.Entities.TimeRecordNote;
 using DalTimeRecordNoteItem = TimeTracker.Dal.Entities.TimeRecordNoteItem;
-using DtoTimeRecordNoteItem = TimeTracker.Service.Contract.Data.Entities.TimeRecordNoteItem;
+using DtoTimeRecordNoteItem = TimeTracker.Data.Entities.TimeRecordNoteItem;
 
 
 namespace TimeTracker.Data.Mapping

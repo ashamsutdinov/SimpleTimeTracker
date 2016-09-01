@@ -1,5 +1,8 @@
-namespace TimeTracker.Service.Contract.Data.Rest
+using System.Runtime.Serialization;
+
+namespace TimeTracker.Service.Contract.Data
 {
+    [DataContract]
     public enum SessionState
     {
         Undefined = 0,

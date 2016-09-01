@@ -45,31 +45,20 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Data\Entities\Entity.cs" />
-    <Compile Include="Data\Entities\KeyAndDescriptionEntity.cs" />
-    <Compile Include="Data\Rest\ItemList.cs" />
-    <Compile Include="Data\Rest\LoginData.cs" />
-    <Compile Include="Data\Rest\PasswordData.cs" />
-    <Compile Include="Data\Rest\RegistrationData.cs" />
-    <Compile Include="Data\Rest\Request.cs" />
-    <Compile Include="Data\Rest\Response.cs" />
-    <Compile Include="Data\Rest\SessionData.cs" />
-    <Compile Include="Data\Rest\SessionState.cs" />
-    <Compile Include="Data\Rest\TicketData.cs" />
-    <Compile Include="Data\Rest\TimeRecordData.cs" />
-    <Compile Include="Data\Rest\TimeRecordItemList.cs" />
-    <Compile Include="Data\Rest\TimeRecordsFilterData.cs" />
-    <Compile Include="Data\Entities\DayRecord.cs" />
-    <Compile Include="Data\Entities\TimeRecord.cs" />
-    <Compile Include="Data\Entities\TimeRecordItem.cs" />
-    <Compile Include="Data\Entities\TimeRecordNote.cs" />
-    <Compile Include="Data\Entities\TimeRecordNoteItem.cs" />
-    <Compile Include="Data\Entities\User.cs" />
-    <Compile Include="Data\Entities\UserRole.cs" />
-    <Compile Include="Data\Entities\UserSession.cs" />
-    <Compile Include="Data\Entities\UserSetting.cs" />
-    <Compile Include="Data\Entities\UserState.cs" />
-    <Compile Include="Data\Entities\UserToSetting.cs" />
+    <Compile Include="Data\ItemList.cs" />
+    <Compile Include="Data\LoginData.cs" />
+    <Compile Include="Data\PasswordData.cs" />
+    <Compile Include="Data\RegistrationData.cs" />
+    <Compile Include="Data\Request.cs" />
+    <Compile Include="Data\Response.cs" />
+    <Compile Include="Data\SessionData.cs" />
+    <Compile Include="Data\SessionState.cs" />
+    <Compile Include="Data\TicketData.cs" />
+    <Compile Include="Data\TimeRecordData.cs" />
+    <Compile Include="Data\TimeRecordGroup.cs" />
+    <Compile Include="Data\TimeRecordGroupItem.cs" />
+    <Compile Include="Data\TimeRecordItemList.cs" />
+    <Compile Include="Data\TimeRecordsFilterData.cs" />
     <Compile Include="ITimeTrackerService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

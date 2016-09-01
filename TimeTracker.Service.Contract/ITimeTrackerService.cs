@@ -1,6 +1,6 @@
 ﻿using System.ServiceModel;
 using System.ServiceModel.Web;
-using TimeTracker.Service.Contract.Data.Rest;
+using TimeTracker.Service.Contract.Data;
 
 namespace TimeTracker.Service.Contract
 {

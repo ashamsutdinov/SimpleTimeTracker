@@ -7,8 +7,7 @@ using TimeTracker.Contract.Data.Entities;
 using TimeTracker.Contract.Log;
 using TimeTracker.Service.Base.Utils;
 using TimeTracker.Service.Contract;
-using TimeTracker.Service.Contract.Data.Entities;
-using TimeTracker.Service.Contract.Data.Rest;
+using TimeTracker.Service.Contract.Data;
 
 namespace TimeTracker.Service.Base
 {
@@ -200,14 +199,7 @@ namespace TimeTracker.Service.Base
 
                 int total;
                 var timeRecords = TimeRecordDataProvider.GetTimeRecords(userId, data.From, data.To, data.PageNumber, data.PageSize, out total);
-                var result = new TimeRecordItemList
-                {
-                    Items = timeRecords.Cast<TimeRecordItem>().ToList(),
-                    PageNumber = data.PageNumber,
-                    PageSize = data.PageSize,
-                    TotalItems = total,
-                    TotalPages = total / data.PageSize + 1
-                };
+                var result = new TimeRecordItemList(timeRecords.ToList(), data.PageNumber, data.PageSize, total);
                 return result;
             }, request);
         }

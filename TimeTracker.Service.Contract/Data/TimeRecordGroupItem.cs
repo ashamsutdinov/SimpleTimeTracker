@@ -1,19 +1,16 @@
-using System;
 using System.Runtime.Serialization;
 
-namespace TimeTracker.Service.Contract.Data.Rest
+namespace TimeTracker.Service.Contract.Data
 {
     [DataContract]
-    public class TimeRecordData
+    public class TimeRecordGroupItem
     {
+        //Equal to TimeRecordId
         [DataMember]
         public int Id { get; set; }
 
         [DataMember]
-        public DateTime Date { get; set; }
-
-        [DataMember]
-        public string Caption { get; set; }
+        public string Caption {get; set; }
 
         [DataMember]
         public int Hours { get; set; }

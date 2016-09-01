@@ -3,7 +3,7 @@ using System.Collections.Concurrent;
 using System.Configuration;
 using System.Security.Cryptography;
 using System.Text;
-using TimeTracker.Service.Contract.Data.Rest;
+using TimeTracker.Service.Contract.Data;
 
 namespace TimeTracker.Service.Base.Utils
 {

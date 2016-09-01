@@ -36,15 +36,26 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Base\DataProviderBase.cs" />
+    <Compile Include="Entities\DayRecord.cs" />
+    <Compile Include="Entities\Entity.cs" />
+    <Compile Include="Entities\KeyAndDescriptionEntity.cs" />
+    <Compile Include="Entities\TimeRecord.cs" />
+    <Compile Include="Entities\TimeRecordItem.cs" />
+    <Compile Include="Entities\TimeRecordNote.cs" />
+    <Compile Include="Entities\TimeRecordNoteItem.cs" />
+    <Compile Include="Entities\User.cs" />
+    <Compile Include="Entities\UserRole.cs" />
+    <Compile Include="Entities\UserSession.cs" />
+    <Compile Include="Entities\UserSetting.cs" />
+    <Compile Include="Entities\UserState.cs" />
+    <Compile Include="Entities\UserToSetting.cs" />
     <Compile Include="TimeRecordDataProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UserDataProvider.cs" />
@@ -58,14 +69,6 @@
     <ProjectReference Include="..\TimeTracker.Dal\TimeTracker.Dal.csproj">
       <Project>{2021ad22-24ab-45c9-9991-22215b498d40}</Project>
       <Name>TimeTracker.Dal</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\TimeTracker.Service.Contract\TimeTracker.Service.Contract.csproj">
-      <Project>{4109736b-aff1-4798-b0c3-347777772059}</Project>
-      <Name>TimeTracker.Service.Contract</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\TimeTracker.ServiceBase\TimeTracker.ServiceBase.csproj">
-      <Project>{573acecd-6212-4f7f-8ca3-0eccb895ad1e}</Project>
-      <Name>TimeTracker.ServiceBase</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
