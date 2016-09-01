@@ -74,7 +74,7 @@ namespace TimeTracker.Service.Base
                 {
                     throw new AuthenticationException("User already logged in");
                 }
-                
+
                 //check password syntax
                 PasswordData passwordData;
                 var validPasswordSyntax = _cryptographyHelper.VerifyPasswordSyntax(request.Data.Password, out passwordData);
@@ -182,7 +182,7 @@ namespace TimeTracker.Service.Base
             }, request);
         }
 
-        public Response<TimeRecordItemList> LoadTimeRecords(Request<TimeRecordsFilterData> request)
+        public Response<TimeRecordItemList> GetTimeRecords(Request<TimeRecordsFilterData> request)
         {
             return SafeInvoke((user, session) =>
             {
@@ -199,8 +199,75 @@ namespace TimeTracker.Service.Base
 
                 int total;
                 var timeRecords = TimeRecordDataProvider.GetTimeRecords(userId, data.From, data.To, data.PageNumber, data.PageSize, out total);
-                var result = new TimeRecordItemList(timeRecords.ToList(), data.PageNumber, data.PageSize, total);
+                var result = new TimeRecordItemList(timeRecords.ToList(), data.PageNumber, data.PageSize, total, UserDataProvider, TimeRecordDataProvider);
                 return result;
+            }, request);
+        }
+
+        public Response<UserSettingItemList> GetUserSettings(Request<int> request)
+        {
+            return SafeInvoke((user, session) =>
+            {
+                var requestedUserId = request.Data;
+                if (requestedUserId == 0)
+                {
+                    requestedUserId = user.Id;
+                }
+                if (requestedUserId != user.Id && user.Roles.All(r => r.Id != "manager"))
+                {
+                    throw new UnauthorizedAccessException("Only manager can request settings for specific user");
+                }
+
+                var allSettings = UserDataProvider.GetAllUserSettings();
+                var userSettings = UserDataProvider.GetUserSettings(requestedUserId);
+
+                return new UserSettingItemList
+                {
+                    UserId = requestedUserId,
+                    Items = allSettings.Select(s => new UserSettingItem
+                    {
+                        Id = s.Id,
+                        Description = s.Description,
+                        Value = userSettings.Where(us => us.Id == s.Id).Select(us => us.Value).FirstOrDefault()
+                    }).ToList()
+                };
+            }, request);
+        }
+
+        public Response<int> SaveUserSettings(Request<UserSettingItemList> request)
+        {
+            return SafeInvoke((user, session) =>
+            {
+                var requestedUserId = request.Data.UserId;
+                if (requestedUserId == 0)
+                {
+                    requestedUserId = user.Id;
+                }
+                if (requestedUserId != user.Id && user.Roles.All(r => r.Id != "manager"))
+                {
+                    throw new UnauthorizedAccessException("Only manager can update settings for specific user");
+                }
+                var requestedUser = UserDataProvider.GetUser(requestedUserId);
+                if (requestedUser == null)
+                {
+                    throw new InvalidOperationException("User was not found");
+                }
+
+                foreach (var itemEnu in request.Data.Items)
+                {
+                    var item = itemEnu;
+                    var setting = requestedUser.Settings.FirstOrDefault(s => s.Id == item.Id);
+                    if (setting == null)
+                    {
+                        setting = UserDataProvider.PrepareUserSetting();
+                        setting.Id = item.Id;
+                        setting.Description = item.Description;
+                        requestedUser.Settings.Add(setting);
+                    }
+                    setting.Value = item.Value;
+                }
+                var updatedUser = UserDataProvider.SaveUser(requestedUser);
+                return updatedUser.Id;
             }, request);
         }
 

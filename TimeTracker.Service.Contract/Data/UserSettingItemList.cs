@@ -1,12 +1,12 @@
-using System.Collections.Generic;
 using System.Runtime.Serialization;
 
 namespace TimeTracker.Service.Contract.Data
 {
     [DataContract]
-    public class ItemList<TItem>
+    public class UserSettingItemList :
+        ItemList<UserSettingItem>
     {
         [DataMember]
-        public List<TItem> Items { get; set; } 
+        public int UserId { get; set; }
     }
 }

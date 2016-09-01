@@ -110,6 +110,7 @@
     <Build Include="Procedures\GetUserByLogin.sql" />
     <Build Include="Procedures\GetUserSession.sql" />
     <Build Include="Procedures\GetUserDayRecordByDate.sql" />
+    <Build Include="Procedures\GetTimeRecordNote.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="PostDeploy.sql" />

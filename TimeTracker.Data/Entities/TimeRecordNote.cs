@@ -7,7 +7,7 @@ namespace TimeTracker.Data.Entities
         Entity<int>,
         ITimeRecordNote
     {
-        public int TimeRecordId { get; set; }
+        public int DayRecordId { get; set; }
 
         public int UserId { get; set; }
 

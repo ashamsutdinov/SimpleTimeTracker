@@ -7,7 +7,7 @@ namespace TimeTracker.Dal.Entities
     public class TimeRecordNote :
         Entity<int>
     {
-        public int TimeRecordId { get; set; }
+        public int DayRecordId { get; set; }
 
         public int UserId { get; set; }
 
@@ -25,8 +25,8 @@ namespace TimeTracker.Dal.Entities
         public TimeRecordNote(IDataRecord reader) :
             base(reader)
         {
-            TimeRecordId = Read<int>(reader, "TimeRecordId");
-            UserId = Read<int>(reader, "userId");
+            DayRecordId = Read<int>(reader, "DayRecordId");
+            UserId = Read<int>(reader, "UserId");
             DateTime = Read<DateTime>(reader, "DateTime");
             Text = Read<string>(reader, "Text");
             Deleted = Read<bool>(reader, "Deleted");

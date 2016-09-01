@@ -1,12 +1,14 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.Serialization;
+using TimeTracker.Contract.Data;
 using TimeTracker.Contract.Data.Entities;
 
 namespace TimeTracker.Service.Contract.Data
 {
     [DataContract]
     public class TimeRecordItemList :
-        ItemList<TimeRecordGroup>
+        PagedItemList<TimeRecordGroup>
     {
         public TimeRecordItemList() :
             base(0, 0, 0)
@@ -14,7 +16,7 @@ namespace TimeTracker.Service.Contract.Data
 
         }
 
-        public TimeRecordItemList(List<ITimeRecordItem> items, int pageNumber, int pageSize, int totalItems) : 
+        public TimeRecordItemList(IEnumerable<ITimeRecordItem> items, int pageNumber, int pageSize, int totalItems, IUserDataProvider userDataProvider, ITimeRecordDataProvider timeRecordDataProvider) : 
             base(pageNumber, pageSize, totalItems)
         {
             var groups = new Dictionary<int, TimeRecordGroup>();
@@ -31,6 +33,23 @@ namespace TimeTracker.Service.Contract.Data
                         UserId = item.UserId,
                         Items = new List<TimeRecordGroupItem>()
                     };
+                    var preferredHoursSetting = userDataProvider.GetUserSettingValue(group.UserId, "PreferredWorkingHoursPerDay");
+                    if (!string.IsNullOrEmpty(preferredHoursSetting))
+                    {
+                        var warningLimit = int.Parse(preferredHoursSetting);
+                        if (group.TotalHours > warningLimit)
+                        {
+                            group.Warning = true;
+                        }
+                    }
+                    var notes = timeRecordDataProvider.GetTimeRecordNotes(item.Id);
+                    group.Notes = notes.Select(n => new TimeRecordGroupNoteItem
+                    {
+                        Id = n.Id,
+                        DateTime = n.DateTime,
+                        Text = n.Text,
+                        UserName = n.UserName
+                    }).ToList();
                     groups[item.Id] = group;
                 }
                 group.Items.Add(new TimeRecordGroupItem
@@ -43,6 +62,7 @@ namespace TimeTracker.Service.Contract.Data
                 {
                     group.UserName = item.UserName;
                 }
+                Items = groups.Values.ToList();
             }
         }
     }

@@ -137,15 +137,16 @@
         </div>
         <!--user timesheets container-->
         <div id="userTimeRecordsContainer" data-bind="visible: loaded" style="display: none">
+            <h3>My timesheets</h3>
             <!--filter form-->
             <form class="form-inline">
                 <div class="form-group">
                     <label for="filterFrom">From:</label>
-                    <input id="filterFrom" type="text" class="form-control" data-bind="datepicker: filterFromDate"/>
+                    <input id="filterFrom" type="text" class="form-control" data-bind="datepicker: filterFromDate" />
                 </div>
                 <div class="form-group">
                     <label for="filterTo">To:</label>
-                    <input id="filterTo" type="text" class="form-control" data-bind="datepicker: filterToDate"/>
+                    <input id="filterTo" type="text" class="form-control" data-bind="datepicker: filterToDate" />
                 </div>
                 <div class="form-group">
                     <label for="filterPageSize">Page size:</label>
@@ -155,12 +156,33 @@
             </form>
             <!--time records container-->
             <div class="row">
-                <br/>
+                <br />
                 <p class="center-container" data-bind="visible: timeRecords().length == 0">Time records were not found</p>
-                <div data-bind="foreach: timeRecords">
-
+                <div id="userTimeRecordsContainerContent">
+                    <div class="timesheets" data-bind="foreach: timeRecords">
+                        <div data-bind="css: $data.Warning == true ? 'row timesheet-row rate-overload' : ' row timesheet-row rate-normal'">
+                            <h5>Date: <span data-bind="text: fromMsDate($data.Date).format('Y-m-d')"></span>, Total hours: <span data-bind="text: $data.TotalHours"></span></h5>
+                            <hr />
+                            <div class="col-md-12" data-bind="foreach: $data.Items">
+                                <div class="col-md-3">
+                                    <div class="timesheet-cell">
+                                        <span data-bind="text: $data.Caption"></span>,
+                                        <span data-bind="text: $data.Hours"></span> hr.
+                                        <br />
+                                        <a class="crud-element" href="#">Edit</a> <a class="crud-element" href="#">Delete</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <br/>
+                <span>Page: </span>
+                <span data-bind="foreach: pages">
+                    <a href="#" data-bind="text: $data, click: $parent.changePage, css: $data == $parent.filterPageNumber() ? 'active' : ''"></a>
+                </span>
+                <span>
+                    <a href="#" data-bind="click: exportCurrentPage">Export current page</a>
+                </span>
             </div>
             <!--new record form-->
             <form class="form-inline">
@@ -181,19 +203,20 @@
         </div>
         <!--manage users container-->
         <div id="usersContainer" data-bind="visible: loaded" style="display: none">
-            Tab 2
+            <h3>Manage users</h3>
         </div>
         <!--manage user timesheets container-->
         <div id="manageTimeRecordsContainer" data-bind="visible: loaded" style="display: none">
+            <h3>Manage timesheets</h3>
             <!--filter form-->
             <form class="form-inline">
                 <div class="form-group">
                     <label for="manageFilterFrom">From:</label>
-                    <input id="manageFilterFrom" type="text" class="form-control" data-bind="datepicker: filterFromDate"/>
+                    <input id="manageFilterFrom" type="text" class="form-control" data-bind="datepicker: filterFromDate" />
                 </div>
                 <div class="form-group">
                     <label for="manageFilterTo">To:</label>
-                    <input id="manageFilterTo" type="text" class="form-control" data-bind="datepicker: filterToDate"/>
+                    <input id="manageFilterTo" type="text" class="form-control" data-bind="datepicker: filterToDate" />
                 </div>
                 <div class="form-group">
                     <label for="manageFilterPageSize">Page size:</label>
@@ -203,17 +226,26 @@
             </form>
             <!--time records container-->
             <div class="row">
-                <br/>
+                <br />
                 <p class="center-container" data-bind="visible: timeRecords().length == 0">Time records were not found</p>
                 <div data-bind="foreach: timeRecords">
 
                 </div>
-                <br/>
+                <br />
             </div>
         </div>
         <!--user settings container-->
         <div id="userSettingsContainer" data-bind="visible: loaded">
-            Tab 4
+            <h3>Manage settings</h3>
+            <!-- ko foreach: userSettings -->
+            <div class="row form-inline">
+                <div class="form-group">
+                    <label data-bind="text: $data.Description"></label>
+                    <input type="text" class="form-control" data-bind="value: $data.Value" />
+                </div>
+            </div>
+            <!-- /ko -->
+            <button class="btn btn-default" data-bind="click: submitUserSettings">Update settings</button>
         </div>
     </div>
     <script src="https://code.jquery.com/jquery-3.1.0.min.js" crossorigin="anonymous"></script>
@@ -221,6 +253,7 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.4.0/knockout-min.js" crossorigin="anonymous"></script>
     <script src="./Scripts/bootstrap-datepicker.js"></script>
+    <script src="./Scripts/Date.format.min.js"></script>
     <!--consider script compression-->
     <script src="./Scripts/enums.js"></script>
     <script src="./Scripts/ui.js"></script>
@@ -244,7 +277,7 @@
             //we call hide modal window here to prevent adding any markup references to view models
             $("#loginRegisterModelWindow").modal("hide");
         }), document.getElementById("loginContainer"));
-        ko.applyBindings(new UserTimeRecordsViewModel(), document.getElementById("userTimeRecordsContainer"));
+        ko.applyBindings(new UserTimeRecordsViewModel("userTimeRecordsContainerContent"), document.getElementById("userTimeRecordsContainer"));
         ko.applyBindings(new UsersViewModel(), document.getElementById("usersContainer"));
         ko.applyBindings(new ManageTimeRecordsViewModel(), document.getElementById("manageTimeRecordsContainer"));
         ko.applyBindings(new UserSettingsViewModel(), document.getElementById("userSettingsContainer"));

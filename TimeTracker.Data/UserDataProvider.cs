@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.Remoting.Messaging;
 using AutoMapper;
 using TimeTracker.Contract.Data;
 using TimeTracker.Contract.Data.Entities;
@@ -81,6 +83,35 @@ namespace TimeTracker.Data
                 Roles = new List<DalUserRole> {new DalUserRole {Id = "user"}},
                 Settings = new List<DalUserToSetting>()
             };
+            dalUser = _userDa.SaveUser(dalUser);
+            return Mapper.Map<DalUser, IUser>(dalUser);
+        }
+
+        public string GetUserSettingValue(int userId, string key)
+        {
+            return _userDa.GetUserSettingValue(userId, key);
+        }
+
+        public IList<IUserSetting> GetAllUserSettings()
+        {
+            var dalSettings = _userDa.GetAllUserSettings();
+            return dalSettings.Select(Mapper.Map<DalUserSetting, IUserSetting>).ToList();
+        }
+
+        public IList<IUserToSetting> GetUserSettings(int userId)
+        {
+            var dalSettings = _userDa.GetUserSessings(userId);
+            return dalSettings.Select(Mapper.Map<DalUserToSetting, IUserToSetting>).ToList();
+        }
+
+        public IUserToSetting PrepareUserSetting()
+        {
+            return new DtoUserToSetting();
+        }
+
+        public IUser SaveUser(IUser user)
+        {
+            var dalUser = Mapper.Map<IUser, DalUser>(user);
             dalUser = _userDa.SaveUser(dalUser);
             return Mapper.Map<DalUser, IUser>(dalUser);
         }

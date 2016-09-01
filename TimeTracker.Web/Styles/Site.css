@@ -76,3 +76,39 @@
 .center-container {
     text-align: center;
 }
+
+a.active {
+    color: Black;
+    font-size: 12px;
+}
+
+.timesheet-row {
+    padding: 5px 5px 5px 5px;
+    border-style: solid;
+    border-width: 1px;
+    border-color: gray;
+    border-radius: 3px;
+    color: black;
+    margin-bottom: 2px;
+}
+
+.timesheet-cell {
+    border-style: solid;
+    border-width: 1px;
+    margin: 1px 1px 1px 1px;
+    padding: 2px 2px 2px 2px;
+    border-color: gainsboro;
+}
+
+.rate-normal {
+    background-color: lightgreen;
+}
+
+.rate-overload {
+    background-color: lightpink;
+}
+
+.timesheets {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}

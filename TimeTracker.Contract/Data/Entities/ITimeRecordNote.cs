@@ -5,7 +5,7 @@ namespace TimeTracker.Contract.Data.Entities
     public interface ITimeRecordNote :
         IEntity<int>
     {
-        int TimeRecordId { get; set; }
+        int DayRecordId { get; set; }
 
         int UserId { get; set; }
 

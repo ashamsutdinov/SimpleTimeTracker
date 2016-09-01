@@ -86,7 +86,7 @@
       <Name>TimeTracker.Data</Name>
     </ProjectReference>
     <ProjectReference Include="..\TimeTracker.Service.Base\TimeTracker.Service.Base.csproj">
-      <Project>{5F1C0FF4-7F5C-43F6-956F-45F5DD4F613C}</Project>
+      <Project>{5f1c0ff4-7f5c-43f6-956f-45f5dd4f613c}</Project>
       <Name>TimeTracker.Service.Base</Name>
     </ProjectReference>
     <ProjectReference Include="..\TimeTracker.Service.Contract\TimeTracker.Service.Contract.csproj">

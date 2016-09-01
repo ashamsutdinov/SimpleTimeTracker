@@ -9,7 +9,7 @@ namespace TimeTracker.Service.Contract.Data
     {
         //Equal to DayRecordId
         [DataMember]
-        public int Id { get;set; }
+        public int Id { get; set; }
 
         [DataMember]
         public int UserId { get; set; }
@@ -23,6 +23,14 @@ namespace TimeTracker.Service.Contract.Data
         [DataMember]
         public int TotalHours { get; set; }
 
-        public List<TimeRecordGroupItem> Items { get; set; }  
+        //if greater than PreferredWorkingHoursPerDay
+        [DataMember]
+        public bool Warning { get; set; }
+
+        [DataMember]
+        public List<TimeRecordGroupItem> Items { get; set; }
+
+        [DataMember]
+        public List<TimeRecordGroupNoteItem> Notes { get; set; } 
     }
 }

@@ -23,6 +23,7 @@ var Event = {
     UserCreated: 41,
     UserUpdated: 42,
     UserDeleted: 43,
+    UserSettingUpdated: 44,
 
     Alert: 51,
 

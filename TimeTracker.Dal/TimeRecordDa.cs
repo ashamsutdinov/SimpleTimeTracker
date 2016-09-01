@@ -67,25 +67,34 @@ namespace TimeTracker.Dal
             return ExecuteNonQuery("[dbo].[DeleteTimeRecordNote]", idParameter);
         }
 
-        public List<TimeRecordNoteItem> GetTimeRecordNotes(int timeRecordId)
+        public TimeRecordNote GetTimeRecordNote(int id)
         {
-            var timeRecordIdParameter = CreateParameter("@TimeRecordId", SqlDbType.Int, timeRecordId);
+            var idParameter = CreateParameter("@Id", SqlDbType.Int, id);
+            var result = ExecuteReader("[dbo].[GetTimeRecordNote]",
+                reader => ReadSingle(reader, r => new TimeRecordNote(r)),
+                idParameter);
+            return result;
+        }
+
+        public List<TimeRecordNoteItem> GetTimeRecordNotes(int dayRecordId)
+        {
+            var dayRecordIdParameter = CreateParameter("@DayRecordId", SqlDbType.Int, dayRecordId);
             var result = ExecuteReader("[dbo].[GetTimeRecordNotes]",
                 reader => Read(reader, r => new TimeRecordNoteItem(r)),
-                timeRecordIdParameter);
+                dayRecordIdParameter);
             return result;
         }
 
         public TimeRecordNote SaveTimeRecordNote(TimeRecordNote note)
         {
             var idParameter = CreateParameter("@Id", SqlDbType.Int, note.Id);
-            var timeRecordIdParameter = CreateParameter("@TimeRecordId", SqlDbType.Int, note.TimeRecordId);
+            var dayRecordIdParameter = CreateParameter("@DayRecordId", SqlDbType.Int, note.DayRecordId);
             var userIdParameter = CreateParameter("@UserId", SqlDbType.Int, note.UserId);
             var textParameter = CreateParameter("@Text", SqlDbType.NVarChar, note.Text);
             var result = ExecuteReader("[dbo].[SaveTimeRecordNote]",
                 reader => ReadSingle(reader, r => new TimeRecordNote(r)),
                 idParameter,
-                timeRecordIdParameter,
+                dayRecordIdParameter,
                 userIdParameter,
                 textParameter);
             return result;

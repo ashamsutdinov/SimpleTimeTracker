@@ -46,6 +46,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Data\ItemList.cs" />
+    <Compile Include="Data\PagedItemList.cs" />
     <Compile Include="Data\LoginData.cs" />
     <Compile Include="Data\PasswordData.cs" />
     <Compile Include="Data\RegistrationData.cs" />
@@ -57,8 +58,11 @@
     <Compile Include="Data\TimeRecordData.cs" />
     <Compile Include="Data\TimeRecordGroup.cs" />
     <Compile Include="Data\TimeRecordGroupItem.cs" />
+    <Compile Include="Data\TimeRecordGroupNoteItem.cs" />
     <Compile Include="Data\TimeRecordItemList.cs" />
     <Compile Include="Data\TimeRecordsFilterData.cs" />
+    <Compile Include="Data\UserSettingItem.cs" />
+    <Compile Include="Data\UserSettingItemList.cs" />
     <Compile Include="ITimeTrackerService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

@@ -5,7 +5,7 @@
 )
 AS
 BEGIN
-	SELECT [s].[Id], [s].[Description], [us].[Value]
+	SELECT [us].[Value]
 	FROM [dbo].[UsersToSettings] [us]
 	INNER JOIN [dbo].[UserSettings] [s] ON [us].[SettingId] = [s].[Id]
 	WHERE [us].[UserId] = @UserId AND [us].[SettingId] = @SettingId

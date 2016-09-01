@@ -1,4 +1,4 @@
-﻿window.TimeRecordsViewModel = function (dataId) {
+﻿window.TimeRecordsViewModel = function (dataId, containerId) {
 
     var self = new DataContainerViewModelBase(dataId);
     
@@ -10,6 +10,7 @@
     self.filterPageSizeOptions = ko.observableArray([5, 10, 15, 20, 25]);
 
     self.timeRecords = ko.observableArray([]);
+    self.pages = ko.observableArray([]);
 
     self.filterTimeRecords = function () {
         var from = getDateOnly(self.filterFromDate());
@@ -21,11 +22,30 @@
             PageSize: self.filterPageSize(),
             LoadAllUsers: self.filterLoadAllUsers()
         };
-        window.application.apiCall("LoadTimeRecords", request, {
-            success:function(r) {
-                
+        window.application.apiCall("GetTimeRecords", request, {
+            success: function (r) {
+                self.pages([]);
+                if (r.Items != null) {
+                    self.timeRecords(r.Items);
+                   for (var i = 0; i < r.TotalPages; i++) {
+                       self.pages.push(i+1);
+                   }
+               } else {
+                   self.timeRecords([]);
+               }
             }
         });
+    };
+
+    self.changePage = function (page) {
+        if (page !== self.filterPageNumber()) {
+            self.filterPageNumber(page);
+            self.filterTimeRecords();
+        }
+    };
+
+    self.exportCurrentPage = function () {
+        printElement(containerId);
     };
 
     var eventsTriggerReload = [Event.TimeRecordCreated, Event.TimeRecordDeleted, Event.TimeRecordUpdated];

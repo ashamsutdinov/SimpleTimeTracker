@@ -11,5 +11,16 @@ namespace TimeTracker.Contract.Data
         ITimeRecord SaveTimeRecord(int id, int userId, DateTime date, string caption, int hours);
 
         IList<ITimeRecordItem> GetTimeRecords(int? userId, DateTime? fromDate, DateTime? toDate, int pageNumber, int pageSize, out int total);
+
+        int DeleteTimeRecord(int timeRecordId);
+
+        ITimeRecordNote GetTimeRecordNote(int id);
+
+        IList<ITimeRecordNoteItem> GetTimeRecordNotes(int dayRecordId);
+        ITimeRecordNote PrepareTimeRecordNote(int dayRecordId, int userId, string text);
+
+        ITimeRecordNote SaveTimeRecordNote(ITimeRecordNote note);
+
+        int DeleteTimeRecordNote(int timeRecordNoteId);
     }
 }

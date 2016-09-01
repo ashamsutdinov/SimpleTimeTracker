@@ -1,6 +1,6 @@
-﻿window.UserTimeRecordsViewModel = function () {
+﻿window.UserTimeRecordsViewModel = function (containerId) {
 
-    var self = new TimeRecordsViewModel(DataRequest.UserTimesheets);
+    var self = new TimeRecordsViewModel(DataRequest.UserTimesheets, containerId);
 
     self.newRecordDate = ko.observable(new Date());
     self.newRecordDescription = ko.observable("");

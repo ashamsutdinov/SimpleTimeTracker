@@ -37,7 +37,7 @@ BEGIN
 		(@FromDate IS NULL OR [d].[Date] >= @FromDate) AND
 		(@ToDate IS NULL OR [d].[Date] <= @ToDate) AND 
 		([d].[TotalHours] > 0)
-		ORDER BY [d].[Id] ASC
+		ORDER BY [d].[Date] ASC
 		OFFSET (@PageNumber - 1) * @PageSize ROWS
 		FETCH NEXT @PageSize ROWS ONLY
 
