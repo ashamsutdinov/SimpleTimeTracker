@@ -1,4 +1,6 @@
-﻿#loader {
+﻿@import url(http://fonts.googleapis.com/css?family=Gloria+Hallelujah);
+
+#loader {
     display: block;
     position: absolute;
     left: 50%;
@@ -92,14 +94,6 @@ a.active {
     margin-bottom: 2px;
 }
 
-.timesheet-cell {
-    border-style: solid;
-    border-width: 1px;
-    margin: 1px 1px 1px 1px;
-    padding: 2px 2px 2px 2px;
-    border-color: gainsboro;
-}
-
 .rate-normal {
     background-color: lightgreen;
 }
@@ -111,4 +105,28 @@ a.active {
 .timesheets {
     margin-top: 10px;
     margin-bottom: 10px;
+}
+
+.stickynote { 
+	display: block;
+	padding: 5px 5px 5px 5px;
+    margin-top: 3px;
+	border:0;
+	border-radius:3px;
+	background: -webkit-linear-gradient(#F9EFAF, #F7E98D);
+	background: -moz-linear-gradient(#F9EFAF, #F7E98D);
+	background: -o-linear-gradient(#F9EFAF, #F7E98D);
+	background: -ms-linear-gradient(#F9EFAF, #F7E98D);
+	background: linear-gradient(#F9EFAF, #F7E98D);
+	box-shadow:0 4px 6px rgba(0,0,0,0.1);
+	overflow:hidden;
+	transition:box-shadow 0.5s ease;
+	font-smoothing:subpixel-antialiased;
+	max-width:520px;
+	max-height:250px;
+}
+
+hr {
+    margin-top: 5px;
+    margin-bottom: 5px;
 }

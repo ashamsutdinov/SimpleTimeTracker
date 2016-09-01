@@ -4,7 +4,7 @@
 
     self.newRecordDate = ko.observable(new Date());
     self.newRecordDescription = ko.observable("");
-    self.newRecordHours = ko.observable(0);
+    self.newRecordHours = ko.observable(1);
 
     self.submitTimeRecord = function () {
 
@@ -49,6 +49,10 @@
                     Text: "Time record successfully created"
                 });
                 window.messageBus.fire(Event.TimeRecordCreated);
+            },
+            done: function() {
+                self.newRecordDescription("");
+                self.newRecordHours(1);
             }
         });
     };

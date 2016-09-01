@@ -137,16 +137,17 @@
         </div>
         <!--user timesheets container-->
         <div id="userTimeRecordsContainer" data-bind="visible: loaded" style="display: none">
-            <h3>My timesheets</h3>
+           
             <!--filter form-->
             <form class="form-inline">
+                <h4 for="filterFrom">My timesheets</h4>
                 <div class="form-group">
                     <label for="filterFrom">From: </label>
-                    <input id="filterFrom" type="text" class="form-control" data-bind="datepicker: filterFromDate" />
+                    <input id="filterFrom" type="text" class="form-control" data-bind="datepicker: filterFromDate"/>
                 </div>
                 <div class="form-group">
                     <label for="filterTo">To: </label>
-                    <input id="filterTo" type="text" class="form-control" data-bind="datepicker: filterToDate" />
+                    <input id="filterTo" type="text" class="form-control" data-bind="datepicker: filterToDate"/>
                 </div>
                 <div class="form-group">
                     <label for="filterPageSize">Page size: </label>
@@ -157,15 +158,15 @@
             <!--time records container-->
             <div class="row">
                 <br />
-                <p class="center-container" data-bind="visible: timeRecords().length == 0">Time records were not found</p>
+                <div class="row center-container" data-bind="visible: timeRecords().length == 0">Time records were not found</div>
                 <div id="userTimeRecordsContainerContent">
                     <div class="timesheets" data-bind="foreach: timeRecords">
                         <div data-bind="css: $data.Warning == true ? 'row timesheet-row rate-overload' : ' row timesheet-row rate-normal'">
                             <h5>Date: <span data-bind="text: fromMsDate($data.Date).format('Y-m-d')"></span>, Total hours: <span data-bind="text: $data.TotalHours"></span></h5>
-                            <hr />
+                            <hr/>
                             <div class="col-md-12" data-bind="foreach: $data.Items">
                                 <div class="col-md-3">
-                                    <div class="timesheet-cell">
+                                    <div class="stickynote">
                                         <span data-bind="text: $data.Caption"></span>,
                                         <span data-bind="text: $data.Hours"></span> hr.
                                         <br/>
@@ -175,27 +176,23 @@
                             </div>
                             <div class="row"></div>
                             <hr/>
-                            <h5>Notes:</h5>
-                            <form class="form-inline">
-                                <div class="form-group">
-                                    <label>Add note: </label>
-                                    <input type="text" class="form-control" />
-                                </div>
-                                <button class="btn btn-default" data-bind="">Add note</button>
-                            </form>
+                            <h5>Notes <span class="crud-element">(<a href="#" data-bind="">Add note</a>)</span>:</h5>
                         </div>
                     </div>
                 </div>
-                <span>Page: </span>
-                <span data-bind="foreach: pages">
-                    <a href="#" data-bind="text: $data, click: $parent.changePage, css: $data == $parent.filterPageNumber() ? 'active' : ''"></a>
-                </span>
-                <span>
-                    <a href="#" data-bind="click: exportCurrentPage">Export current page</a>
-                </span>
+                <div class="col-md-12" data-bind="visible: timeRecords().length > 0">
+                    <span>Page: </span>
+                    <span data-bind="foreach: pages">
+                        <a href="#" data-bind="text: $data, click: $parent.changePage, css: $data == $parent.filterPageNumber() ? 'active' : ''"></a>
+                    </span>
+                    <span>
+                        <a href="#" data-bind="click: exportCurrentPage">Export current page</a>
+                    </span>
+                </div>
             </div>
             <!--new record form-->
             <form class="form-inline">
+                <h4 for="filterFrom">Submit new timesheet:</h4>
                 <div class="form-group">
                     <label for="newRecordDate">Date: </label>
                     <input id="newRecordDate" type="text" class="form-control" required="" data-bind="datepicker: newRecordDate">
