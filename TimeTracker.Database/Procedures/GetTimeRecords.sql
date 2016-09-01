@@ -65,5 +65,7 @@ BEGIN
 		(@FromDate IS NULL OR [Date] >= @FromDate) AND
 		(@ToDate IS NULL OR [Date] <= @ToDate) AND 
 		([TotalHours] > 0)
+
+	DROP TABLE #result
 END
 GO
