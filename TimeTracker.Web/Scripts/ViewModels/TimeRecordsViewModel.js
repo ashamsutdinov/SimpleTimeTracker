@@ -48,6 +48,14 @@
         printElement(containerId);
     };
 
+    self.deleteTimeRecord = function(e) {
+
+    };
+
+    self.editTimeRecord = function(e) {
+        alert("not implemented");
+    };
+
     var eventsTriggerReload = [Event.TimeRecordCreated, Event.TimeRecordDeleted, Event.TimeRecordUpdated];
 
     window.messageBus.subscribe(Event.DataRequested, function(d) {
