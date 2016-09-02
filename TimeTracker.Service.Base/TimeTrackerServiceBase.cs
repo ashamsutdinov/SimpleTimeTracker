@@ -6,11 +6,11 @@ using TimeTracker.Contract.Data;
 using TimeTracker.Contract.Data.Entities;
 using TimeTracker.Contract.Log;
 using TimeTracker.Service.Base.Utils;
-using TimeTracker.Service.Base.Validation;
 using TimeTracker.Service.Base.Validation.Authentication;
 using TimeTracker.Service.Base.Validation.Base;
 using TimeTracker.Service.Base.Validation.Registration;
 using TimeTracker.Service.Base.Validation.Session;
+using TimeTracker.Service.Base.Validation.TimeRecord;
 using TimeTracker.Service.Contract;
 using TimeTracker.Service.Contract.Data;
 
@@ -27,6 +27,20 @@ namespace TimeTracker.Service.Base
 
         protected readonly ILogger Log;
 
+        private readonly ValidationRule[] _ticketValudationRules;
+
+        private readonly ValidationRule[] _loginValidationRules;
+
+        private readonly ValidationRule[] _registrationValidationRules;
+
+        private readonly ValidationRule[] _saveTimeRecordValidationRules;
+
+        private readonly ValidationRule[] _deleteTimeRecordValidationRules;
+
+        private readonly ValidationRule[] _saveTimeRecordNoteValidationRules;
+
+        private readonly ValidationRule[] _getUserTimeRecordsValidationRules;
+
         protected TimeTrackerServiceBase()
         {
             var serviceResolver = ServiceResolverFactory.Get();
@@ -34,6 +48,58 @@ namespace TimeTracker.Service.Base
             UserDataProvider = serviceResolver.Resolve<IUserDataProvider>();
             TimeRecordDataProvider = serviceResolver.Resolve<ITimeRecordDataProvider>();
             Log.Debug(this, "TimeTrackerServiceBase created");
+
+            _ticketValudationRules = new ValidationRule[]
+            {
+                new RequestTicketSyntaxValidationRule(_cryptographyHelper),
+                new UserExistsValidationRule(),
+                new SessionExistsValidationRule(), 
+                new TicketConsistencyValidationRule(),
+                new SessionOwnershipValidationRule(),
+                new SessionIsNotExpiredValidationRule(UserDataProvider), 
+            };
+
+            _loginValidationRules = new ValidationRule[]
+            {
+                new UserAlreadyLoggedInPolicy(),
+                new LoginPasswordValidationRule(_cryptographyHelper),
+                new UserByLoginExistsPolicy(UserDataProvider),
+                new MatchPasswordValidationRule(_cryptographyHelper, UserDataProvider),
+                new UserIsActiveValudationRule(UserDataProvider)
+            };
+
+            _registrationValidationRules = new ValidationRule[]
+            {
+                new UserAlreadyLoggedInPolicy(),
+                new RegistrationPasswordSyntaxValidationRule(_cryptographyHelper),
+                new LoginCanBeUserValidationRule(UserDataProvider)
+            };
+
+            _saveTimeRecordValidationRules = new ValidationRule[]
+            {
+                new TimeRecordNonZeroDurationValidationRule(),
+                new TimeRecordDurationValidationRule(),
+                new TimeRecordExistsValidationRule(TimeRecordDataProvider),
+                new TimeRecordEditRightsValidationRule(TimeRecordDataProvider, "administrator"),
+                new TimeRecordTotalDuractionValidationRule(TimeRecordDataProvider)
+            };
+
+            _deleteTimeRecordValidationRules = new ValidationRule[]
+            {
+                new TimeRecordExistsValidationRule(TimeRecordDataProvider),
+                new TimeRecordEditRightsValidationRule(TimeRecordDataProvider, "administrator")
+            };
+
+            _saveTimeRecordNoteValidationRules = new ValidationRule[]
+            {
+                new TimeRecordNoteExistsValidationRule(TimeRecordDataProvider),
+                new TimeRecordNoteEditRightsValidationRule(TimeRecordDataProvider, "administrator")
+            };
+
+            _getUserTimeRecordsValidationRules = new ValidationRule[]
+            {
+                new TimeRecordListAccessRightsValidationRule("administrator") 
+            };
         }
 
         public Response<long> Heartbit(Request<long> request)
@@ -73,7 +139,7 @@ namespace TimeTracker.Service.Base
         {
             return SafeInvoke(request, (userNull, sessionNull) =>
             {
-                //at this point, login and password already passed validation by security policies
+                //at this point, login and password already verified by validation rules
                 var user = UserDataProvider.GetUser(request.Data.Login);
                 var session = UserDataProvider.CreateNewSession(user.Id, request.ClientId);
                 var ticket = _cryptographyHelper.GetSessionTicket(session.Id, user.Id, request.ClientId);
@@ -83,12 +149,7 @@ namespace TimeTracker.Service.Base
                 {
                     Ticket = ticket
                 };
-            },
-            new UserAlreadyLoggedInPolicy(),
-            new LoginPasswordValidationRule(_cryptographyHelper),
-            new UserByLoginExistsPolicy(UserDataProvider),
-            new MatchPasswordValidationRule(_cryptographyHelper, UserDataProvider),
-            new UserIsActiveValudationRule(UserDataProvider));
+            }, _loginValidationRules);
         }
 
         public Response<string> Logout(Request request)
@@ -111,10 +172,7 @@ namespace TimeTracker.Service.Base
                 var hash = _cryptographyHelper.HashPassword(passwordData.Password, salt);
                 var user = UserDataProvider.RegisterUser(login, request.Data.Name, hash, salt);
                 return user.Id;
-            },
-            new UserAlreadyLoggedInPolicy(),
-            new RegistrationPasswordSyntaxValidationRule(_cryptographyHelper),
-            new LoginCanBeUserValidationRule(UserDataProvider));
+            }, _registrationValidationRules);
         }
 
         public Response<int> SaveTimeRecord(Request<TimeRecordData> request)
@@ -122,124 +180,37 @@ namespace TimeTracker.Service.Base
             return SafeInvoke(request, (user, session) =>
             {
                 var data = request.Data;
-                if (data.Hours > 24)
-                {
-                    throw new InvalidOperationException("The number of working hours per day may not exceed 24 hours");
-                }
-                if (data.Hours <= 0)
-                {
-                    throw new InvalidOperationException("Duration required");
-                }
-                var ownerId = user.Id;
-                var existingTimeRecordDuration = 0;
-                var existingDayRecordId = 0;
-                if (request.Data.Id > 0)
-                {
-                    var existingTimeRecord = TimeRecordDataProvider.GetTimeRecord(request.Data.Id);
-                    if (existingTimeRecord != null)
-                    {
-                        var linkedDayRecord = TimeRecordDataProvider.GetDayRecord(existingTimeRecord.DayRecordId);
-                        ownerId = linkedDayRecord.UserId;
-                        existingTimeRecordDuration = existingTimeRecord.Hours;
-                        existingDayRecordId = existingTimeRecord.DayRecordId;
-                    }
-                    else
-                    {
-                        throw new InvalidOperationException("Time record was not found");
-                    }
-                }
-                if (ownerId != user.Id && user.Roles.All(r => r.Id != "administrator"))
-                {
-                    throw new UnauthorizedAccessException("Only administrator can edit time records");
-                }
-                var existingDayRecord = TimeRecordDataProvider.GetUserDayRecordByDate(ownerId, data.Date);
-
-                if (existingDayRecord != null)
-                {
-                    int testTotalHours;
-                    if (existingDayRecord.Id == existingDayRecordId)
-                    {
-                        //we edit the same day record
-                        testTotalHours = existingDayRecord.TotalHours - existingTimeRecordDuration + request.Data.Hours;
-                    }
-                    else
-                    {
-                        //we edit another day record
-                        testTotalHours = existingDayRecord.TotalHours + request.Data.Hours;
-                    }
-                    if (testTotalHours > 24)
-                    {
-                        throw new InvalidOperationException("The number of working hours per day may not exceed 24 hours");
-                    }
-                }
                 var saved = TimeRecordDataProvider.SaveTimeRecord(data.Id, user.Id, data.Date, data.Caption, data.Hours);
                 return saved.Id;
-            });
+            }, _saveTimeRecordValidationRules);
         }
 
-        public Response<int> DeleteTimeRecord(Request<int> request)
+        public Response<int> DeleteTimeRecord(Request<TimeRecordData> request)
         {
             return SafeInvoke(request, (user, session) =>
             {
-                var existingTimeRecord = TimeRecordDataProvider.GetTimeRecord(request.Data);
-                if (existingTimeRecord == null)
-                {
-                    throw new InvalidOperationException("Time record was not found");
-                }
-                var dayRecord = TimeRecordDataProvider.GetDayRecord(existingTimeRecord.DayRecordId);
-                if (user.Id != dayRecord.UserId && user.Roles.All(r => r.Id != "administrator"))
-                {
-                    throw new UnauthorizedAccessException("Only administrator can delete user's time records");
-                }
-                TimeRecordDataProvider.DeleteTimeRecordNote(request.Data);
-                return request.Data;
-            });
+                TimeRecordDataProvider.DeleteTimeRecordNote(request.Data.Id);
+                return request.Data.Id;
+            }, _deleteTimeRecordValidationRules);
         }
 
         public Response<int> SaveTimeRecordNote(Request<TimeRecordNoteData> request)
         {
             return SafeInvoke(request, (user, session) =>
             {
-                var dayRecord = TimeRecordDataProvider.GetDayRecord(request.Data.DayRecordId);
-                if (dayRecord.UserId != user.Id && user.Roles.All(r => r.Id != "administrator"))
-                {
-                    throw new UnauthorizedAccessException("Only administrator can leave notes to time records");
-                }
-                ITimeRecordNote note;
-                if (request.Data.Id > 0)
-                {
-                    note = TimeRecordDataProvider.GetTimeRecordNote(request.Data.Id);
-                    if (note == null)
-                    {
-                        throw new InvalidOperationException("The record note was not found");
-                    }
-                    note.Text = request.Data.Text;
-                }
-                else
-                {
-                    note = TimeRecordDataProvider.PrepareTimeRecordNote(request.Data.DayRecordId, user.Id, request.Data.Text);
-                }
+                var note = TimeRecordDataProvider.PrepareTimeRecordNote(request.Data.DayRecordId, user.Id, request.Data.Text);
                 TimeRecordDataProvider.SaveTimeRecordNote(note);
                 return note.Id;
-            });
+            }, _saveTimeRecordNoteValidationRules);
         }
 
-        public Response<int> DeleteTimeRecordNote(Request<int> request)
+        public Response<int> DeleteTimeRecordNote(Request<TimeRecordNoteData> request)
         {
             return SafeInvoke(request, (user, session) =>
             {
-                var note = TimeRecordDataProvider.GetTimeRecordNote(request.Data);
-                if (note == null)
-                {
-                    throw new InvalidOperationException("Time record note was not found");
-                }
-                if (note.UserId != user.Id && user.Roles.All(r => r.Id != "administrator"))
-                {
-                    throw new InvalidOperationException("Only administrator can delete user's time record notes");
-                }
-                TimeRecordDataProvider.DeleteTimeRecordNote(request.Data);
-                return request.Data;
-            });
+                TimeRecordDataProvider.DeleteTimeRecordNote(request.Data.Id);
+                return request.Data.Id;
+            }, _saveTimeRecordNoteValidationRules);
         }
 
         public Response<TimeRecordItemList> GetTimeRecords(Request<TimeRecordsFilterData> request)
@@ -247,21 +218,11 @@ namespace TimeTracker.Service.Base
             return SafeInvoke(request, (user, session) =>
             {
                 var data = request.Data;
-                int? userId = null;
-                if (data.LoadAllUsers && user.Roles.All(r => r.Id != "administrator"))
-                {
-                    throw new UnauthorizedAccessException("Only administrator can request all user's time records");
-                }
-                if (!data.LoadAllUsers)
-                {
-                    userId = user.Id;
-                }
-
                 int total;
-                var timeRecords = TimeRecordDataProvider.GetTimeRecords(userId, data.From, data.To, data.PageNumber, data.PageSize, out total);
+                var timeRecords = TimeRecordDataProvider.GetTimeRecords(data.LoadAllUsers ? (int?) null : user.Id, data.From, data.To, data.PageNumber, data.PageSize, out total);
                 var result = new TimeRecordItemList(timeRecords.ToList(), data.PageNumber, data.PageSize, total, UserDataProvider, TimeRecordDataProvider);
                 return result;
-            });
+            }, _getUserTimeRecordsValidationRules);
         }
 
         public Response<UserSettingItemList> GetUserSettings(Request<int> request)
@@ -331,13 +292,13 @@ namespace TimeTracker.Service.Base
             });
         }
 
-        private Response<TData> SafeInvoke<TData>(Request request, Func<IUser, IUserSession, TData> action, params ValidationRule[] policies)
+        private Response<TData> SafeInvoke<TData>(Request request, Func<IUser, IUserSession, TData> action, ValidationRule[] requestValidationRules = null)
         {
-            return SafeInvoke(request, action, false, policies);
+            return SafeInvoke(request, action, false, requestValidationRules);
         }
 
 
-        private Response<TData> SafeInvoke<TData>(Request request, Func<IUser, IUserSession, TData> action, bool skipTicketValidation, params ValidationRule[] requestPolicies)
+        private Response<TData> SafeInvoke<TData>(Request request, Func<IUser, IUserSession, TData> action, bool skipTicketValidation, ValidationRule[] requestValidationRules = null)
         {
             try
             {
@@ -350,19 +311,9 @@ namespace TimeTracker.Service.Base
                     user = UserDataProvider.GetUser(sessionData.UserId);
                     session = UserDataProvider.GetUserSession(sessionData.Id);
 
-                    var ticketPolicies = new ValidationRule[]
+                    foreach (var ticketValidationRule in _ticketValudationRules)
                     {
-                        new RequestTicketSyntaxValidationRule(_cryptographyHelper),
-                        new UserExistsPolicy(),
-                        new SessionExistsValidationRule(), 
-                        new TicketConsistencyValidationRule(request.Ticket),
-                        new SessionOwnershipValidationRule(),
-                        new SessionIsNotExpiredValidationRule(UserDataProvider), 
-                    };
-
-                    foreach (var ticketPolicy in ticketPolicies)
-                    {
-                        ticketPolicy.Evaluate(user, session, request);
+                        ticketValidationRule.Evaluate(user, session, request);
                     }
 
                     //advance session
@@ -370,9 +321,12 @@ namespace TimeTracker.Service.Base
                     UserDataProvider.SaveSession(session);
                 }
 
-                foreach (var requestPolicy in requestPolicies)
+                if (requestValidationRules != null)
                 {
-                    requestPolicy.Evaluate(user, session, request);
+                    foreach (var requestValidationRule in requestValidationRules)
+                    {
+                        requestValidationRule.Evaluate(user, session, request);
+                    }
                 }
 
                 var data = action(user, session);

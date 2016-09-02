@@ -5,7 +5,7 @@ using TimeTracker.Service.Contract.Data;
 
 namespace TimeTracker.Service.Base.Validation.Session
 {
-    internal class UserExistsPolicy : 
+    internal class UserExistsValidationRule : 
         ValidationRule
     {
         public override void Evaluate(IUser user, IUserSession userSession, Request request)

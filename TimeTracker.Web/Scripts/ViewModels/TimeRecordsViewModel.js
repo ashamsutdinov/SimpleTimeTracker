@@ -72,8 +72,11 @@
     };
 
     self.deleteTimeRecord = function (e) {
-        confirmDelete(function() {
-            window.application.apiCall("DeleteTimeRecord", e.Id, {
+        confirmDelete(function () {
+            var request = {
+                Id: e.Id
+            };
+            window.application.apiCall("DeleteTimeRecord", request, {
                 success: function() {
                     window.messageBus.fire(Event.TimeRecordDeleted);
                 }
@@ -149,8 +152,11 @@
     };
 
     self.deleteTimeRecordNote = function(e) {
-        confirmDelete(function() {
-            window.application.apiCall("DeleteTimeRecordNote", e.Id, {
+        confirmDelete(function () {
+            var request = {
+                Id: e.Id
+            };
+            window.application.apiCall("DeleteTimeRecordNote", request, {
                 success: function() {
                     window.messageBus.fire(Event.TimeRecordNoteDeleted);
                 }

@@ -53,16 +53,24 @@
     <Compile Include="Validation\Session\SessionExistsValidationRule.cs" />
     <Compile Include="Validation\Session\SessionIsNotExpiredValidationRule.cs" />
     <Compile Include="Validation\Session\SessionOwnershipValidationRule.cs" />
+    <Compile Include="Validation\TimeRecord\TimeRecordEditRightsValidationRule.cs" />
+    <Compile Include="Validation\TimeRecord\TimeRecordExistsValidationRule.cs" />
+    <Compile Include="Validation\TimeRecord\TimeRecordListAccessRightsValidationRule.cs" />
+    <Compile Include="Validation\TimeRecord\TimeRecordNonZeroDurationValidationRule.cs" />
+    <Compile Include="Validation\TimeRecord\TimeRecordDurationValidationRule.cs" />
     <Compile Include="Validation\Session\TicketConsistencyValidationRule.cs" />
     <Compile Include="Validation\Base\RequestValidationRule.cs" />
     <Compile Include="Validation\Authentication\UserIsActiveValudationRule.cs" />
     <Compile Include="Validation\Authentication\UserAlreadyLoggedInPolicy.cs" />
     <Compile Include="Validation\Registration\LoginCanBeUserValidationRule.cs" />
     <Compile Include="Validation\Authentication\UserByLoginExistsPolicy.cs" />
-    <Compile Include="Validation\Session\UserExistsPolicy.cs" />
+    <Compile Include="Validation\Session\UserExistsValidationRule.cs" />
     <Compile Include="TimeTrackerServiceBase.cs" />
     <Compile Include="Utils\CryptographyHelper.cs" />
     <Compile Include="Utils\ServiceResolverFactory.cs" />
+    <Compile Include="Validation\TimeRecord\TimeRecordNoteEditRightsValidationRule.cs" />
+    <Compile Include="Validation\TimeRecord\TimeRecordNoteExistsValidationRule.cs" />
+    <Compile Include="Validation\TimeRecord\TimeRecordTotalDuractionValidationRule.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\TimeTracker.Contract\TimeTracker.Contract.csproj">

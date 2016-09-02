@@ -37,7 +37,7 @@ namespace TimeTracker.Service.Contract
 
         [OperationContract]
         [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
-        Response<int> DeleteTimeRecord(Request<int> request);
+        Response<int> DeleteTimeRecord(Request<TimeRecordData> request);
 
         [OperationContract]
         [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
@@ -45,7 +45,7 @@ namespace TimeTracker.Service.Contract
 
         [OperationContract]
         [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
-        Response<int> DeleteTimeRecordNote(Request<int> request);
+        Response<int> DeleteTimeRecordNote(Request<TimeRecordNoteData> request);
 
         [OperationContract]
         [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]

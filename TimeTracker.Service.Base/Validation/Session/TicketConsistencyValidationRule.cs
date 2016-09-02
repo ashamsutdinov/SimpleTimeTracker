@@ -8,18 +8,10 @@ namespace TimeTracker.Service.Base.Validation.Session
     internal class TicketConsistencyValidationRule :
         ValidationRule
     {
-        private readonly string _requestTicket ;
-
-        public TicketConsistencyValidationRule(string requestTicket)
-        {
-            _requestTicket = requestTicket;
-            
-        }
-      
         public override void Evaluate(IUser user, IUserSession userSession, Request request)
         {
             var sessionTicket = userSession != null ? userSession.Ticket : null;
-            if (sessionTicket != _requestTicket)
+            if (sessionTicket != request.Ticket)
             {
                 throw new InvalidOperationException("Invalid session ticket");
             }
