@@ -1,16 +1,17 @@
 ﻿using System;
 using TimeTracker.Contract.Data;
 using TimeTracker.Contract.Data.Entities;
+using TimeTracker.Service.Base.Validation.Base;
 using TimeTracker.Service.Contract.Data;
 
-namespace TimeTracker.Service.Base.Security
+namespace TimeTracker.Service.Base.Validation.Session
 {
-    internal class SessionExpicationPolicy :
-        SecurityPolicy
+    internal class SessionIsNotExpiredValidationRule :
+        ValidationRule
     {
         private readonly IUserDataProvider _userDataProvider;
 
-        public SessionExpicationPolicy(IUserDataProvider userDataProvider)
+        public SessionIsNotExpiredValidationRule(IUserDataProvider userDataProvider)
         {
             _userDataProvider = userDataProvider;
         }

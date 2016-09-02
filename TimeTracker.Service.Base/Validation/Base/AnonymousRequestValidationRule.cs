@@ -1,10 +1,10 @@
 using TimeTracker.Contract.Data.Entities;
 using TimeTracker.Service.Contract.Data;
 
-namespace TimeTracker.Service.Base.Security
+namespace TimeTracker.Service.Base.Validation.Base
 {
-    internal abstract class AnonymousRequestSecurityPolicy :
-        SecurityPolicy
+    internal abstract class AnonymousRequestValidationRule :
+        ValidationRule
     {
         public override void Evaluate(IUser user, IUserSession userSession, Request request)
         {
@@ -14,8 +14,8 @@ namespace TimeTracker.Service.Base.Security
         protected abstract void EvaluateAnonymous(Request request);
     }
 
-    internal abstract class AnonymousRequestSecurityPolicy<TData> :
-        SpecificRequestSecurityPolicy<TData>
+    internal abstract class AnonymousRequestValidationRule<TData> :
+        RequestValidationRule<TData>
     {
         protected override void EvaluateInternal(IUser user, IUserSession userSession, Request<TData> request)
         {

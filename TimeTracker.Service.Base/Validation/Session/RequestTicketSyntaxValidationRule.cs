@@ -1,15 +1,16 @@
 ﻿using System;
 using TimeTracker.Service.Base.Utils;
+using TimeTracker.Service.Base.Validation.Base;
 using TimeTracker.Service.Contract.Data;
 
-namespace TimeTracker.Service.Base.Security
+namespace TimeTracker.Service.Base.Validation.Session
 {
-    internal class RequestTicketSyntaxPolicy :
-        AnonymousRequestSecurityPolicy
+    internal class RequestTicketSyntaxValidationRule :
+        AnonymousRequestValidationRule
     {
         private readonly CryptographyHelper _cryptographyHelper;
 
-        public RequestTicketSyntaxPolicy(CryptographyHelper helper)
+        public RequestTicketSyntaxValidationRule(CryptographyHelper helper)
         {
             _cryptographyHelper = helper;
         }

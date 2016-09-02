@@ -2,10 +2,10 @@ using System;
 using TimeTracker.Contract.Data.Entities;
 using TimeTracker.Service.Contract.Data;
 
-namespace TimeTracker.Service.Base.Security
+namespace TimeTracker.Service.Base.Validation.Base
 {
-    internal abstract class SpecificRequestSecurityPolicy<TData> :
-        SecurityPolicy
+    internal abstract class RequestValidationRule<TData> :
+        ValidationRule
     {
         public override void Evaluate(IUser user, IUserSession userSession, Request request)
         {

@@ -1,17 +1,16 @@
-﻿using System;
-using System.Security.Authentication;
+﻿using System.Security.Authentication;
 using TimeTracker.Contract.Data;
-using TimeTracker.Contract.Data.Entities;
+using TimeTracker.Service.Base.Validation.Base;
 using TimeTracker.Service.Contract.Data;
 
-namespace TimeTracker.Service.Base.Security
+namespace TimeTracker.Service.Base.Validation.Authentication
 {
-    internal class UserByLoginExistsPolicy :
-        AnonymousRequestSecurityPolicy<LoginData>
+    internal class UserIsActiveValudationRule :
+        AnonymousRequestValidationRule<LoginData>
     {
         private readonly IUserDataProvider _userDataProvider;
 
-        public UserByLoginExistsPolicy(IUserDataProvider userDataProvider)
+        public UserIsActiveValudationRule(IUserDataProvider userDataProvider)
         {
             _userDataProvider = userDataProvider;
         }
@@ -20,9 +19,9 @@ namespace TimeTracker.Service.Base.Security
         {
             var login = request.Data.Login;
             var user = _userDataProvider.GetUser(login);
-            if (user == null)
+            if (user.StateId != "active")
             {
-                throw new AuthenticationException("Invalid login or password");
+                throw new AuthenticationException("User was disabled or deleted");
             }
         }
     }

@@ -5,8 +5,12 @@ using System.Security.Authentication;
 using TimeTracker.Contract.Data;
 using TimeTracker.Contract.Data.Entities;
 using TimeTracker.Contract.Log;
-using TimeTracker.Service.Base.Security;
 using TimeTracker.Service.Base.Utils;
+using TimeTracker.Service.Base.Validation;
+using TimeTracker.Service.Base.Validation.Authentication;
+using TimeTracker.Service.Base.Validation.Base;
+using TimeTracker.Service.Base.Validation.Registration;
+using TimeTracker.Service.Base.Validation.Session;
 using TimeTracker.Service.Contract;
 using TimeTracker.Service.Contract.Data;
 
@@ -81,10 +85,10 @@ namespace TimeTracker.Service.Base
                 };
             },
             new UserAlreadyLoggedInPolicy(),
-            new PasswordSyntaxOnLoginPolicy(_cryptographyHelper),
+            new LoginPasswordValidationRule(_cryptographyHelper),
             new UserByLoginExistsPolicy(UserDataProvider),
-            new PasswordHashMatchPolicy(_cryptographyHelper, UserDataProvider),
-            new UserActiveStatePolicy(UserDataProvider));
+            new MatchPasswordValidationRule(_cryptographyHelper, UserDataProvider),
+            new UserIsActiveValudationRule(UserDataProvider));
         }
 
         public Response<string> Logout(Request request)
@@ -109,8 +113,8 @@ namespace TimeTracker.Service.Base
                 return user.Id;
             },
             new UserAlreadyLoggedInPolicy(),
-            new PasswordSyntaxOnRegistrationPolicy(_cryptographyHelper),
-            new UserByLoginDoesExistsPolicy(UserDataProvider));
+            new RegistrationPasswordSyntaxValidationRule(_cryptographyHelper),
+            new LoginCanBeUserValidationRule(UserDataProvider));
         }
 
         public Response<int> SaveTimeRecord(Request<TimeRecordData> request)
@@ -327,13 +331,13 @@ namespace TimeTracker.Service.Base
             });
         }
 
-        private Response<TData> SafeInvoke<TData>(Request request, Func<IUser, IUserSession, TData> action, params SecurityPolicy[] policies)
+        private Response<TData> SafeInvoke<TData>(Request request, Func<IUser, IUserSession, TData> action, params ValidationRule[] policies)
         {
             return SafeInvoke(request, action, false, policies);
         }
 
 
-        private Response<TData> SafeInvoke<TData>(Request request, Func<IUser, IUserSession, TData> action, bool skipTicketValidation, params SecurityPolicy[] requestPolicies)
+        private Response<TData> SafeInvoke<TData>(Request request, Func<IUser, IUserSession, TData> action, bool skipTicketValidation, params ValidationRule[] requestPolicies)
         {
             try
             {
@@ -346,14 +350,14 @@ namespace TimeTracker.Service.Base
                     user = UserDataProvider.GetUser(sessionData.UserId);
                     session = UserDataProvider.GetUserSession(sessionData.Id);
 
-                    var ticketPolicies = new SecurityPolicy[]
+                    var ticketPolicies = new ValidationRule[]
                     {
-                        new RequestTicketSyntaxPolicy(_cryptographyHelper),
+                        new RequestTicketSyntaxValidationRule(_cryptographyHelper),
                         new UserExistsPolicy(),
-                        new SessionExistsPolicy(), 
-                        new SessionTicketConsistencyPolicy(request.Ticket),
-                        new SessionOwnershipPolicy(),
-                        new SessionExpicationPolicy(UserDataProvider), 
+                        new SessionExistsValidationRule(), 
+                        new TicketConsistencyValidationRule(request.Ticket),
+                        new SessionOwnershipValidationRule(),
+                        new SessionIsNotExpiredValidationRule(UserDataProvider), 
                     };
 
                     foreach (var ticketPolicy in ticketPolicies)

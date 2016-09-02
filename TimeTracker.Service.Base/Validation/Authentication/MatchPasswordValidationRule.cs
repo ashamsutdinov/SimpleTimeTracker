@@ -1,18 +1,19 @@
 using System.Security.Authentication;
 using TimeTracker.Contract.Data;
 using TimeTracker.Service.Base.Utils;
+using TimeTracker.Service.Base.Validation.Base;
 using TimeTracker.Service.Contract.Data;
 
-namespace TimeTracker.Service.Base.Security
+namespace TimeTracker.Service.Base.Validation.Authentication
 {
-    internal class PasswordHashMatchPolicy :
-        AnonymousRequestSecurityPolicy<LoginData>
+    internal class MatchPasswordValidationRule :
+        AnonymousRequestValidationRule<LoginData>
     {
         private readonly CryptographyHelper _cryptographyHelper;
 
         private readonly IUserDataProvider _userDataProvider;
 
-        public PasswordHashMatchPolicy(CryptographyHelper cryptographyHelper, IUserDataProvider userDataProvider)
+        public MatchPasswordValidationRule(CryptographyHelper cryptographyHelper, IUserDataProvider userDataProvider)
         {
             _cryptographyHelper = cryptographyHelper;
             _userDataProvider = userDataProvider;
