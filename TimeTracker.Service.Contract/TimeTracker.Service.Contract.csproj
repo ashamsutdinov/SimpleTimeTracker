@@ -45,33 +45,33 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Data\ItemList.cs" />
-    <Compile Include="Data\KeyValueItem.cs" />
-    <Compile Include="Data\PagedItemList.cs" />
-    <Compile Include="Data\LoginData.cs" />
-    <Compile Include="Data\PageRequest.cs" />
-    <Compile Include="Data\PasswordData.cs" />
-    <Compile Include="Data\RegistrationData.cs" />
-    <Compile Include="Data\Request.cs" />
-    <Compile Include="Data\Response.cs" />
-    <Compile Include="Data\RoleItem.cs" />
-    <Compile Include="Data\SessionData.cs" />
-    <Compile Include="Data\SessionState.cs" />
-    <Compile Include="Data\TicketData.cs" />
-    <Compile Include="Data\TimeRecordData.cs" />
-    <Compile Include="Data\TimeRecordGroup.cs" />
-    <Compile Include="Data\TimeRecordGroupItem.cs" />
-    <Compile Include="Data\TimeRecordGroupNoteItem.cs" />
-    <Compile Include="Data\TimeRecordItemList.cs" />
-    <Compile Include="Data\TimeRecordNoteData.cs" />
-    <Compile Include="Data\TimeRecordsFilterData.cs" />
-    <Compile Include="Data\UserList.cs" />
-    <Compile Include="Data\UserListItem.cs" />
-    <Compile Include="Data\UserListRequest.cs" />
-    <Compile Include="Data\UserRoleItem.cs" />
-    <Compile Include="Data\UserSettingItem.cs" />
-    <Compile Include="Data\UserSettingItemList.cs" />
-    <Compile Include="Data\UserStateItem.cs" />
+    <Compile Include="Data\Base\ItemList.cs" />
+    <Compile Include="Data\Base\KeyValueItem.cs" />
+    <Compile Include="Data\Base\PagedItemList.cs" />
+    <Compile Include="Data\Authentication\LoginData.cs" />
+    <Compile Include="Data\Base\PageData.cs" />
+    <Compile Include="Data\Authentication\PasswordData.cs" />
+    <Compile Include="Data\Registration\RegistrationData.cs" />
+    <Compile Include="Data\Base\Request.cs" />
+    <Compile Include="Data\Base\Response.cs" />
+    <Compile Include="Data\UserManagement\RoleItem.cs" />
+    <Compile Include="Data\Session\SessionData.cs" />
+    <Compile Include="Data\Session\SessionState.cs" />
+    <Compile Include="Data\Session\TicketData.cs" />
+    <Compile Include="Data\TimeRecords\TimeRecordData.cs" />
+    <Compile Include="Data\TimeRecords\TimeRecordGroup.cs" />
+    <Compile Include="Data\TimeRecords\TimeRecordGroupItem.cs" />
+    <Compile Include="Data\TimeRecords\TimeRecordGroupNoteItem.cs" />
+    <Compile Include="Data\TimeRecords\TimeRecordItemList.cs" />
+    <Compile Include="Data\TimeRecords\TimeRecordNoteData.cs" />
+    <Compile Include="Data\TimeRecords\TimeRecordsFilterData.cs" />
+    <Compile Include="Data\UserManagement\UserList.cs" />
+    <Compile Include="Data\UserManagement\UserListItem.cs" />
+    <Compile Include="Data\UserManagement\UserListData.cs" />
+    <Compile Include="Data\UserManagement\UserRoleItem.cs" />
+    <Compile Include="Data\UserManagement\UserSettingItem.cs" />
+    <Compile Include="Data\UserManagement\UserSettingItemList.cs" />
+    <Compile Include="Data\UserManagement\UserStateItem.cs" />
     <Compile Include="ITimeTrackerService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -81,9 +81,7 @@
       <Name>TimeTracker.Contract</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Data\Base\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

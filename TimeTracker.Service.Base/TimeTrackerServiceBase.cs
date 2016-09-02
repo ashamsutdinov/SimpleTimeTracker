@@ -10,10 +10,15 @@ using TimeTracker.Service.Base.Validation.Authentication;
 using TimeTracker.Service.Base.Validation.Base;
 using TimeTracker.Service.Base.Validation.Registration;
 using TimeTracker.Service.Base.Validation.Session;
-using TimeTracker.Service.Base.Validation.TimeRecord;
+using TimeTracker.Service.Base.Validation.TimeRecords;
 using TimeTracker.Service.Base.Validation.UserManagement;
 using TimeTracker.Service.Contract;
-using TimeTracker.Service.Contract.Data;
+using TimeTracker.Service.Contract.Data.Authentication;
+using TimeTracker.Service.Contract.Data.Base;
+using TimeTracker.Service.Contract.Data.Registration;
+using TimeTracker.Service.Contract.Data.Session;
+using TimeTracker.Service.Contract.Data.TimeRecords;
+using TimeTracker.Service.Contract.Data.UserManagement;
 
 namespace TimeTracker.Service.Base
 {
@@ -276,6 +281,11 @@ namespace TimeTracker.Service.Base
                 var updatedUser = UserDataProvider.SaveUser(requestedUser);
                 return updatedUser.Id;
             }, _userSettingsValidationRules);
+        }
+
+        public Response<UserList> GetUsers(Request<UserListData> request)
+        {
+            throw new NotImplementedException();
         }
 
         private Response<TData> SafeInvoke<TData>(Request request, Func<IUser, IUserSession, TData> action, ValidationRule[] requestValidationRules = null)

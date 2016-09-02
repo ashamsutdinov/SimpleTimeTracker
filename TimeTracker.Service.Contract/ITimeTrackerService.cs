@@ -1,6 +1,11 @@
 ﻿using System.ServiceModel;
 using System.ServiceModel.Web;
-using TimeTracker.Service.Contract.Data;
+using TimeTracker.Service.Contract.Data.Authentication;
+using TimeTracker.Service.Contract.Data.Base;
+using TimeTracker.Service.Contract.Data.Registration;
+using TimeTracker.Service.Contract.Data.Session;
+using TimeTracker.Service.Contract.Data.TimeRecords;
+using TimeTracker.Service.Contract.Data.UserManagement;
 
 namespace TimeTracker.Service.Contract
 {
@@ -59,6 +64,8 @@ namespace TimeTracker.Service.Contract
         [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
         Response<int> SaveUserSettings(Request<UserSettingItemList> request);
 
-        Response<UserList> GetUsers(Request)
+        [OperationContract]
+        [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
+        Response<UserList> GetUsers(Request<UserListData> request);
     }
 }

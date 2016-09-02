@@ -1,6 +1,7 @@
 using System;
 using TimeTracker.Contract.Data.Entities;
 using TimeTracker.Service.Contract.Data;
+using TimeTracker.Service.Contract.Data.Base;
 
 namespace TimeTracker.Service.Base.Validation.Base
 {
