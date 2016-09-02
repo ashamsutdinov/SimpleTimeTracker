@@ -71,6 +71,8 @@
     <Compile Include="Validation\TimeRecord\TimeRecordNoteEditRightsValidationRule.cs" />
     <Compile Include="Validation\TimeRecord\TimeRecordNoteExistsValidationRule.cs" />
     <Compile Include="Validation\TimeRecord\TimeRecordTotalDuractionValidationRule.cs" />
+    <Compile Include="Validation\UserManagement\UserSettingsEditRightsValidationRule.cs" />
+    <Compile Include="Validation\UserManagement\UserSettingsOwnerExistsValidationRule.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\TimeTracker.Contract\TimeTracker.Contract.csproj">

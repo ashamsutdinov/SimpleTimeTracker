@@ -11,6 +11,7 @@ using TimeTracker.Service.Base.Validation.Base;
 using TimeTracker.Service.Base.Validation.Registration;
 using TimeTracker.Service.Base.Validation.Session;
 using TimeTracker.Service.Base.Validation.TimeRecord;
+using TimeTracker.Service.Base.Validation.UserManagement;
 using TimeTracker.Service.Contract;
 using TimeTracker.Service.Contract.Data;
 
@@ -40,6 +41,8 @@ namespace TimeTracker.Service.Base
         private readonly ValidationRule[] _saveTimeRecordNoteValidationRules;
 
         private readonly ValidationRule[] _getUserTimeRecordsValidationRules;
+
+        private readonly ValidationRule[] _userSettingsValidationRules;
 
         protected TimeTrackerServiceBase()
         {
@@ -99,6 +102,12 @@ namespace TimeTracker.Service.Base
             _getUserTimeRecordsValidationRules = new ValidationRule[]
             {
                 new TimeRecordListAccessRightsValidationRule("administrator") 
+            };
+
+            _userSettingsValidationRules = new ValidationRule[]
+            {
+                new UserSettingsOwnerExistsValidationRule(UserDataProvider), 
+                new UserSettingsEditRightsValidationRule("manager") 
             };
         }
 
@@ -225,23 +234,13 @@ namespace TimeTracker.Service.Base
             }, _getUserTimeRecordsValidationRules);
         }
 
-        public Response<UserSettingItemList> GetUserSettings(Request<int> request)
+        public Response<UserSettingItemList> GetUserSettings(Request<UserSettingItemList> request)
         {
             return SafeInvoke(request, (user, session) =>
             {
-                var requestedUserId = request.Data;
-                if (requestedUserId == 0)
-                {
-                    requestedUserId = user.Id;
-                }
-                if (requestedUserId != user.Id && user.Roles.All(r => r.Id != "manager"))
-                {
-                    throw new UnauthorizedAccessException("Only manager can request settings for specific user");
-                }
-
+                var requestedUserId = request.Data.UserId > 0 ? request.Data.UserId : user.Id;
                 var allSettings = UserDataProvider.GetAllUserSettings();
                 var userSettings = UserDataProvider.GetUserSettings(requestedUserId);
-
                 return new UserSettingItemList
                 {
                     UserId = requestedUserId,
@@ -252,28 +251,15 @@ namespace TimeTracker.Service.Base
                         Value = userSettings.Where(us => us.Id == s.Id).Select(us => us.Value).FirstOrDefault()
                     }).ToList()
                 };
-            });
+            }, _userSettingsValidationRules);
         }
 
         public Response<int> SaveUserSettings(Request<UserSettingItemList> request)
         {
             return SafeInvoke(request, (user, session) =>
             {
-                var requestedUserId = request.Data.UserId;
-                if (requestedUserId == 0)
-                {
-                    requestedUserId = user.Id;
-                }
-                if (requestedUserId != user.Id && user.Roles.All(r => r.Id != "manager"))
-                {
-                    throw new UnauthorizedAccessException("Only manager can update settings for specific user");
-                }
+                var requestedUserId = request.Data.UserId > 0 ? request.Data.UserId : user.Id;
                 var requestedUser = UserDataProvider.GetUser(requestedUserId);
-                if (requestedUser == null)
-                {
-                    throw new InvalidOperationException("User was not found");
-                }
-
                 foreach (var itemEnu in request.Data.Items)
                 {
                     var item = itemEnu;
@@ -289,7 +275,7 @@ namespace TimeTracker.Service.Base
                 }
                 var updatedUser = UserDataProvider.SaveUser(requestedUser);
                 return updatedUser.Id;
-            });
+            }, _userSettingsValidationRules);
         }
 
         private Response<TData> SafeInvoke<TData>(Request request, Func<IUser, IUserSession, TData> action, ValidationRule[] requestValidationRules = null)

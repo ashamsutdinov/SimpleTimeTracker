@@ -5,7 +5,9 @@
     self.userSettings = ko.observableArray([]);
 
     self.loadSettings = function () {
-        var request = 0;
+        var request = {
+            UserId : 0
+        };
         window.application.apiCall("GetUserSettings", request, {
             success: function (r) {
                 self.userSettings(r.Items);
