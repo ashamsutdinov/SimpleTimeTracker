@@ -4,7 +4,7 @@
 )
 AS
 BEGIN
-	SELECT [tn].[Id], [tn].[DayRecordId], [tn].[UserId], [u].[Name] as [UserName], [tn].[DateTime], [tn].[Text]
+	SELECT [tn].[Id], [tn].[DayRecordId], [tn].[UserId], [u].[Name] as [UserName], [tn].[DateTime], [tn].[Text], [tn].[Deleted]
 	FROM [dbo].[TimeRecordNotes] [tn]
 	INNER JOIN [dbo].[Users] [u] ON [tn].[UserId] = [u].[Id]
 	WHERE [tn].[DayRecordId] = @DayRecordId AND [tn].[Deleted] = 0

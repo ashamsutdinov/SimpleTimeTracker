@@ -1,6 +1,6 @@
-﻿window.ManageTimeRecordsViewModel = function (containerId) {
+﻿window.ManageTimeRecordsViewModel = function (options) {
 
-    var self = new TimeRecordsViewModel(DataRequest.ManageTimeshets, containerId);
+    var self = new TimeRecordsViewModel(DataRequest.ManageTimeshets, options);
 
     self.filterLoadAllUsers(true);
 

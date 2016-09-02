@@ -79,7 +79,7 @@ namespace TimeTracker.Service.Base
                 {
                     Ticket = ticket
                 };
-            }, 
+            },
             new UserAlreadyLoggedInPolicy(),
             new PasswordSyntaxOnLoginPolicy(_cryptographyHelper),
             new UserByLoginExistsPolicy(UserDataProvider),
@@ -107,13 +107,13 @@ namespace TimeTracker.Service.Base
                 var hash = _cryptographyHelper.HashPassword(passwordData.Password, salt);
                 var user = UserDataProvider.RegisterUser(login, request.Data.Name, hash, salt);
                 return user.Id;
-            }, 
+            },
             new UserAlreadyLoggedInPolicy(),
             new PasswordSyntaxOnRegistrationPolicy(_cryptographyHelper),
             new UserByLoginDoesExistsPolicy(UserDataProvider));
         }
 
-        public Response<int> CreateTimeRecord(Request<TimeRecordData> request)
+        public Response<int> SaveTimeRecord(Request<TimeRecordData> request)
         {
             return SafeInvoke(request, (user, session) =>
             {
@@ -126,13 +126,115 @@ namespace TimeTracker.Service.Base
                 {
                     throw new InvalidOperationException("Duration required");
                 }
-                var existingDayRecord = TimeRecordDataProvider.GetUserDayRecordByDate(user.Id, data.Date);
-                if (existingDayRecord != null && existingDayRecord.TotalHours + data.Hours > 24)
+                var ownerId = user.Id;
+                var existingTimeRecordDuration = 0;
+                var existingDayRecordId = 0;
+                if (request.Data.Id > 0)
                 {
-                    throw new InvalidOperationException("The number of working hours per day may not exceed 24 hours");
+                    var existingTimeRecord = TimeRecordDataProvider.GetTimeRecord(request.Data.Id);
+                    if (existingTimeRecord != null)
+                    {
+                        var linkedDayRecord = TimeRecordDataProvider.GetDayRecord(existingTimeRecord.DayRecordId);
+                        ownerId = linkedDayRecord.UserId;
+                        existingTimeRecordDuration = existingTimeRecord.Hours;
+                        existingDayRecordId = existingTimeRecord.DayRecordId;
+                    }
+                    else
+                    {
+                        throw new InvalidOperationException("Time record was not found");
+                    }
                 }
-                var saved = TimeRecordDataProvider.SaveTimeRecord(0, user.Id, data.Date, data.Caption, data.Hours);
+                if (ownerId != user.Id && user.Roles.All(r => r.Id != "administrator"))
+                {
+                    throw new UnauthorizedAccessException("Only administrator can edit time records");
+                }
+                var existingDayRecord = TimeRecordDataProvider.GetUserDayRecordByDate(ownerId, data.Date);
+
+                if (existingDayRecord != null)
+                {
+                    int testTotalHours;
+                    if (existingDayRecord.Id == existingDayRecordId)
+                    {
+                        //we edit the same day record
+                        testTotalHours = existingDayRecord.TotalHours - existingTimeRecordDuration + request.Data.Hours;
+                    }
+                    else
+                    {
+                        //we edit another day record
+                        testTotalHours = existingDayRecord.TotalHours + request.Data.Hours;
+                    }
+                    if (testTotalHours > 24)
+                    {
+                        throw new InvalidOperationException("The number of working hours per day may not exceed 24 hours");
+                    }
+                }
+                var saved = TimeRecordDataProvider.SaveTimeRecord(data.Id, user.Id, data.Date, data.Caption, data.Hours);
                 return saved.Id;
+            });
+        }
+
+        public Response<int> DeleteTimeRecord(Request<int> request)
+        {
+            return SafeInvoke(request, (user, session) =>
+            {
+                var existingTimeRecord = TimeRecordDataProvider.GetTimeRecord(request.Data);
+                if (existingTimeRecord == null)
+                {
+                    throw new InvalidOperationException("Time record was not found");
+                }
+                var dayRecord = TimeRecordDataProvider.GetDayRecord(existingTimeRecord.DayRecordId);
+                if (user.Id != dayRecord.UserId && user.Roles.All(r => r.Id != "administrator"))
+                {
+                    throw new UnauthorizedAccessException("Only administrator can delete user's time records");
+                }
+                TimeRecordDataProvider.DeleteTimeRecordNote(request.Data);
+                return request.Data;
+            });
+        }
+
+        public Response<int> SaveTimeRecordNote(Request<TimeRecordNoteData> request)
+        {
+            return SafeInvoke(request, (user, session) =>
+            {
+                var dayRecord = TimeRecordDataProvider.GetDayRecord(request.Data.DayRecordId);
+                if (dayRecord.UserId != user.Id && user.Roles.All(r => r.Id != "administrator"))
+                {
+                    throw new UnauthorizedAccessException("Only administrator can leave notes to time records");
+                }
+                ITimeRecordNote note;
+                if (request.Data.Id > 0)
+                {
+                    note = TimeRecordDataProvider.GetTimeRecordNote(request.Data.Id);
+                    if (note == null)
+                    {
+                        throw new InvalidOperationException("The record note was not found");
+                    }
+                    note.Text = request.Data.Text;
+                }
+                else
+                {
+                    note = TimeRecordDataProvider.PrepareTimeRecordNote(request.Data.DayRecordId, user.Id, request.Data.Text);
+                }
+                TimeRecordDataProvider.SaveTimeRecordNote(note);
+                return note.Id;
+            });
+        }
+
+        public Response<int> DeleteTimeRecordNote(Request<int> request)
+        {
+            return SafeInvoke(request, (user, session) =>
+            {
+                var note = TimeRecordDataProvider.GetTimeRecordNote(request.Data);
+                if (note == null)
+                {
+                    throw new InvalidOperationException("Time record note was not found");
+                }
+                if (note.UserId != user.Id && user.Roles.All(r => r.Id != "administrator"))
+                {
+                    throw new InvalidOperationException("Only administrator can delete user's time record notes");
+                }
+                TimeRecordDataProvider.DeleteTimeRecordNote(request.Data);
+                return request.Data;
             });
         }
 

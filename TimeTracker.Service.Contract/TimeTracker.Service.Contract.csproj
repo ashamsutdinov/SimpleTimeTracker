@@ -60,6 +60,7 @@
     <Compile Include="Data\TimeRecordGroupItem.cs" />
     <Compile Include="Data\TimeRecordGroupNoteItem.cs" />
     <Compile Include="Data\TimeRecordItemList.cs" />
+    <Compile Include="Data\TimeRecordNoteData.cs" />
     <Compile Include="Data\TimeRecordsFilterData.cs" />
     <Compile Include="Data\UserSettingItem.cs" />
     <Compile Include="Data\UserSettingItemList.cs" />

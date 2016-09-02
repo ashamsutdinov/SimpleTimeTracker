@@ -12,22 +12,21 @@ var Event = {
     LoggedOut: 12,
     LogoutRequested: 13,
 
-    TimeRecordCreated: 21,
-    TimeRecordUpdated: 22,
-    TimeRecordDeleted: 23,
+    TimeRecordSaved: 21,
+    TimeRecordDeleted: 22,
+    TimeRecordNoteSaved: 23,
+    TimeRecordNoteDeleted: 24,
 
-    TimeRecordNoteCreated: 31,
-    TimeRecordNoteUpdated: 32,
-    TimeRecordNoteDeleted: 33,
-
-    UserCreated: 41,
-    UserUpdated: 42,
-    UserDeleted: 43,
-    UserSettingUpdated: 44,
+    UserSaved: 41,
+    UserDeleted: 42,
+    UserSettingUpdated: 43,
 
     Alert: 51,
 
-    DataRequested: 61
+    DataRequested: 61,
+
+    BeginDialog: 71,
+    EndDialog: 72
 };
 
 var SessionState = {

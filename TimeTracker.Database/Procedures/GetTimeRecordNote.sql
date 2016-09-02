@@ -4,7 +4,7 @@
 )
 AS
 BEGIN
-	SELECT [tn].[Id], [tn].[DayRecordId], [tn].[UserId], [tn].[DateTime], [tn].[Text]
+	SELECT [tn].[Id], [tn].[DayRecordId], [tn].[UserId], [tn].[DateTime], [tn].[Text], [tn].[Deleted]
 	FROM [dbo].[TimeRecordNotes] [tn]	
 	WHERE [tn].[Id] = @Id
 END

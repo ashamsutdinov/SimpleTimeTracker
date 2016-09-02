@@ -10,6 +10,10 @@ namespace TimeTracker.Contract.Data
 
         ITimeRecord SaveTimeRecord(int id, int userId, DateTime date, string caption, int hours);
 
+        ITimeRecord GetTimeRecord(int id);
+
+        IDayRecord GetDayRecord(int id);
+
         IList<ITimeRecordItem> GetTimeRecords(int? userId, DateTime? fromDate, DateTime? toDate, int pageNumber, int pageSize, out int total);
 
         int DeleteTimeRecord(int timeRecordId);

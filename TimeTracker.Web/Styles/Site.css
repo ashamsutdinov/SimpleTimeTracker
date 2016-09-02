@@ -126,7 +126,19 @@ a.active {
 	max-height:250px;
 }
 
+.smallnote {
+    background: -webkit-linear-gradient(#FFEEEE, #DDEFBB);
+	background: -moz-linear-gradient(#FFEEEE, #DDEFBB);
+	background: -o-linear-gradient(#FFEEEE, #DDEFBB);
+	background: -ms-linear-gradient(#FFEEEE, #DDEFBB);
+	background: linear-gradient(#FFEEEE, #DDEFBB);
+}
+
 hr {
     margin-top: 5px;
     margin-bottom: 5px;
+}
+
+.dropdown-menu {
+    z-index: 1500;
 }

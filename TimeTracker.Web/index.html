@@ -55,10 +55,10 @@
             <div class="container center-container">
                 <h3>You have to log in or register to use Simple Time Tracker Service</h3>
                 <br />
-                <button class="btn btn-primary btn-lg" href="#signup" data-toggle="modal" data-target=".bs-modal-sm">Login/Register</button>
+                <button class="btn btn-primary btn-lg" href="#signup" data-toggle="modal" data-target="#loginRegisterModelWindow">Login/Register</button>
             </div>
             <!-- Sign In / Register Modal window -->
-            <div class="modal fade bs-modal-sm" id="loginRegisterModelWindow" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
+            <div class="modal fade bs-modal-sm modal-window" id="loginRegisterModelWindow" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
                 <div class="modal-dialog modal-sm">
                     <div class="modal-content">
                         <br>
@@ -137,24 +137,54 @@
         </div>
         <!--user timesheets container-->
         <div id="userTimeRecordsContainer" data-bind="visible: loaded" style="display: none">
-           
             <!--filter form-->
             <form class="form-inline">
                 <h4 for="filterFrom">My timesheets</h4>
                 <div class="form-group">
                     <label for="filterFrom">From: </label>
-                    <input id="filterFrom" type="text" class="form-control" data-bind="datepicker: filterFromDate"/>
+                    <input id="filterFrom" type="text" class="form-control" data-bind="datepicker: filterFromDate" />
                 </div>
                 <div class="form-group">
                     <label for="filterTo">To: </label>
-                    <input id="filterTo" type="text" class="form-control" data-bind="datepicker: filterToDate"/>
+                    <input id="filterTo" type="text" class="form-control" data-bind="datepicker: filterToDate" />
                 </div>
                 <div class="form-group">
                     <label for="filterPageSize">Page size: </label>
                     <select id="filterPageSize" class="form-control" data-bind="options: filterPageSizeOptions, value: filterPageSize, event: {change: pageSizeChanged}"></select>
                 </div>
                 <button class="btn btn-default" data-bind="click: filterTimeRecords">Filter time records</button>
+                <button type="button" class="btn btn-default" data-toggle="modal" data-target="#myTimeRecordEntryWindow">Add new time record</button>
             </form>
+            <!--add/edit timesheet modal window-->
+            <div class="modal fade modal-window" id="myTimeRecordEntryWindow" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            <h4 class="modal-title" id="myModalLabel">Time Record Entry</h4>
+                        </div>
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label for="newRecordDate">Date: </label>
+                                <input id="newRecordDate" type="text" class="form-control" required="" data-bind="datepicker: timeRecordEntryDate">
+                            </div>
+                            <div class="form-group">
+                                <label for="newRecordDescription">Description: </label>
+                                <input id="newRecordDescription" type="text" class="form-control" required="" data-bind="value: timeRecordEntryDescription">
+                            </div>
+                            <div class="form-group">
+                                <label for="newRecordHours">Hours: </label>
+                                <input id="newRecordHours" type="text" class="form-control" required="" data-bind="value: timeRecordEntryHours">
+                            </div>
+                        </div>
+                        <div class="modal-footer center-container">
+                            <div class="alert alert-danger" data-bind="visible: timeRecordEntryError() !== null, text: timeRecordEntryError"></div>
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-primary" data-bind="click: submitTimeRecord">Save</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <!--time records container-->
             <div class="row">
                 <br />
@@ -162,21 +192,31 @@
                 <div id="userTimeRecordsContainerContent">
                     <div class="timesheets" data-bind="foreach: timeRecords">
                         <div data-bind="css: $data.Warning == true ? 'row timesheet-row rate-overload' : ' row timesheet-row rate-normal'">
-                            <h5>Date: <span data-bind="text: fromMsDate($data.Date).format('Y-m-d')"></span>, Total hours: <span data-bind="text: $data.TotalHours"></span></h5>
-                            <hr/>
+                            <small><span data-bind="text: fromMsDate($data.Date).format('Y-m-d')"></span>, Total hours: <span data-bind="text: $data.TotalHours"></span></small>
                             <div class="col-md-12" data-bind="foreach: $data.Items">
                                 <div class="col-md-3">
                                     <div class="stickynote">
                                         <span data-bind="text: $data.Caption"></span>,
                                         <span data-bind="text: $data.Hours"></span> hr.
-                                        <br/>
-                                        <a class="crud-element" href="#" data-bind="click: $parent.editTimeRecord">Edit</a> <a class="crud-element" href="#" data-bind="click: $parent.deleteTimeRecord">Delete</a>
+                                        <br />
+                                        <a class="crud-element" href="#" data-bind="click: $root.editTimeRecord"><span class="glyphicon glyphicon-edit" title="Edit"></span></a>
+                                        <a class="crud-element" href="#" data-bind="click: $root.deleteTimeRecord"><span class="glyphicon glyphicon-trash" title="Delete"></span></a>
                                     </div>
                                 </div>
                             </div>
                             <div class="row"></div>
-                            <hr/>
-                            <h5>Notes <span class="crud-element">(<a href="#" data-bind="">Add note</a>)</span>:</h5>
+                            <hr />
+                            <small>Notes </small>  <a href="#" class="crud-element" data-bind="click: $parent.addTimeRecordNote"><span title="Add note" class="glyphicon glyphicon-plus"></span></a>
+                            <div class="col-md-12" data-bind="foreach: $data.Notes">
+                                <div class="col-md-3">
+                                    <div class="stickynote smallnote">
+                                        <small><span data-bind="text: fromMsDate($data.DateTime).format('Y-m-d H:m') + ', ' + $data.UserName"></span></small>
+                                        <br/>
+                                        <span data-bind="text: $data.Text"></span>
+                                        <a href="#" class="crud-element" data-bind="click: $root.deleteTimeRecordNote"><span class="glyphicon glyphicon-trash" title="Delete"></span></a>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -190,23 +230,7 @@
                     </span>
                 </div>
             </div>
-            <!--new record form-->
-            <form class="form-inline">
-                <h4 for="filterFrom">Submit new timesheet:</h4>
-                <div class="form-group">
-                    <label for="newRecordDate">Date: </label>
-                    <input id="newRecordDate" type="text" class="form-control" required="" data-bind="datepicker: newRecordDate">
-                </div>
-                <div class="form-group">
-                    <label for="newRecordDescription">Description: </label>
-                    <input id="newRecordDescription" type="text" class="form-control" required="" data-bind="value: newRecordDescription">
-                </div>
-                <div class="form-group">
-                    <label for="newRecordHours">Hours: </label>
-                    <input id="newRecordHours" type="text" class="form-control" required="" data-bind="value: newRecordHours">
-                </div>
-                <button class="btn btn-default" data-bind="click: submitTimeRecord">Submit time record</button>
-            </form>
+
         </div>
         <!--manage users container-->
         <div id="usersContainer" data-bind="visible: loaded" style="display: none">
@@ -292,6 +316,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.4.0/knockout-min.js" crossorigin="anonymous"></script>
     <script src="./Scripts/bootstrap-datepicker.js"></script>
     <script src="./Scripts/Date.format.min.js"></script>
+    <script src="./Scripts/bootbox.min.js"></script>
     <!--consider script compression-->
     <script src="./Scripts/enums.js"></script>
     <script src="./Scripts/ui.js"></script>
@@ -310,16 +335,38 @@
     <script src="./Scripts/ViewModels/UserSettingsViewModel.js"></script>
     <script>
         ko.applyBindings(new NavigationViewModel(), document.getElementById("navigationBar"));
+
         ko.applyBindings(new ApplicationStateViewModel(), document.getElementById("applicationStateContainer"));
-        ko.applyBindings(new LoginViewModel(function () {
-            //we call hide modal window here to prevent adding any markup references to view models
-            $("#loginRegisterModelWindow").modal("hide");
-        }), document.getElementById("loginContainer"));
-        ko.applyBindings(new UserTimeRecordsViewModel("userTimeRecordsContainerContent"), document.getElementById("userTimeRecordsContainer"));
+
+        ko.applyBindings(new LoginViewModel(), document.getElementById("loginContainer"));
+
+        ko.applyBindings(new UserTimeRecordsViewModel({
+            container: "userTimeRecordsContainerContent",
+            timeRecordWindow: $("#myTimeRecordEntryWindow"),
+            noteWindow: $("#myTimeRecordNoteEntryWindow")
+        }),
+        document.getElementById("userTimeRecordsContainer"));
+
         ko.applyBindings(new UsersViewModel(), document.getElementById("usersContainer"));
-        ko.applyBindings(new ManageTimeRecordsViewModel("manageTimeRecordsContainerContent"), document.getElementById("manageTimeRecordsContainer"));
+
+        ko.applyBindings(new ManageTimeRecordsViewModel({
+            container: "manageTimeRecordsContainerContent",
+            timeRecordWindow: $("#userTimeRecordEntryWindow"),
+            noteWindow: $("#userTimeRecordNoteEntryWindow")
+        }),
+        document.getElementById("manageTimeRecordsContainer"));
+
         ko.applyBindings(new UserSettingsViewModel(), document.getElementById("userSettingsContainer"));
+
+        window.messageBus.subscribe(Event.EndDialog, function () {
+            $(".modal-window").modal("hide");
+        });
+
+        window.messageBus.subscribe(Event.BeginDialog, function (e) {
+            e.modal("show");
+        });
         window.messageBus.fire(Event.Ready);
+
     </script>
 </body>
 </html>

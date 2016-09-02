@@ -92,3 +92,24 @@ function printElement(id) {
     cruds.remove();
     popupWindow(newElement.html());
 }
+
+function confirmDialog(text, callback) {
+    callback = callback || function() {};
+    bootbox.confirm(text, function(result) {
+        if (result) {
+            callback();
+        }
+    });
+};
+
+function confirmDelete(callback) {
+    confirmDialog("Do you really want to delete this record?", callback);
+}
+
+function typeValue(text, callback) {
+    bootbox.prompt(text, function(result) {
+        if (!nullString(result)) {
+            callback(result);
+        }
+    });
+}

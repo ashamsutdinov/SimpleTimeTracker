@@ -35,6 +35,18 @@ namespace TimeTracker.Data
             return Mapper.Map<DalTimeRecord, ITimeRecord>(dalTimeRecord);
         }
 
+        public ITimeRecord GetTimeRecord(int id)
+        {
+            var dalTimeRecord = _timeRecordDa.GetTimeRecord(id);
+            return Mapper.Map<DalTimeRecord, ITimeRecord>(dalTimeRecord);
+        }
+
+        public IDayRecord GetDayRecord(int id)
+        {
+            var dalDayRecord = _timeRecordDa.GetDayRecord(id);
+            return Mapper.Map<DalDayRecord, IDayRecord>(dalDayRecord);
+        }
+
         public IList<ITimeRecordItem> GetTimeRecords(int? userId, DateTime? fromDate, DateTime? toDate, int pageNumber, int pageSize, out int total)
         {
             var dalRecords = _timeRecordDa.GetTimeRecords(userId, fromDate, toDate, pageNumber, pageSize, out total);

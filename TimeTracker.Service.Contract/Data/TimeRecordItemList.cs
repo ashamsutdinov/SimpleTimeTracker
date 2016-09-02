@@ -56,7 +56,8 @@ namespace TimeTracker.Service.Contract.Data
                 {
                     Id = item.TimeRecordId,
                     Hours = item.Hours,
-                    Caption = item.Caption
+                    Caption = item.Caption,
+                    Date = item.Date
                 });
                 if (string.IsNullOrEmpty(group.UserName))
                 {

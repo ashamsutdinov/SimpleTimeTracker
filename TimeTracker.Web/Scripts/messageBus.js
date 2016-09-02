@@ -20,7 +20,7 @@
 
     self.fire = function(event, data) {
         var handlers = callbacks[event];
-        if (handlers !== undefined && handlers !== null) {
+        if (!nullObject(handlers)) {
             for (var i = 0; i < handlers.length; i++) {
                 handlers[i](data);
             }

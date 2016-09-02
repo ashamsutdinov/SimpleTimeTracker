@@ -1,3 +1,4 @@
+using System;
 using System.Runtime.Serialization;
 
 namespace TimeTracker.Service.Contract.Data
@@ -14,5 +15,8 @@ namespace TimeTracker.Service.Contract.Data
 
         [DataMember]
         public int Hours { get; set; }
+
+        [DataMember]
+        public DateTime Date { get; set; }
     }
 }

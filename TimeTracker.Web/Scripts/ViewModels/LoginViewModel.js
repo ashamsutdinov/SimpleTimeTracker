@@ -1,4 +1,4 @@
-﻿window.LoginViewModel = function (loggedInCallback) {
+﻿window.LoginViewModel = function () {
 
     var self = this;
 
@@ -46,11 +46,9 @@
         window.application.apiCall("Login", data, {
             success: function (r) {
                 localStorage[Config.TicketKey] = r.Ticket;
+                window.messageBus.fire(Event.EndDialog);
                 window.messageBus.fire(Event.LoggedIn);
                 window.application.handshake();
-                if (loggedInCallback !== undefined && loggedInCallback !== null) {
-                    loggedInCallback();
-                }
             },
             error: errorHandler,
             done: function () {
@@ -109,7 +107,7 @@
                 setTimeout(function () {
                     self.registered(false);
                 }, Config.ShowAlertTimeout);
-                window.messageBus.fire(Event.UserCreated);
+                window.messageBus.fire(Event.UserSaved);
             },
             error: errorHandler,
             done: function () {
