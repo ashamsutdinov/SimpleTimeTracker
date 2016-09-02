@@ -46,12 +46,15 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Data\ItemList.cs" />
+    <Compile Include="Data\KeyValueItem.cs" />
     <Compile Include="Data\PagedItemList.cs" />
     <Compile Include="Data\LoginData.cs" />
+    <Compile Include="Data\PageRequest.cs" />
     <Compile Include="Data\PasswordData.cs" />
     <Compile Include="Data\RegistrationData.cs" />
     <Compile Include="Data\Request.cs" />
     <Compile Include="Data\Response.cs" />
+    <Compile Include="Data\RoleItem.cs" />
     <Compile Include="Data\SessionData.cs" />
     <Compile Include="Data\SessionState.cs" />
     <Compile Include="Data\TicketData.cs" />
@@ -62,8 +65,13 @@
     <Compile Include="Data\TimeRecordItemList.cs" />
     <Compile Include="Data\TimeRecordNoteData.cs" />
     <Compile Include="Data\TimeRecordsFilterData.cs" />
+    <Compile Include="Data\UserList.cs" />
+    <Compile Include="Data\UserListItem.cs" />
+    <Compile Include="Data\UserListRequest.cs" />
+    <Compile Include="Data\UserRoleItem.cs" />
     <Compile Include="Data\UserSettingItem.cs" />
     <Compile Include="Data\UserSettingItemList.cs" />
+    <Compile Include="Data\UserStateItem.cs" />
     <Compile Include="ITimeTrackerService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -72,6 +80,9 @@
       <Project>{72918956-3bfe-4607-acd3-270d2570f303}</Project>
       <Name>TimeTracker.Contract</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Data\Base\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

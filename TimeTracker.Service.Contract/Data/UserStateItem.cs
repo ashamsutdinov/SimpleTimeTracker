@@ -3,10 +3,9 @@ using System.Runtime.Serialization;
 namespace TimeTracker.Service.Contract.Data
 {
     [DataContract]
-    public class UserSettingItem :
+    public class UserStateItem :
         KeyValueItem
     {
-        [DataMember]
-        public string Value { get; set; }
+        
     }
 }

@@ -58,5 +58,7 @@ namespace TimeTracker.Service.Contract
         [OperationContract]
         [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
         Response<int> SaveUserSettings(Request<UserSettingItemList> request);
+
+        Response<UserList> GetUsers(Request)
     }
 }
