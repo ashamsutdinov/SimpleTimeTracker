@@ -61,7 +61,6 @@
     <Folder Include="Procedures" />
     <Folder Include="Types" />
     <Folder Include="Scripts" />
-    <Folder Include="Triggers" />
   </ItemGroup>
   <ItemGroup>
     <None Include="TimeTracker.Database.publish.xml" />
@@ -86,7 +85,6 @@
     <Build Include="Tables\UsersToSettings.sql" />
     <Build Include="Procedures\GetUsers.sql" />
     <Build Include="Tables\TimeRecords.sql" />
-    <Build Include="Triggers\TimeRecordTrigger.sql" />
     <Build Include="Tables\TimeRecordNotes.sql" />
     <Build Include="Procedures\SaveTimeRecord.sql" />
     <Build Include="Procedures\DeleteTimeRecord.sql" />
@@ -111,6 +109,7 @@
     <Build Include="Procedures\GetUserSession.sql" />
     <Build Include="Procedures\GetUserDayRecordByDate.sql" />
     <Build Include="Procedures\GetTimeRecordNote.sql" />
+    <Build Include="Procedures\UpdateDayRecordStatistics.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="PostDeploy.sql" />

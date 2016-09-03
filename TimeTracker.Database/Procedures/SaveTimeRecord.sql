@@ -17,21 +17,26 @@ BEGIN
 	END
 
 	IF EXISTS (SELECT TOP 1 * FROM [dbo].[TimeRecords] WHERE [Id] = @Id)
-	BEGIN		
+	BEGIN
+		DECLARE @OldDayRecordId INT
+		SELECT @OldDayRecordId = [DayRecordId] FROM [dbo].[TimeRecords] WHERE [Id] = @Id
 		UPDATE [dbo].[TimeRecords] SET
 			[DayRecordId] = @DayRecordId,
 			[Caption] = @Caption,
 			[Hours] = @Hours 
 		WHERE [Id] = @Id
+		EXEC [dbo].[UpdateDayRecordStatistics] @OldDayRecordId
 	END
 	ELSE
 	BEGIN
 		INSERT INTO [dbo].[TimeRecords] ([DayRecordId], [Hours], [Caption]) VALUES (@DayRecordId, @Hours, @Caption)
 		SELECT @Id = @@IDENTITY
-	END
+	END	
 
 	SELECT [t].[Id], [t].[DayRecordId], [t].[Hours], [t].[Caption], [t].[Deleted]
 	FROM [dbo].[TimeRecords] [t]
 	WHERE [t].[Id] = @Id
+
+	EXEC [dbo].[UpdateDayRecordStatistics] @DayRecordId
 END
 GO
