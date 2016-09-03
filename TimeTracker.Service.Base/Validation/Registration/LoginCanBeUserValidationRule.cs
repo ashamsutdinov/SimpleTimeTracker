@@ -1,8 +1,6 @@
 ﻿using System.Security.Authentication;
 using TimeTracker.Contract.Data;
 using TimeTracker.Service.Base.Validation.Base;
-using TimeTracker.Service.Contract.Data;
-using TimeTracker.Service.Contract.Data.Authentication;
 using TimeTracker.Service.Contract.Data.Base;
 using TimeTracker.Service.Contract.Data.Registration;
 
@@ -13,7 +11,8 @@ namespace TimeTracker.Service.Base.Validation.Registration
     {
         private readonly IUserDataProvider _userDataProvider;
 
-        public LoginCanBeUserValidationRule(IUserDataProvider userDataProvider)
+        public LoginCanBeUserValidationRule(IUserDataProvider userDataProvider) : 
+            base(true)
         {
             _userDataProvider = userDataProvider;
         }

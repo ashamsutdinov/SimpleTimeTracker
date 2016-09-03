@@ -1,8 +1,6 @@
 ﻿using System.Security.Authentication;
 using TimeTracker.Service.Base.Utils;
 using TimeTracker.Service.Base.Validation.Base;
-using TimeTracker.Service.Contract.Data;
-using TimeTracker.Service.Contract.Data.Authentication;
 using TimeTracker.Service.Contract.Data.Base;
 using TimeTracker.Service.Contract.Data.Registration;
 
@@ -13,7 +11,8 @@ namespace TimeTracker.Service.Base.Validation.Registration
     {
         private readonly CryptographyHelper _cryptographyHelper;
 
-        public RegistrationPasswordSyntaxValidationRule(CryptographyHelper cryptographyHelper)
+        public RegistrationPasswordSyntaxValidationRule(CryptographyHelper cryptographyHelper) :
+            base(true)
         {
             _cryptographyHelper = cryptographyHelper;
         }

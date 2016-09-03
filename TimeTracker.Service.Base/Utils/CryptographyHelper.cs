@@ -3,7 +3,6 @@ using System.Collections.Concurrent;
 using System.Configuration;
 using System.Security.Cryptography;
 using System.Text;
-using TimeTracker.Service.Contract.Data;
 using TimeTracker.Service.Contract.Data.Authentication;
 using TimeTracker.Service.Contract.Data.Session;
 

@@ -1,4 +1,5 @@
 ﻿window.TimeRecordsViewModel = function (dataId, options) {
+
     var self = new DataContainerViewModelBase(dataId);
     var containerId = options.container;
     var now = new Date();
@@ -18,7 +19,7 @@
     self.filterLoadAllUsers = ko.observable(false);
     self.filterPageSize = ko.observable(10);
     self.filterPageNumber = ko.observable(1);
-    self.filterPageSizeOptions = ko.observableArray([5, 10, 15, 20, 25]);
+    self.filterPageSizeOptions = ko.observableArray([5, 10, 15, 25, 50]);
 
     self.timeRecords = ko.observableArray([]);
     self.pages = ko.observableArray([]);
@@ -47,12 +48,12 @@
                 self.pages([]);
                 if (r.Items != null) {
                     self.timeRecords(r.Items);
-                   for (var i = 0; i < r.TotalPages; i++) {
-                       self.pages.push(i+1);
-                   }
-               } else {
-                   self.timeRecords([]);
-               }
+                    for (var i = 0; i < r.TotalPages; i++) {
+                        self.pages.push(i + 1);
+                    }
+                } else {
+                    self.timeRecords([]);
+                }
             }
         });
     };
@@ -64,7 +65,7 @@
         }
     };
 
-    self.pageSizeChanged = function(a) {
+    self.pageSizeChanged = function (a) {
         self.filterPageNumber(1);
         self.filterTimeRecords();
     };
@@ -73,7 +74,7 @@
         printElement(containerId);
     };
 
-    self.editTimeRecord = function(e) {
+    self.editTimeRecord = function (e) {
         self.timeRecordEntryId(e.Id);
         self.timeRecordEntryDate(fromMsDate(e.Date));
         self.timeRecordEntryDescription(e.Caption);
@@ -88,7 +89,7 @@
                 Id: e.Id
             };
             window.application.apiCall("DeleteTimeRecord", request, {
-                success: function() {
+                success: function () {
                     window.messageBus.fire(Event.TimeRecordDeleted);
                 }
             });
@@ -141,50 +142,65 @@
         });
     };
 
-    self.addTimeRecordNote = function(e) {
-        typeValue("Leave your note for this record", function(result) {
+    self.addTimeRecordNote = function (e) {
+        typeValue("Leave your note for this record", function (result) {
             self.timeRecordNoteDayRecordId(e.Id);
             self.timeRecordNoteText(result);
             self.submitTimeRecordNote();
         });
     };
 
-    self.submitTimeRecordNote = function() {
+    self.submitTimeRecordNote = function () {
         var request = {
             Id: 0,
             DayRecordId: self.timeRecordNoteDayRecordId(),
             Text: self.timeRecordNoteText()
         };
         window.application.apiCall("SaveTimeRecordNote", request, {
-            success: function() {
+            success: function () {
                 window.messageBus.fire(Event.TimeRecordNoteSaved);
             }
         });
     };
 
-    self.deleteTimeRecordNote = function(e) {
+    self.deleteTimeRecordNote = function (e) {
         confirmDelete(function () {
             var request = {
                 DayRecordId: e.DayRecordId,
                 Id: e.Id
             };
             window.application.apiCall("DeleteTimeRecordNote", request, {
-                success: function() {
+                success: function () {
                     window.messageBus.fire(Event.TimeRecordNoteDeleted);
                 }
             });
         });
     };
 
+    
+
+    self.load = function () {
+        self.filterTimeRecords();
+    }
+
+    self.clear = function() {
+        self.timeRecords([]);
+        self.pages([]);
+        self.filterPageSize(10);
+        self.filterPageNumber(1);
+
+        self.timeRecordEntryId(0);
+        self.timeRecordEntryDate(new Date());
+        self.timeRecordEntryDescription("");
+        self.timeRecordEntryHours(1);
+        self.timeRecordEntryError(null);
+
+        self.timeRecordNoteDayRecordId(0);
+        self.timeRecordNoteText(null);
+    };
+
     var eventsTriggerReload = [Event.TimeRecordSaved, Event.TimeRecordDeleted, Event.TimeRecordNoteSaved, Event.TimeRecordNoteDeleted];
-
-    window.messageBus.subscribe(Event.DataRequested, function(d) {
-        if (d === dataId) {
-            self.filterTimeRecords();
-        }
-    });
-
-    window.messageBus.subscribeMany(eventsTriggerReload, function() {
+    window.messageBus.subscribeMany(eventsTriggerReload, function () {
         self.filterTimeRecords();
     });
 

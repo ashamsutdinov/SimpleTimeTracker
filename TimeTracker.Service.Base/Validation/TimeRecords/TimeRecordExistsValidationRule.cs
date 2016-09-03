@@ -1,7 +1,6 @@
 using System;
 using TimeTracker.Contract.Data;
 using TimeTracker.Service.Base.Validation.Base;
-using TimeTracker.Service.Contract.Data;
 using TimeTracker.Service.Contract.Data.Base;
 using TimeTracker.Service.Contract.Data.TimeRecords;
 
@@ -12,7 +11,8 @@ namespace TimeTracker.Service.Base.Validation.TimeRecords
     {
         private readonly ITimeRecordDataProvider _timeRecordDataProvider;
 
-        public TimeRecordExistsValidationRule(ITimeRecordDataProvider timeRecordDataProvider)
+        public TimeRecordExistsValidationRule(ITimeRecordDataProvider timeRecordDataProvider) : 
+            base(true)
         {
             _timeRecordDataProvider = timeRecordDataProvider;
         }

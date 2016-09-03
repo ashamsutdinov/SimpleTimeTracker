@@ -2,7 +2,6 @@
 using TimeTracker.Contract.Data;
 using TimeTracker.Contract.Data.Entities;
 using TimeTracker.Service.Base.Validation.Base;
-using TimeTracker.Service.Contract.Data;
 using TimeTracker.Service.Contract.Data.Base;
 using TimeTracker.Service.Contract.Data.UserManagement;
 
@@ -13,7 +12,8 @@ namespace TimeTracker.Service.Base.Validation.UserManagement
     {
         private readonly IUserDataProvider _userDataProvider;
 
-        public UserSettingsOwnerExistsValidationRule(IUserDataProvider userDataProvider)
+        public UserSettingsOwnerExistsValidationRule(IUserDataProvider userDataProvider) : 
+            base(true)
         {
             _userDataProvider = userDataProvider;
         }

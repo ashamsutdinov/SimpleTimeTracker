@@ -30,14 +30,16 @@
         });
     };
 
+    self.load = function() {
+        self.loadSettings();
+    };
+
+    self.clear = function() {
+        self.userSettings([]);
+    };
+
     window.messageBus.subscribe(Event.UserSettingUpdated, function () {
         self.loadSettings();
-    });
-
-    window.messageBus.subscribe(Event.DataRequested, function (d) {
-        if (d === DataRequest.UserSettings) {
-            self.loadSettings();
-        }
     });
 
     return self;

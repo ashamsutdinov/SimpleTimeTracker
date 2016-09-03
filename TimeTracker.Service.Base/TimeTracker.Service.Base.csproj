@@ -61,9 +61,9 @@
     <Compile Include="Validation\Session\TicketConsistencyValidationRule.cs" />
     <Compile Include="Validation\Base\RequestValidationRule.cs" />
     <Compile Include="Validation\Authentication\UserIsActiveValudationRule.cs" />
-    <Compile Include="Validation\Authentication\UserAlreadyLoggedInPolicy.cs" />
+    <Compile Include="Validation\Authentication\UserIsNotLoggedInValidationRule.cs" />
     <Compile Include="Validation\Registration\LoginCanBeUserValidationRule.cs" />
-    <Compile Include="Validation\Authentication\UserByLoginExistsPolicy.cs" />
+    <Compile Include="Validation\Authentication\UserByLoginExistsValidationRule.cs" />
     <Compile Include="Validation\Session\UserExistsValidationRule.cs" />
     <Compile Include="TimeTrackerServiceBase.cs" />
     <Compile Include="Utils\CryptographyHelper.cs" />
@@ -71,6 +71,8 @@
     <Compile Include="Validation\TimeRecords\TimeRecordNoteEditRightsValidationRule.cs" />
     <Compile Include="Validation\TimeRecords\TimeRecordNoteExistsValidationRule.cs" />
     <Compile Include="Validation\TimeRecords\TimeRecordTotalDuractionValidationRule.cs" />
+    <Compile Include="Validation\UserManagement\UserManagementPermissionsValidationRule.cs" />
+    <Compile Include="Validation\UserManagement\UserManagementUserExistsValidationRule.cs" />
     <Compile Include="Validation\UserManagement\UserSettingsEditRightsValidationRule.cs" />
     <Compile Include="Validation\UserManagement\UserSettingsOwnerExistsValidationRule.cs" />
   </ItemGroup>

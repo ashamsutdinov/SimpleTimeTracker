@@ -1,23 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Remoting.Messaging;
 using AutoMapper;
 using TimeTracker.Contract.Data;
 using TimeTracker.Contract.Data.Entities;
 using TimeTracker.Dal;
 using TimeTracker.Data.Base;
-
+using TimeTracker.Data.Entities;
 using DalUser = TimeTracker.Dal.Entities.User;
-using DtoUser = TimeTracker.Data.Entities.User;
 using DalUserRole = TimeTracker.Dal.Entities.UserRole;
-using DtoUserRole = TimeTracker.Data.Entities.UserRole;
 using DalUserSession = TimeTracker.Dal.Entities.UserSession;
 using DtoUserSession = TimeTracker.Data.Entities.UserSession;
+using DtoUserRole = TimeTracker.Data.Entities.UserRole;
 using DalUserSetting = TimeTracker.Dal.Entities.UserSetting;
-using DtoUserSetting = TimeTracker.Data.Entities.UserSetting;
 using DalUserState = TimeTracker.Dal.Entities.UserState;
-using DtoUserState = TimeTracker.Data.Entities.UserState;
 using DalUserToSetting = TimeTracker.Dal.Entities.UserToSetting;
 using DtoUserToSetting = TimeTracker.Data.Entities.UserToSetting;
 
@@ -41,6 +37,16 @@ namespace TimeTracker.Data
             return Mapper.Map<DalUser, IUser>(dalUser);
         }
 
+        public IUserRole PrepareRole(string id)
+        {
+            return new DtoUserRole { Id = id };
+        }
+
+        public IUserToSetting PrepareUserSetting(string id, string value)
+        {
+            return new DtoUserToSetting { Id = id, Value = value };
+        }
+
         public IUser GetUser(string login)
         {
             var dalUser = _userDa.GetUserByLogin(login);
@@ -53,7 +59,6 @@ namespace TimeTracker.Data
             {
                 ClientId = clientId,
                 DateTime = DateTime.UtcNow,
-                //todo: configure!
                 Expiration = 1800,
                 Expired = false,
                 Ticket = null,
@@ -71,6 +76,20 @@ namespace TimeTracker.Data
             return Mapper.Map<DalUserSession, IUserSession>(dalSession);
         }
 
+        public IList<IUser> GetUsers(int pageNumber, int pageSize, out int total)
+        {
+            var dalUsers = _userDa.GetUsers(pageNumber, pageSize, out total);
+            return dalUsers.Select(Mapper.Map<DalUser, IUser>).ToList();
+        }
+
+        public int DeleteUser(int id)
+        {
+            var user = GetUser(id);
+            user.StateId = "deleted";
+            SaveUser(user);
+            return user.Id;
+        }
+
         public IUser RegisterUser(string login, string name, string passwordHash, string passwordSalt)
         {
             var dalUser = new DalUser
@@ -80,7 +99,7 @@ namespace TimeTracker.Data
                 PasswordHash = passwordHash,
                 PasswordSalt = passwordSalt,
                 StateId = "active",
-                Roles = new List<DalUserRole> {new DalUserRole {Id = "user"}},
+                Roles = new List<DalUserRole> { new DalUserRole { Id = "user" } },
                 Settings = new List<DalUserToSetting>()
             };
             dalUser = _userDa.SaveUser(dalUser);
@@ -102,6 +121,18 @@ namespace TimeTracker.Data
         {
             var dalSettings = _userDa.GetUserSessings(userId);
             return dalSettings.Select(Mapper.Map<DalUserToSetting, IUserToSetting>).ToList();
+        }
+
+        public IList<IUserRole> GetAllUserRoles()
+        {
+            var dalRoles = _userDa.GetAllUserRoles();
+            return dalRoles.Select(Mapper.Map<DalUserRole, IUserRole>).ToList();
+        }
+
+        public IList<IUserState> GetAllUserStates()
+        {
+            var dalStates = _userDa.GetAllUserStates();
+            return dalStates.Select(Mapper.Map<DalUserState, IUserState>).ToList();
         }
 
         public IUserToSetting PrepareUserSetting()

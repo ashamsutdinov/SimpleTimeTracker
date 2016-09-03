@@ -233,7 +233,75 @@
         </div>
         <!--manage users container-->
         <div id="usersContainer" data-bind="visible: loaded" style="display: none">
-            <h3>Manage users</h3>
+            <form class="form-inline">
+                <h4 for="filterFrom">Manage users</h4>
+                <div class="form-group">
+                    <label for="usersPageSize">Page size: </label>
+                    <select id="usersPageSize" class="form-control" data-bind="options: pageSizeOptions, value: pageSize, event: {change: pageSizeChanged}"></select>
+                </div>
+            </form>
+            <!--edit user window-->
+            <div class="modal fade modal-window" id="editUserWindow" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            <h4 class="modal-title">Edit user</h4>
+                        </div>
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label for="editUserLogin">Login: </label>
+                                <input id="editUserLogin" type="text" class="form-control" required="" data-bind="value: editUserLogin" readonly="readonly">
+                            </div>
+                            <div class="form-group">
+                                <label for="editUserName">Name: </label>
+                                <input id="editUserName" type="text" class="form-control" required="" data-bind="value: editUserName">
+                            </div>
+                            <div class="form-group">
+                                <label for="editUserState">State: </label>
+                                <select id="editUserState" class="form-control" data-bind="options: states, value: editUserStateId, optionsText: 'Description', optionsValue: 'Id'"></select>
+                            </div>
+                            <div class="form-group">
+                                <label for="editUserRoles">Roles: </label>
+                                <select id="editUserRoles" class="form-control" data-bind="selectedOptions: editUserRoles, options: roles, optionsText: 'Description', optionsValue: 'Id'" multiple=""></select>
+                            </div>
+                            <div data-bind="foreach: editUserSettings">
+                                <div class="form-group">
+                                    <label data-bind="text: $data.Description"></label>
+                                    <input type="text" class="form-control" data-bind="value: $data.Value" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer center-container">
+                            <div class="alert alert-danger" data-bind="visible: editUserError() !== null, text: editUserError"></div>
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-primary" data-bind="click: saveUser">Save</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--users container -->
+            <div class="row">
+                <br/>
+                <div class="row center-container" data-bind="visible: users().length == 0">Users were not found</div>
+                <div class="users" data-bind="foreach: users">
+                    <div class="user-row">
+                        Login: <span data-bind="text: $data.Login"></span>,
+                        Name: <span data-bind="text: $data.Name"></span>,
+                        State: <span data-bind="text: $data.StateDescription"></span>.
+                        <a class="crud-element" href="#" data-bind="click: $root.resetPassword">Reset password</a>
+                        <a class="crud-element" href="#" data-bind="click: $root.editUser"><span class="glyphicon glyphicon-edit" title="Edit"></span></a>
+                        <a class="crud-element" href="#" data-bind="click: $root.deleteUser"><span class="glyphicon glyphicon-trash" title="Delete"></span></a>
+                        
+                    </div>
+                </div>
+                <div class="col-md-12" data-bind="visible: users().length > 0">
+                    <span>Page: </span>
+                    <span data-bind="foreach: pages">
+                        <a href="#" data-bind="text: $data, click: $parent.changePage, css: $data == $parent.pageNumber() ? 'active' : ''"></a>
+                    </span>
+                </div>
+            </div>
         </div>
         <!--manage user timesheets container-->
         <div id="manageTimeRecordsContainer" data-bind="visible: loaded" style="display: none">
@@ -242,11 +310,11 @@
                 <h4 for="filterFrom">Manage timesheets</h4>
                 <div class="form-group">
                     <label for="manageFilterFrom">From: </label>
-                    <input id="manageFilterFrom" type="text" class="form-control" data-bind="datepicker: filterFromDate"/>
+                    <input id="manageFilterFrom" type="text" class="form-control" data-bind="datepicker: filterFromDate" />
                 </div>
                 <div class="form-group">
                     <label for="manageFilterTo">To: </label>
-                    <input id="manageFilterTo" type="text" class="form-control" data-bind="datepicker: filterToDate"/>
+                    <input id="manageFilterTo" type="text" class="form-control" data-bind="datepicker: filterToDate" />
                 </div>
                 <div class="form-group">
                     <label for="manageFilterPageSize">Page size: </label>
@@ -379,16 +447,19 @@
             timeRecordWindow: $("#myTimeRecordEntryWindow"),
             noteWindow: $("#myTimeRecordNoteEntryWindow")
         }),
-        document.getElementById("userTimeRecordsContainer"));
+            document.getElementById("userTimeRecordsContainer"));
 
-        ko.applyBindings(new UsersViewModel(), document.getElementById("usersContainer"));
+        ko.applyBindings(new UsersViewModel({
+                userWindow: $("#editUserWindow")
+            }),
+            document.getElementById("usersContainer"));
 
         ko.applyBindings(new ManageTimeRecordsViewModel({
             container: "manageTimeRecordsContainerContent",
             timeRecordWindow: $("#userTimeRecordEntryWindow"),
             noteWindow: $("#userTimeRecordNoteEntryWindow")
         }),
-        document.getElementById("manageTimeRecordsContainer"));
+            document.getElementById("manageTimeRecordsContainer"));
 
         ko.applyBindings(new UserSettingsViewModel(), document.getElementById("userSettingsContainer"));
 

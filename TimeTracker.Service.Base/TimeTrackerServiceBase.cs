@@ -49,6 +49,8 @@ namespace TimeTracker.Service.Base
 
         private readonly ValidationRule[] _userSettingsValidationRules;
 
+        private readonly ValidationRule[] _userManagementValidationRules;
+
         protected TimeTrackerServiceBase()
         {
             var serviceResolver = ServiceResolverFactory.Get();
@@ -69,16 +71,16 @@ namespace TimeTracker.Service.Base
 
             _loginValidationRules = new ValidationRule[]
             {
-                new UserAlreadyLoggedInPolicy(),
+                new UserIsNotLoggedInValidationRule(),
                 new LoginPasswordValidationRule(_cryptographyHelper),
-                new UserByLoginExistsPolicy(UserDataProvider),
+                new UserByLoginExistsValidationRule(UserDataProvider),
                 new MatchPasswordValidationRule(_cryptographyHelper, UserDataProvider),
                 new UserIsActiveValudationRule(UserDataProvider)
             };
 
             _registrationValidationRules = new ValidationRule[]
             {
-                new UserAlreadyLoggedInPolicy(),
+                new UserIsNotLoggedInValidationRule(),
                 new RegistrationPasswordSyntaxValidationRule(_cryptographyHelper),
                 new LoginCanBeUserValidationRule(UserDataProvider)
             };
@@ -113,6 +115,12 @@ namespace TimeTracker.Service.Base
             {
                 new UserSettingsOwnerExistsValidationRule(UserDataProvider), 
                 new UserSettingsEditRightsValidationRule("manager") 
+            };
+
+            _userManagementValidationRules = new ValidationRule[]
+            {
+                new UserManagementPermissionsValidationRule("manager"),
+                new UserManagementUserExistsValidationRule(UserDataProvider)
             };
         }
 
@@ -249,7 +257,7 @@ namespace TimeTracker.Service.Base
                 return new UserSettingItemList
                 {
                     UserId = requestedUserId,
-                    Items = allSettings.Select(s => new UserSettingItem
+                    Items = allSettings.Select(s => new UserSettingValueItem
                     {
                         Id = s.Id,
                         Description = s.Description,
@@ -285,7 +293,78 @@ namespace TimeTracker.Service.Base
 
         public Response<UserList> GetUsers(Request<UserListData> request)
         {
-            throw new NotImplementedException();
+            return SafeInvoke(request, (user, session) =>
+            {
+                int total;
+                var users = UserDataProvider.GetUsers(request.Data.PageNumber, request.Data.PageSize, out total);
+                var result = new UserList(users, request.Data.PageNumber, request.Data.PageSize, total, UserDataProvider);
+                return result;
+            }, _userManagementValidationRules);
+        }
+
+        public Response<UserListItem> GetUser(Request<UserListItem> request)
+        {
+            return SafeInvoke(request, (user, session) =>
+            {
+                var requestedUser = UserDataProvider.GetUser(request.Data.Id);
+                var convertedUser = UserList.ConvertFromDtoUser(requestedUser);
+
+                //this is to ensure ALL possible settings will be delivered to the client
+                var allSettings = UserDataProvider.GetAllUserSettings();
+                var userSettings = UserDataProvider.GetUserSettings(request.Data.Id);
+
+                convertedUser.Settings = allSettings.Select(s => new UserSettingValueItem
+                {
+                    Id = s.Id,
+                    Description = s.Description,
+                    Value = userSettings.Where(us => us.Id == s.Id).Select(us => us.Value).FirstOrDefault()
+                }).ToList();
+
+                return convertedUser;
+
+            }, _userManagementValidationRules);
+        }
+
+        public Response<int> SaveUser(Request<UserListItem> request)
+        {
+            return SafeInvoke(request, (user, session) =>
+            {
+                var userToSave = UserDataProvider.GetUser(request.Data.Id);
+                userToSave.Name = request.Data.Name;
+                userToSave.StateId = request.Data.StateId;
+                userToSave.Roles.Clear();
+                foreach (var role in request.Data.Roles)
+                {
+                    userToSave.Roles.Add(UserDataProvider.PrepareRole(role.Id));
+                }
+                userToSave.Settings.Clear();
+                foreach (var setting in request.Data.Settings)
+                {
+                    userToSave.Settings.Add(UserDataProvider.PrepareUserSetting(setting.Id, setting.Value));
+                }
+                UserDataProvider.SaveUser(userToSave);
+                return userToSave.Id;
+            }, _userManagementValidationRules);
+        }
+
+        public Response<int> DeleteUser(Request<UserListItem> request)
+        {
+            return SafeInvoke(request, (user, session) => UserDataProvider.DeleteUser(request.Data.Id), _userManagementValidationRules);
+        }
+
+        public Response<int> ResetPassword(Request<UserListItem> request)
+        {
+            return SafeInvoke(request, (user, session) =>
+            {
+                var requestedUser = UserDataProvider.GetUser(request.Data.Id);
+                var newSalt = _cryptographyHelper.CreateSalt();
+                var newPassword = "123456";
+                var newPasswordHash = _cryptographyHelper.HashPassword(newPassword, newSalt);
+                requestedUser.PasswordHash = newPasswordHash;
+                requestedUser.PasswordSalt = newSalt;
+                UserDataProvider.SaveUser(requestedUser);
+                return requestedUser.Id;
+            }, _userManagementValidationRules);
         }
 
         private Response<TData> SafeInvoke<TData>(Request request, Func<IUser, IUserSession, TData> action, ValidationRule[] requestValidationRules = null)

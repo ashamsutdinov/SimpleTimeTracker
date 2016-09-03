@@ -25,6 +25,6 @@ namespace TimeTracker.Service.Contract.Data.UserManagement
         public List<UserRoleItem> Roles { get; set; }
 
         [DataMember]
-        public List<UserSettingItem> Settings { get; set; }
+        public List<UserSettingValueItem> Settings { get; set; }
     }
 }

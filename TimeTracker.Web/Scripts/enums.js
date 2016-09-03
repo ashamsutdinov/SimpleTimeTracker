@@ -48,5 +48,6 @@ var DataRequest = {
     UserTimesheets: 0,
     ManageUsers: 1,
     ManageTimeshets: 2,
-    UserSettings: 3
+    UserSettings: 3,
+    ClearAll: 10
 };

@@ -4,7 +4,7 @@ using System.Runtime.Serialization;
 namespace TimeTracker.Service.Contract.Data.TimeRecords
 {
     [DataContract]
-    public class TimeRecordData
+    public class TimeRecordData 
     {
         [DataMember]
         public int Id { get; set; }

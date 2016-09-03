@@ -84,7 +84,12 @@ a.active {
     font-size: 12px;
 }
 
-.timesheet-row {
+.timesheets, .users {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.timesheet-row, .user-row {
     padding: 5px 5px 5px 5px;
     border-style: solid;
     border-width: 1px;
@@ -102,10 +107,7 @@ a.active {
     background-color: lightpink;
 }
 
-.timesheets {
-    margin-top: 10px;
-    margin-bottom: 10px;
-}
+
 
 .stickynote { 
 	display: block;

@@ -1,5 +1,4 @@
 using TimeTracker.Contract.Data.Entities;
-using TimeTracker.Service.Contract.Data;
 using TimeTracker.Service.Contract.Data.Base;
 
 namespace TimeTracker.Service.Base.Validation.Base
@@ -18,6 +17,12 @@ namespace TimeTracker.Service.Base.Validation.Base
     internal abstract class AnonymousRequestValidationRule<TData> :
         RequestValidationRule<TData>
     {
+        protected AnonymousRequestValidationRule(bool verifyRequestType) :
+            base(verifyRequestType)
+        {
+            
+        } 
+
         protected override void EvaluateInternal(IUser user, IUserSession userSession, Request<TData> request)
         {
             EvaluateAnonymous(request);

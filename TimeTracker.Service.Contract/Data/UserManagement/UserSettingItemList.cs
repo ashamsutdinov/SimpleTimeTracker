@@ -5,7 +5,7 @@ namespace TimeTracker.Service.Contract.Data.UserManagement
 {
     [DataContract]
     public class UserSettingItemList :
-        ItemList<UserSettingItem>
+        ItemList<UserSettingValueItem>
     {
         [DataMember]
         public int UserId { get; set; }

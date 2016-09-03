@@ -1,18 +1,18 @@
 ﻿using System.Security.Authentication;
 using TimeTracker.Contract.Data;
 using TimeTracker.Service.Base.Validation.Base;
-using TimeTracker.Service.Contract.Data;
 using TimeTracker.Service.Contract.Data.Authentication;
 using TimeTracker.Service.Contract.Data.Base;
 
 namespace TimeTracker.Service.Base.Validation.Authentication
 {
-    internal class UserByLoginExistsPolicy :
+    internal class UserByLoginExistsValidationRule :
         AnonymousRequestValidationRule<LoginData>
     {
         private readonly IUserDataProvider _userDataProvider;
 
-        public UserByLoginExistsPolicy(IUserDataProvider userDataProvider)
+        public UserByLoginExistsValidationRule(IUserDataProvider userDataProvider) : 
+            base(true)
         {
             _userDataProvider = userDataProvider;
         }

@@ -7,7 +7,6 @@ namespace TimeTracker.Service.Contract.Data.UserManagement
     public class UserSettingItem :
         KeyValueItem
     {
-        [DataMember]
-        public string Value { get; set; }
+        
     }
 }
