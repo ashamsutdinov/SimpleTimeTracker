@@ -17,8 +17,6 @@ namespace TimeTracker.Service.Base.Utils
 
         private readonly string _privateKey;
 
-        private readonly MD5CryptoServiceProvider _md5 = new MD5CryptoServiceProvider();
-
         private const int SaltLength = 6;
 
         public CryptographyHelper()
@@ -106,8 +104,11 @@ namespace TimeTracker.Service.Base.Utils
         private string MD5(string input)
         {
             var data = Encoding.UTF8.GetBytes(input);
-            var hashData = _md5.ComputeHash(data);
-            return Convert.ToBase64String(hashData);
+            using (var md5 = new MD5CryptoServiceProvider())
+            {
+                var hashData = md5.ComputeHash(data);
+                return Convert.ToBase64String(hashData);
+            }
         }
 
         public string CreateSalt(int length = SaltLength)

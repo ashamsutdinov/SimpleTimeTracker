@@ -49,7 +49,9 @@ namespace TimeTracker.Service.Contract.Data.TimeRecords
                         Id = n.Id,
                         DateTime = n.DateTime,
                         Text = n.Text,
-                        UserName = n.UserName
+                        UserName = n.UserName,
+                        DayRecordId = item.Id,
+                        PostedByAnotherUser = n.UserId != item.UserId
                     }).ToList();
                     groups[item.Id] = group;
                 }

@@ -134,6 +134,14 @@ a.active {
 	background: linear-gradient(#FFEEEE, #DDEFBB);
 }
 
+.smallnote-red {
+    background: -webkit-linear-gradient(#FFFFFF, #FF94B0);
+	background: -moz-linear-gradient(#FFFFFF, #FF94B0);
+	background: -o-linear-gradient(#FFFFFF, #FF94B0);
+	background: -ms-linear-gradient(#FFFFFF, #FF94B0);
+	background: linear-gradient(#FFFFFF, #FF94B0);
+}
+
 hr {
     margin-top: 5px;
     margin-bottom: 5px;

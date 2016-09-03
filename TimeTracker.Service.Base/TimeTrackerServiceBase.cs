@@ -203,7 +203,7 @@ namespace TimeTracker.Service.Base
         {
             return SafeInvoke(request, (user, session) =>
             {
-                TimeRecordDataProvider.DeleteTimeRecordNote(request.Data.Id);
+                TimeRecordDataProvider.DeleteTimeRecord(request.Data.Id);
                 return request.Data.Id;
             }, _deleteTimeRecordValidationRules);
         }

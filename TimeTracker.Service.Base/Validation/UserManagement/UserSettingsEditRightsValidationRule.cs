@@ -20,7 +20,7 @@ namespace TimeTracker.Service.Base.Validation.UserManagement
 
         protected override void EvaluateInternal(IUser user, IUserSession userSession, Request<UserSettingItemList> request)
         {
-            if (user.Id != request.Data.UserId && !user.Roles.Select(r=>r.Id).Intersect(_requiredRoles).Any())
+            if (request.Data.UserId != 0 && user.Id != request.Data.UserId && !user.Roles.Select(r=>r.Id).Intersect(_requiredRoles).Any())
             {
                 throw new UnauthorizedAccessException("User does not have enough rights to perform manipulations with users settings");   
             }

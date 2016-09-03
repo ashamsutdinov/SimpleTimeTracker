@@ -9,7 +9,7 @@
 AS
 BEGIN
 	DECLARE @DayRecordId INT
-	SELECT @DayRecordId = [Id] FROM [dbo].[DayRecords] WHERE [Date] = @Date
+	SELECT @DayRecordId = [Id] FROM [dbo].[DayRecords] WHERE [Date] = @Date AND [UserId] = @UserId
 	IF @DayRecordId IS NULL
 	BEGIN
 		INSERT INTO [dbo].[DayRecords] ([UserId], [Date]) VALUES (@UserId, @Date)

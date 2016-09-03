@@ -1,9 +1,20 @@
 ﻿window.TimeRecordsViewModel = function (dataId, options) {
     var self = new DataContainerViewModelBase(dataId);
     var containerId = options.container;
-    
-    self.filterFromDate = ko.observable(new Date());
-    self.filterToDate = ko.observable(new Date());
+    var now = new Date();
+    var month = now.getMonth();
+    var year = now.getFullYear();
+    if (month === 0) {
+        month = 11;
+        year = year - 1;
+    } else {
+        month = month - 1;
+    }
+    var monthBefore = new Date();
+    monthBefore.setFullYear(year);
+    monthBefore.setMonth(month);
+    self.filterFromDate = ko.observable(monthBefore);
+    self.filterToDate = ko.observable(now);
     self.filterLoadAllUsers = ko.observable(false);
     self.filterPageSize = ko.observable(10);
     self.filterPageNumber = ko.observable(1);
@@ -154,6 +165,7 @@
     self.deleteTimeRecordNote = function(e) {
         confirmDelete(function () {
             var request = {
+                DayRecordId: e.DayRecordId,
                 Id: e.Id
             };
             window.application.apiCall("DeleteTimeRecordNote", request, {

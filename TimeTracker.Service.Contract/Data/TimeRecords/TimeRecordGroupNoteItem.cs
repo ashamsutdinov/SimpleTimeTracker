@@ -17,5 +17,11 @@ namespace TimeTracker.Service.Contract.Data.TimeRecords
 
         [DataMember]
         public string UserName { get; set; }
+
+        [DataMember]
+        public int DayRecordId { get; set; }
+
+        [DataMember]
+        public bool PostedByAnotherUser { get; set; }
     }
 }
