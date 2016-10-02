@@ -113,3 +113,12 @@ function typeValue(text, callback) {
         }
     });
 }
+
+function validate(input, error, errorText) {
+    var value = input();
+    if (nullString(value)) {
+        error(errorText);
+        return false;
+    }
+    return true;
+}

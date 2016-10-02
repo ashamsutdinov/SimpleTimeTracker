@@ -6,9 +6,9 @@ using TimeTracker.Service.Contract.Data.Base;
 namespace TimeTracker.Service.Base.Validation.Session
 {
     internal class SessionOwnershipValidationRule :
-        ValidationRule
+        LoggedInUserValidationRule
     {
-        public override void Evaluate(IUser user, IUserSession userSession, Request request)
+        protected override void EvaluateInternal(IUser user, IUserSession userSession, Request request)
         {
             var visitorId = user != null ? user.Id : 0;
             var sessionOwnerId = userSession != null ? userSession.UserId : 0;

@@ -46,8 +46,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Validation\Base\AnonymousRequestValidationRule.cs" />
     <Compile Include="Validation\Authentication\MatchPasswordValidationRule.cs" />
-    <Compile Include="Validation\Registration\RegistrationPasswordSyntaxValidationRule.cs" />
-    <Compile Include="Validation\Authentication\LoginPasswordValidationRule.cs" />
+    <Compile Include="Validation\Base\LoggedInUserValidationRule.cs" />
     <Compile Include="Validation\Session\RequestTicketSyntaxValidationRule.cs" />
     <Compile Include="Validation\Base\ValidationRule.cs" />
     <Compile Include="Validation\Session\SessionExistsValidationRule.cs" />

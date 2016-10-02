@@ -1,18 +1,13 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Configuration;
 using System.Security.Cryptography;
 using System.Text;
-using TimeTracker.Service.Contract.Data.Authentication;
 using TimeTracker.Service.Contract.Data.Session;
 
 namespace TimeTracker.Service.Base.Utils
 {
     internal class CryptographyHelper
     {
-        private readonly ConcurrentDictionary<string, string> _nonces = new ConcurrentDictionary<string, string>();
-
-        private readonly string _apiKey;
 
         private readonly string _privateKey;
 
@@ -20,25 +15,7 @@ namespace TimeTracker.Service.Base.Utils
 
         public CryptographyHelper()
         {
-            _apiKey = ConfigurationManager.AppSettings["ApiKey"];
             _privateKey = ConfigurationManager.AppSettings["PrivateKey"];
-        }
-
-        public string GetNonce(string clientId)
-        {
-            var nonce = Guid.NewGuid().ToString();
-            _nonces[clientId] = nonce;
-            return nonce;
-        }
-
-        public bool VerifyPasswordSyntax(PasswordData passwordData)
-        {
-            string nonce;
-            if (_nonces.TryGetValue(passwordData.ClientId, out nonce))
-            {
-                return nonce == passwordData.Nonce;
-            }
-            return false;
         }
 
         public string XorDecode(string message, string key)
@@ -56,17 +33,6 @@ namespace TimeTracker.Service.Base.Utils
             var hashed = algorithm.ComputeHash(passwordData);
             var hash = Convert.ToBase64String(hashed);
             return hash;
-        }
-
-        public PasswordData DecodeXorPassword(string password)
-        {
-            var decoded = XorDecode(password, _apiKey).Split('#');
-            return new PasswordData
-            {
-                Password = decoded[0],
-                ClientId = decoded[1],
-                Nonce = decoded[2]
-            };
         }
 
         public SessionData DecodeXorTicket(string ticket)
@@ -100,7 +66,7 @@ namespace TimeTracker.Service.Base.Utils
             return result.ToString();
         }
 
-        private string MD5(string input)
+        private static string MD5(string input)
         {
             var data = Encoding.UTF8.GetBytes(input);
             using (var md5 = new MD5CryptoServiceProvider())

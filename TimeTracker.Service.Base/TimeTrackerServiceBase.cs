@@ -72,7 +72,6 @@ namespace TimeTracker.Service.Base
             _loginValidationRules = new ValidationRule[]
             {
                 new UserIsNotLoggedInValidationRule(),
-                new LoginPasswordValidationRule(_cryptographyHelper),
                 new UserByLoginExistsValidationRule(UserDataProvider),
                 new MatchPasswordValidationRule(_cryptographyHelper, UserDataProvider),
                 new UserIsActiveValudationRule(UserDataProvider)
@@ -81,7 +80,6 @@ namespace TimeTracker.Service.Base
             _registrationValidationRules = new ValidationRule[]
             {
                 new UserIsNotLoggedInValidationRule(),
-                new RegistrationPasswordSyntaxValidationRule(_cryptographyHelper),
                 new LoginCanBeUserValidationRule(UserDataProvider)
             };
 
@@ -152,11 +150,6 @@ namespace TimeTracker.Service.Base
             });
         }
 
-        public virtual Response<string> GetNonce(Request request)
-        {
-            return SafeInvoke(request, (user, session) => _cryptographyHelper.GetNonce(request.ClientId), true);
-        }
-
         public virtual Response<TicketData> Login(Request<LoginData> request)
         {
             return SafeInvoke(request, (userNull, sessionNull) =>
@@ -188,10 +181,9 @@ namespace TimeTracker.Service.Base
         {
             return SafeInvoke(request, (userNull, session) =>
             {
-                var passwordData = _cryptographyHelper.DecodeXorPassword(request.Data.Password);
                 var login = request.Data.Login;
                 var salt = _cryptographyHelper.CreateSalt();
-                var hash = _cryptographyHelper.HashPassword(passwordData.Password, salt);
+                var hash = _cryptographyHelper.HashPassword(request.Data.Password, salt);
                 var user = UserDataProvider.RegisterUser(login, request.Data.Name, hash, salt);
                 return user.Id;
             }, _registrationValidationRules);

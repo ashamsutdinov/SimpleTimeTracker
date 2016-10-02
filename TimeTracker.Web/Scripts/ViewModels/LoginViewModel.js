@@ -25,24 +25,21 @@
         }
     };
 
-    var loginNonceReceived = function (nonce) {
-        var login = self.loginLogin();
-        if (nullString(login)) {
-            self.error("Login required");
+    self.login = function () {
+        self.error(null);
+
+        var valid =
+            validate(self.loginLogin, self.error, "Login required") &&
+            validate(self.loginPassword, self.error, "Password required");
+        
+        if (!valid) {
             return;
         }
-        var password = self.loginPassword();
-        if (nullString(password)) {
-            self.error("Password required");
-            return;
-        }
-        var passwordData = password + "#" + Config.ClientId + "#" + nonce;
-        var encryptedPasswordData = Base64.encode(xor(passwordData, Config.ApiKey));
+        
         var data = {
-            Login: login,
-            Password: encryptedPasswordData
+            Login: self.loginLogin(),
+            Password: self.loginPassword()
         };
-       
         window.application.apiCall("Login", data, {
             success: function (r) {
                 localStorage[Config.TicketKey] = r.Ticket;
@@ -57,15 +54,6 @@
             },
             fail: errorHandler
         });
-    }
-
-    self.login = function () {
-        self.error(null);
-        window.application.apiCall("GetNonce", {}, {
-            success: loginNonceReceived,
-            error: errorHandler,
-            fail: errorHandler
-        });
     };
 
     self.logout = function () {
@@ -78,28 +66,20 @@
         });
     };
 
-    var registerNonceReceived = function (nonce) {
-        var login = self.registerLogin();
-        if (nullString(login)) {
-            self.error("Login required");
+    self.register = function () {
+        var valid =
+            validate(self.registerLogin, self.error, "Login required") &&
+            validate(self.registerName, "Name required") &&
+            validate(self.registerPassword, self.error, "Password required");
+
+        if (!valid) {
             return;
         }
-        var password = self.registerPassword();
-        if (nullString(password)) {
-            self.error("Password required");
-            return;
-        }
-        var name = self.registerName();
-        if (nullString(name)) {
-            self.error("Name required");
-            return;
-        }
-        var passwordData = password + "#" + Config.ClientId + "#" + nonce;
-        var encryptedPasswordData = Base64.encode(xor(passwordData, Config.ApiKey));
+
         var data = {
-            Login: login,
-            Name: name,
-            Password: encryptedPasswordData
+            Login: self.registerLogin(),
+            Name: self.registerName(),
+            Password: self.registerPassword()
         };
         window.application.apiCall("Register", data, {
             success: function (r) {
@@ -107,7 +87,7 @@
                 setTimeout(function () {
                     self.registered(false);
                 }, Config.ShowAlertTimeout);
-                window.messageBus.fire(Event.UserSaved);
+                window.messageBus.fire(Event.UserRegistered);
             },
             error: errorHandler,
             done: function () {
@@ -115,16 +95,6 @@
                 self.registerName(null);
                 self.registerPassword(null);
             },
-            fail: errorHandler
-        });
-    }
-
-    self.register = function () {
-        self.error(null);
-        self.registered(false);
-        window.application.apiCall("GetNonce", {}, {
-            success: registerNonceReceived,
-            error: errorHandler,
             fail: errorHandler
         });
     };

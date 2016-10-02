@@ -17,9 +17,10 @@ var Event = {
     TimeRecordNoteSaved: 23,
     TimeRecordNoteDeleted: 24,
 
-    UserSaved: 41,
-    UserDeleted: 42,
-    UserSettingUpdated: 43,
+    UserRegistered : 41,
+    UserSaved: 42,
+    UserDeleted: 43,
+    UserSettingUpdated: 44,
 
     Alert: 51,
 

@@ -50,7 +50,6 @@
     <Compile Include="Data\Base\PagedItemList.cs" />
     <Compile Include="Data\Authentication\LoginData.cs" />
     <Compile Include="Data\Base\PageData.cs" />
-    <Compile Include="Data\Authentication\PasswordData.cs" />
     <Compile Include="Data\Registration\RegistrationData.cs" />
     <Compile Include="Data\Base\Request.cs" />
     <Compile Include="Data\Base\Response.cs" />

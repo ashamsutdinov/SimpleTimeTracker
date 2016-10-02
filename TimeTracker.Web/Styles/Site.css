@@ -99,11 +99,11 @@ a.active {
     margin-bottom: 2px;
 }
 
-.rate-normal {
+.rate-overload {
     background-color: lightgreen;
 }
 
-.rate-overload {
+.rate-normal {
     background-color: lightpink;
 }
 

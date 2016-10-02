@@ -23,9 +23,8 @@ namespace TimeTracker.Service.Base.Validation.Authentication
 
         protected override void EvaluateAnonymous(Request<LoginData> request)
         {
-            var passwordData = _cryptographyHelper.DecodeXorPassword(request.Data.Password);
             var user = _userDataProvider.GetUser(request.Data.Login);
-            var hash = _cryptographyHelper.HashPassword(passwordData.Password, user.PasswordSalt);
+            var hash = _cryptographyHelper.HashPassword(request.Data.Password, user.PasswordSalt);
             if (hash != user.PasswordHash)
             {
                 throw new AuthenticationException("Invalid login or password");

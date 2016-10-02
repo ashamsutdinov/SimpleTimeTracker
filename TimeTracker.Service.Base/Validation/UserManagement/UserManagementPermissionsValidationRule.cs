@@ -7,7 +7,7 @@ using TimeTracker.Service.Contract.Data.Base;
 namespace TimeTracker.Service.Base.Validation.UserManagement
 {
     internal class UserManagementPermissionsValidationRule :
-        ValidationRule
+        LoggedInUserValidationRule
     {
         private readonly string[] _requiredRoles;
 
@@ -16,7 +16,7 @@ namespace TimeTracker.Service.Base.Validation.UserManagement
             _requiredRoles = requiredRoles;
         }
 
-        public override void Evaluate(IUser user, IUserSession userSession, Request request)
+        protected override void EvaluateInternal(IUser user, IUserSession userSession, Request request)
         {
             var hasRequiredRoles = user.Roles.Select(r => r.Id).Intersect(_requiredRoles).Any();
             if (!hasRequiredRoles)
