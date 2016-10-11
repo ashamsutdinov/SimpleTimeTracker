@@ -6,7 +6,6 @@ namespace TimeTracker.Service.Contract.Data.Base
     [DataContract]
     public class Response<TData>
     {
-        [DataMember]
         public HttpStatusCode StatusCode { get; set; }
 
         [DataMember]
@@ -45,17 +44,19 @@ namespace TimeTracker.Service.Contract.Data.Base
 
         public static Response<TData> NotAcceptable(string message)
         {
-            return PrepareResponse(message, default(TData), HttpStatusCode.NotAcceptable);
+            return PrepareResponse(message, default(TData), HttpStatusCode.BadRequest);
         }
 
         private static Response<TData> PrepareResponse(string message, TData data, HttpStatusCode statusCode)
         {
-            return new Response<TData>
+            var response = new Response<TData>
             {
                 Message = message,
                 Data = data,
                 StatusCode = statusCode
             };
+
+            return response;
         }
     }
 }

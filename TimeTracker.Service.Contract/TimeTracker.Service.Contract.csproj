@@ -53,6 +53,7 @@
     <Compile Include="Data\Registration\RegistrationData.cs" />
     <Compile Include="Data\Base\Request.cs" />
     <Compile Include="Data\Base\Response.cs" />
+    <Compile Include="Data\Session\HeartbitData.cs" />
     <Compile Include="Data\Session\SessionData.cs" />
     <Compile Include="Data\Session\SessionState.cs" />
     <Compile Include="Data\Session\TicketData.cs" />

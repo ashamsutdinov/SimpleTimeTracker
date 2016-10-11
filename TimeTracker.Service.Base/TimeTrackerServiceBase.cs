@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Security.Authentication;
+using System.ServiceModel.Web;
 using TimeTracker.Contract.Data;
 using TimeTracker.Contract.Data.Entities;
 using TimeTracker.Contract.Log;
@@ -25,6 +27,17 @@ namespace TimeTracker.Service.Base
     public abstract class TimeTrackerServiceBase :
         ITimeTrackerService
     {
+        private readonly DateTime _epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+
+        private readonly HttpStatusCode[] _failedResponseStatusCodes = new HttpStatusCode[]
+        {
+            HttpStatusCode.Unauthorized, 
+            HttpStatusCode.Forbidden, 
+            HttpStatusCode.NotAcceptable, 
+            HttpStatusCode.BadRequest,
+            HttpStatusCode.InternalServerError
+        };
+
         private readonly CryptographyHelper _cryptographyHelper = new CryptographyHelper();
 
         protected readonly IUserDataProvider UserDataProvider;
@@ -122,13 +135,21 @@ namespace TimeTracker.Service.Base
             };
         }
 
-        public Response<long> Heartbit(Request<long> request)
+
+        public Response<HeartbitData> Heartbit(long tick)
         {
-            return SafeInvoke(request, (user, session) => DateTime.UtcNow.Ticks, true);
+            //it seems to be unrealistic to catch any exception here
+            var request = new Request<long> { Data = tick };
+            return SafeInvoke(request, (user, session) => new HeartbitData
+            {
+                ClientTime = tick,
+                ServerTime = (long)DateTime.UtcNow.Subtract(_epoch).TotalMilliseconds
+            }, true);
         }
 
-        public Response<SessionState[]> Handshake(Request request)
+        public Response<SessionState[]> Handshake(string clientId, string ticket)
         {
+            var request = new Request { ClientId = clientId, Ticket = ticket };
             return SafeInvoke(request, (user, session) =>
             {
                 if (user == null)
@@ -233,7 +254,7 @@ namespace TimeTracker.Service.Base
             {
                 var data = request.Data;
                 int total;
-                var timeRecords = TimeRecordDataProvider.GetTimeRecords(data.LoadAllUsers ? (int?) null : user.Id, data.From, data.To, data.PageNumber, data.PageSize, out total);
+                var timeRecords = TimeRecordDataProvider.GetTimeRecords(data.LoadAllUsers ? (int?)null : user.Id, data.From, data.To, data.PageNumber, data.PageSize, out total);
                 var result = new TimeRecordItemList(timeRecords.ToList(), data.PageNumber, data.PageSize, total, UserDataProvider, TimeRecordDataProvider);
                 return result;
             }, _getUserTimeRecordsValidationRules);
@@ -361,7 +382,12 @@ namespace TimeTracker.Service.Base
 
         private Response<TData> SafeInvoke<TData>(Request request, Func<IUser, IUserSession, TData> action, ValidationRule[] requestValidationRules = null)
         {
-            return SafeInvoke(request, action, false, requestValidationRules);
+            var response = SafeInvoke(request, action, false, requestValidationRules);
+            if (_failedResponseStatusCodes.Contains(response.StatusCode))
+            {
+                throw new WebFaultException<Response<TData>>(response, response.StatusCode);
+            }
+            return response;
         }
 
 

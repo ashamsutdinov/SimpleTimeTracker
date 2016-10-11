@@ -8,7 +8,7 @@
         var request = {
             UserId : 0
         };
-        window.application.apiCall("GetUserSettings", request, {
+        window.application.apoPost("GetUserSettings", request, {
             success: function (r) {
                 self.userSettings(r.Items);
             }
@@ -20,7 +20,7 @@
             UserId: 0,
             Items: self.userSettings()
         };
-        window.application.apiCall("SaveUserSettings", request, {
+        window.application.apoPost("SaveUserSettings", request, {
             success: function() {
                 window.messageBus.fire(Event.Alert, {
                     Type: AlertType.Success,

@@ -40,7 +40,7 @@
             Login: self.loginLogin(),
             Password: self.loginPassword()
         };
-        window.application.apiCall("Login", data, {
+        window.application.apiPost("Login", data, {
             success: function (r) {
                 localStorage[Config.TicketKey] = r.Ticket;
                 window.messageBus.fire(Event.EndDialog);
@@ -57,7 +57,7 @@
     };
 
     self.logout = function () {
-        window.application.apiCall("Logout", {}, {
+        window.application.apiPost("Logout", {}, {
             done: function () {
                 localStorage.removeItem(Config.TicketKey);
                 window.messageBus.fire(Event.LoggedOut);
@@ -81,7 +81,7 @@
             Name: self.registerName(),
             Password: self.registerPassword()
         };
-        window.application.apiCall("Register", data, {
+        window.application.apoPost("Register", data, {
             success: function (r) {
                 self.registered(true);
                 setTimeout(function () {
