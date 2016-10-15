@@ -37,7 +37,7 @@
             PageSize: self.pageSize(),
             PageNumber: self.pageNumber()
         };
-        window.application.apoPost("GetUsers", request, {
+        window.application.apiPost("GetUsers", request, {
             success: function (r) {
                 self.pages([]);
                 if (r.AllRoles !== null) {
@@ -66,7 +66,7 @@
         var request = {
             Id: e.Id
         };
-        window.application.apoPost("GetUser", request, {
+        window.application.apiPost("GetUser", request, {
             success: function (user) {
                 self.editUserId(user.Id);
                 self.editUserLogin(user.Login);
@@ -95,7 +95,7 @@
             var request = {
                 Id: e.Id
             };
-            window.application.apoPost("DeleteUser", request, {
+            window.application.apiPost("DeleteUser", request, {
                 success: function () {
                     window.messageBus.fire(Event.UserDeleted);
                 }
@@ -119,7 +119,7 @@
             Roles: roles,
             Settings: self.editUserSettings()
         };
-        window.application.apoPost("SaveUser", request, {
+        window.application.apiPost("SaveUser", request, {
             success: function() {
                 window.messageBus.fire(Event.UserSaved);
                 window.messageBus.fire(Event.EndDialog);
@@ -132,7 +132,7 @@
             var request = {
                 Id: e.Id
             };
-            window.application.apoPost("ResetPassword", request, {
+            window.application.apiPost("ResetPassword", request, {
                 success: function () {
 
                 }

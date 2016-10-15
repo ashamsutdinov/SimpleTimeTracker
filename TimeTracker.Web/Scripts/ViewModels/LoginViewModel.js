@@ -81,7 +81,7 @@
             Name: self.registerName(),
             Password: self.registerPassword()
         };
-        window.application.apoPost("Register", data, {
+        window.application.apiPost("Register", data, {
             success: function (r) {
                 self.registered(true);
                 setTimeout(function () {

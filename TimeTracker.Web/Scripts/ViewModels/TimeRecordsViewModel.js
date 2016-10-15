@@ -43,7 +43,7 @@
             PageSize: self.filterPageSize(),
             LoadAllUsers: self.filterLoadAllUsers()
         };
-        window.application.apoPost("GetTimeRecords", request, {
+        window.application.apiPost("GetTimeRecords", request, {
             success: function (r) {
                 self.pages([]);
                 if (r.Items != null) {
@@ -88,7 +88,7 @@
             var request = {
                 Id: e.Id
             };
-            window.application.apoPost("DeleteTimeRecord", request, {
+            window.application.apiPost("DeleteTimeRecord", request, {
                 success: function () {
                     window.messageBus.fire(Event.TimeRecordDeleted);
                 }
@@ -123,7 +123,7 @@
             Hours: self.timeRecordEntryHours()
         };
 
-        window.application.apoPost("SaveTimeRecord", request, {
+        window.application.apiPost("SaveTimeRecord", request, {
             success: function () {
                 window.messageBus.fire(Event.EndDialog);
                 window.messageBus.fire(Event.TimeRecordSaved);
@@ -156,7 +156,7 @@
             DayRecordId: self.timeRecordNoteDayRecordId(),
             Text: self.timeRecordNoteText()
         };
-        window.application.apoPost("SaveTimeRecordNote", request, {
+        window.application.apiPost("SaveTimeRecordNote", request, {
             success: function () {
                 window.messageBus.fire(Event.TimeRecordNoteSaved);
             }
@@ -169,7 +169,7 @@
                 DayRecordId: e.DayRecordId,
                 Id: e.Id
             };
-            window.application.apoPost("DeleteTimeRecordNote", request, {
+            window.application.apiPost("DeleteTimeRecordNote", request, {
                 success: function () {
                     window.messageBus.fire(Event.TimeRecordNoteDeleted);
                 }
