@@ -147,9 +147,9 @@ namespace TimeTracker.Service.Base
             }, true);
         }
 
-        public Response<SessionState[]> Handshake(string clientId, string ticket)
+        public Response<SessionState[]> Handshake()
         {
-            var request = new Request { ClientId = clientId, Ticket = ticket };
+            var request = new Request();
             return SafeInvoke(request, (user, session) =>
             {
                 if (user == null)
@@ -382,6 +382,13 @@ namespace TimeTracker.Service.Base
 
         private Response<TData> SafeInvoke<TData>(Request request, Func<IUser, IUserSession, TData> action, ValidationRule[] requestValidationRules = null)
         {
+            if (WebOperationContext.Current != null)
+            {
+                var wcfRequest = WebOperationContext.Current.IncomingRequest;
+                var headers = wcfRequest.Headers;
+                request.Ticket = headers["Ticket"];
+                request.ClientId = headers["ClientId"];
+            }
             var response = SafeInvoke(request, action, false, requestValidationRules);
             if (_failedResponseStatusCodes.Contains(response.StatusCode))
             {

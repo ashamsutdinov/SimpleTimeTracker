@@ -5,14 +5,14 @@
 
     self.callApi = function (httpMethod, apiMethod, data, callback) {
         var basicData = {
-            ClientId: Config.ClientId,
-            Ticket: localStorage[Config.TicketKey]
         }
         var request = null;
         switch (httpMethod)
         {
             case "GET":
                 request = $.param($.extend(basicData, data));
+                break;
+            case "DELETE":
                 break;
             default:
                 basicData.Data = data;
@@ -32,6 +32,10 @@
             contentType: "application/json; charset=utf-8"
         });
         $.ajax({
+            beforeSend: function(xhr) {
+                xhr.setRequestHeader("Ticket", localStorage[Config.TicketKey]);
+                xhr.setRequestHeader("ClientId", Config.ClientId);
+            },
             url: url,
             contentType: 'application/json',
             method: httpMethod,

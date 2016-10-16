@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
@@ -39,6 +40,7 @@ namespace TimeTracker.RestService.Utils
                 reply.Properties.Add(HttpResponseMessageProperty.Name, httpResponse);
                 httpResponse.SuppressEntityBody = true;
                 httpResponse.StatusCode = HttpStatusCode.OK;
+                httpResponse.Headers.Add("Access-Control-Allow-Headers", "Ticket,ClientId");
             }
 
             var httpHeader = (HttpResponseMessageProperty)reply.Properties["httpResponse"];
