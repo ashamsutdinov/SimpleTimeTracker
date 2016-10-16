@@ -3,21 +3,31 @@
     var self = this;
     var connected = false;
 
-    self.callApi = function (httpMethod, apiMethod, data, callback) {
-        var basicData = {
+    self.callApi = function (httpMethod, rawUrl, data, callback) {
+        var formattedUrl = rawUrl;
+        var requestData = {
         }
-        var request = null;
-        switch (httpMethod)
-        {
-            case "GET":
-                request = $.param($.extend(basicData, data));
-                break;
-            case "DELETE":
-                break;
-            default:
-                basicData.Data = data;
-                request = JSON.stringify(basicData);
-                break;
+        for (var prop in data) {
+            if (data.hasOwnProperty(prop)) {
+                if (~rawUrl.indexOf(prop)) {
+                    formattedUrl = formattedUrl.replace("{" + prop + "}", data[prop]);
+                } else {
+                    requestData[prop] = data[prop];
+                }
+            }
+        }
+        var request;
+        if (Object.keys(requestData).length === 0) {
+            request = null;
+        } else {
+            switch (httpMethod) {
+                case "GET":
+                    request = $.param(requestData);
+                    break;
+                default:
+                    request = JSON.stringify(requestData);
+                    break;
+            }
         }
         var callbackOk = callback.success || function () { };
         var callbackFail = function (response) {
@@ -27,17 +37,16 @@
             }
         };
         var callbackDone = callback.done || function () { };
-        var url = Config.ApiRoot + apiMethod;
+        var url = Config.ApiRoot + formattedUrl;
         $.ajaxSetup({
             contentType: "application/json; charset=utf-8"
         });
         $.ajax({
-            beforeSend: function(xhr) {
+            beforeSend: function (xhr) {
                 xhr.setRequestHeader("Ticket", localStorage[Config.TicketKey]);
                 xhr.setRequestHeader("ClientId", Config.ClientId);
             },
             url: url,
-            contentType: 'application/json',
             method: httpMethod,
             data: request,
             success: function (response) {
@@ -46,23 +55,23 @@
         }).fail(callbackFail).done(callbackDone);
     };
 
-    self.apiGet = function (method, data, callback) {
-        self.callApi('GET', method, data, callback);
+    self.apiGet = function (rawUrl, data, callback) {
+        self.callApi("GET", rawUrl, data, callback);
     };
 
-    self.apiPost = function (method, data, callback) {
-        self.callApi('POST', method, data, callback);
+    self.apiPost = function (rawUrl, data, callback) {
+        self.callApi("POST", rawUrl, data, callback);
     };
 
-    self.apiPut = function (method, data, callback) {
-        self.callApi('PUT', method, data, callback);
+    self.apiPut = function (rawUrl, data, callback) {
+        self.callApi("PUT", rawUrl, data, callback);
     };
 
-    self.apiDelete = function (method, data, callback) {
-        self.callApi('DELETE', method, data, callback);
+    self.apiDelete = function (rawUrl, data, callback) {
+        self.callApi("DELETE", rawUrl, data, callback);
     };
 
-   
+
 
     var handshakeFail = function () {
         localStorage.removeItem(Config.TicketKey);
@@ -71,7 +80,7 @@
     };
 
     self.handshake = function () {
-        self.apiGet("Handshake", {}, {
+        self.apiGet("/Session/Handshake", {}, {
             success: function (states) {
                 var loggedIn = true;
                 for (var i = 0; i < states.length; i++) {
@@ -95,7 +104,7 @@
     };
 
     var heartbit = function () {
-        self.apiGet("Heartbit", { Tick: new Date().getTime() }, {
+        self.apiGet("/Session/Heartbit/{Tick}", { Tick: new Date().getTime() }, {
             success: function () {
                 window.messageBus.fire(Event.Connected);
                 if (!connected) {

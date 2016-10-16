@@ -5,10 +5,8 @@ namespace TimeTracker.Service.Contract.Data.Base
     [DataContract]
     public class Request
     {
-        [DataMember]
         public string ClientId { get; set; }
 
-        [DataMember]
         public string Ticket { get; set; }
     }
 

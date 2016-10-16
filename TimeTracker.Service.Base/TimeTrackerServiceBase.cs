@@ -136,13 +136,14 @@ namespace TimeTracker.Service.Base
         }
 
 
-        public Response<HeartbitData> Heartbit(long tick)
+        public Response<HeartbitData> Heartbit(string tick)
         {
             //it seems to be unrealistic to catch any exception here
-            var request = new Request<long> { Data = tick };
+            var nTick = long.Parse(tick);
+            var request = new Request<long> { Data = nTick };
             return SafeInvoke(request, (user, session) => new HeartbitData
             {
-                ClientTime = tick,
+                ClientTime = nTick,
                 ServerTime = (long)DateTime.UtcNow.Subtract(_epoch).TotalMilliseconds
             }, true);
         }
@@ -171,8 +172,9 @@ namespace TimeTracker.Service.Base
             });
         }
 
-        public virtual Response<TicketData> Login(Request<LoginData> request)
+        public virtual Response<TicketData> Login(LoginData data)
         {
+            var request = new Request<LoginData> { Data = data };
             return SafeInvoke(request, (userNull, sessionNull) =>
             {
                 //at this point, login and password already verified by validation rules
@@ -188,8 +190,9 @@ namespace TimeTracker.Service.Base
             }, _loginValidationRules);
         }
 
-        public Response<string> Logout(Request request)
+        public Response<string> Logout()
         {
+            var request = new Request();
             return SafeInvoke(request, (user, session) =>
             {
                 session.Expired = true;
@@ -198,8 +201,9 @@ namespace TimeTracker.Service.Base
             });
         }
 
-        public Response<int> Register(Request<RegistrationData> request)
+        public Response<int> Register(RegistrationData data)
         {
+            var request = new Request<RegistrationData> { Data = data };
             return SafeInvoke(request, (userNull, session) =>
             {
                 var login = request.Data.Login;
@@ -210,11 +214,11 @@ namespace TimeTracker.Service.Base
             }, _registrationValidationRules);
         }
 
-        public Response<int> SaveTimeRecord(Request<TimeRecordData> request)
+        public Response<int> SaveTimeRecord(string id, TimeRecordData data)
         {
+            var request = new Request<TimeRecordData> { Data = data };
             return SafeInvoke(request, (user, session) =>
             {
-                var data = request.Data;
                 var saved = TimeRecordDataProvider.SaveTimeRecord(data.Id, user.Id, data.Date, data.Caption, data.Hours);
                 return saved.Id;
             }, _saveTimeRecordValidationRules);

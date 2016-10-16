@@ -13,71 +13,71 @@ namespace TimeTracker.Service.Contract
     public interface ITimeTrackerService
     {
         [OperationContract]
-        [WebInvoke(Method = "GET", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare, UriTemplate = "/session/heartbit/{Tick}")]
-        Response<HeartbitData> Heartbit(long tick);
+        [WebInvoke(Method = "GET", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare, UriTemplate = "/Session/Heartbit/{Tick}")]
+        Response<HeartbitData> Heartbit(string tick);
 
         [OperationContract]
-        [WebInvoke(Method = "GET", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare, UriTemplate = "/session/handshake")]
+        [WebInvoke(Method = "GET", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare, UriTemplate = "/Session/Handshake")]
         Response<SessionState[]> Handshake();
        
         [OperationContract]
         [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare, UriTemplate = "/user/login")]
-        Response<TicketData> Login(Request<LoginData> request);
+        Response<TicketData> Login(LoginData data);
 
         [OperationContract]
         [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare, UriTemplate = "/user/logout")]
-        Response<string> Logout(Request request);
+        Response<string> Logout();
 
         [OperationContract]
         [WebInvoke(Method = "PUT", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare, UriTemplate = "/user/register")]
-        Response<int> Register(Request<RegistrationData> request);
+        Response<int> Register(RegistrationData data);
 
         [OperationContract]
         [WebInvoke(Method = "PUT", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare, UriTemplate = "/timerecord/{Id}")]
-        Response<int> SaveTimeRecord(Request<TimeRecordData> request);
+        Response<int> SaveTimeRecord(string id, TimeRecordData data);
 
         [OperationContract]
         [WebInvoke(Method = "DELETE", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare, UriTemplate = "/timerecord/{Id}")]
-        Response<int> DeleteTimeRecord(Request<TimeRecordData> request);
+        Response<int> DeleteTimeRecord(string id);
 
         [OperationContract]
         [WebInvoke(Method = "PUT", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare, UriTemplate = "/timerecord/note/{Id}")]
-        Response<int> SaveTimeRecordNote(Request<TimeRecordNoteData> request);
+        Response<int> SaveTimeRecordNote(string id, TimeRecordData data);
 
         [OperationContract]
         [WebInvoke(Method = "DELETE", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare, UriTemplate = "/timerecord/note/{Id}")]
-        Response<int> DeleteTimeRecordNote(Request<TimeRecordNoteData> request);
+        Response<int> DeleteTimeRecordNote(string id);
 
         [OperationContract]
         [WebInvoke(Method = "GET", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare, UriTemplate = "/timerecord/list/{PageNumber}/{PageSize}/{LoadAll}")]
-        Response<TimeRecordItemList> GetTimeRecords(Request<TimeRecordsFilterData> request);
+        Response<TimeRecordItemList> GetTimeRecords(string pageNumber, string pageSize, string loadAll);
 
         [OperationContract]
         [WebInvoke(Method = "GET", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare, UriTemplate = "user/settings/{Id}")]
-        Response<UserSettingItemList> GetUserSettings(Request<UserSettingItemList> request);
+        Response<UserSettingItemList> GetUserSettings(string id);
 
         [OperationContract]
         [WebInvoke(Method = "PUT", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare, UriTemplate = "user/settings/{Id}")]
-        Response<int> SaveUserSettings(Request<UserSettingItemList> request);
+        Response<int> SaveUserSettings(string id, UserSettingItemList data);
 
         [OperationContract]
         [WebInvoke(Method = "GET", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare, UriTemplate = "/user/list/{PageNumber}/{PageSize}")]
-        Response<UserList> GetUsers(Request<UserListData> request);
+        Response<UserList> GetUsers(string pageNumber, string pageSize);
 
         [OperationContract]
         [WebInvoke(Method = "GET", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare, UriTemplate = "/user/{Id}")]
-        Response<UserListItem> GetUser(Request<UserListItem> request);
+        Response<UserListItem> GetUser(string id);
 
         [OperationContract]
         [WebInvoke(Method = "PUT", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare, UriTemplate = "/user/{Id}")]
-        Response<int> SaveUser(Request<UserListItem> request);
+        Response<int> SaveUser(string id, UserListItem data);
 
         [OperationContract]
         [WebInvoke(Method = "DELETE", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare, UriTemplate = "/user/{Id}")]
-        Response<int> DeleteUser(Request<UserListItem> request);
+        Response<int> DeleteUser(string id);
 
         [OperationContract]
-        [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare, UriTemplate = "/user/reset-password/{Id}")]
-        Response<int> ResetPassword(Request<UserListItem> request);
+        [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare, UriTemplate = "/user/resetpassword/{Id}")]
+        Response<int> ResetPassword(string id);
     }
 }
