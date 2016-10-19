@@ -6,12 +6,12 @@ using TimeTracker.Service.Contract.Data.TimeRecords;
 
 namespace TimeTracker.Service.Base.Validation.TimeRecords
 {
-    internal class TimeRecordTotalDuractionValidationRule :
+    internal class TimeRecordTotalDurationValidationRule :
         AnonymousRequestValidationRule<TimeRecordData>
     {
         private readonly ITimeRecordDataProvider _timeRecordDataProvider;
 
-        public TimeRecordTotalDuractionValidationRule(ITimeRecordDataProvider timeRecordDataProvider) :
+        public TimeRecordTotalDurationValidationRule(ITimeRecordDataProvider timeRecordDataProvider) :
             base(true)
         {
             _timeRecordDataProvider = timeRecordDataProvider;

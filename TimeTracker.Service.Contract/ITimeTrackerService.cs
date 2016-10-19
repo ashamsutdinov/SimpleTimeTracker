@@ -29,8 +29,12 @@ namespace TimeTracker.Service.Contract
         Response<string> Logout();
 
         [OperationContract]
-        [WebInvoke(Method = "PUT", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare, UriTemplate = "/user/register")]
+        [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare, UriTemplate = "/user")]
         Response<int> Register(RegistrationData data);
+
+        [OperationContract]
+        [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare, UriTemplate = "/timerecord")]
+        Response<int> CreateTimeRecord(TimeRecordData data);
 
         [OperationContract]
         [WebInvoke(Method = "PUT", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare, UriTemplate = "/timerecord/{Id}")]
@@ -41,16 +45,20 @@ namespace TimeTracker.Service.Contract
         Response<int> DeleteTimeRecord(string id);
 
         [OperationContract]
+        [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare, UriTemplate = "/timerecord/note")]
+        Response<int> CreateTimeRecordNote(TimeRecordNoteData data);
+
+        [OperationContract]
         [WebInvoke(Method = "PUT", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare, UriTemplate = "/timerecord/note/{Id}")]
-        Response<int> SaveTimeRecordNote(string id, TimeRecordData data);
+        Response<int> SaveTimeRecordNote(string id, TimeRecordNoteData data);
 
         [OperationContract]
         [WebInvoke(Method = "DELETE", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare, UriTemplate = "/timerecord/note/{Id}")]
         Response<int> DeleteTimeRecordNote(string id);
 
         [OperationContract]
-        [WebInvoke(Method = "GET", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare, UriTemplate = "/timerecord/list/{PageNumber}/{PageSize}/{LoadAll}")]
-        Response<TimeRecordItemList> GetTimeRecords(string pageNumber, string pageSize, string loadAll);
+        [WebInvoke(Method = "GET", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare, UriTemplate = "/timerecord/list/{PageNumber}/{PageSize}/{LoadAllUsers}/{From}/{To}")]
+        Response<TimeRecordItemList> GetTimeRecords(string pageNumber, string pageSize, string loadAllUsers, string from, string to);
 
         [OperationContract]
         [WebInvoke(Method = "GET", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare, UriTemplate = "user/settings/{Id}")]

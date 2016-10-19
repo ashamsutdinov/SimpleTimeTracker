@@ -5,7 +5,6 @@ namespace TimeTracker.Service.Contract.Data.TimeRecords
     [DataContract]
     public class TimeRecordNoteData
     {
-        [DataMember]
         public int Id { get; set; }
 
         [DataMember]

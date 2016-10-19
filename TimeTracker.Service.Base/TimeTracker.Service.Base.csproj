@@ -71,7 +71,7 @@
     <Compile Include="Utils\ServiceResolverFactory.cs" />
     <Compile Include="Validation\TimeRecords\TimeRecordNoteEditRightsValidationRule.cs" />
     <Compile Include="Validation\TimeRecords\TimeRecordNoteExistsValidationRule.cs" />
-    <Compile Include="Validation\TimeRecords\TimeRecordTotalDuractionValidationRule.cs" />
+    <Compile Include="Validation\TimeRecords\TimeRecordTotalDurationValidationRule.cs" />
     <Compile Include="Validation\UserManagement\UserManagementPermissionsValidationRule.cs" />
     <Compile Include="Validation\UserManagement\UserManagementUserExistsValidationRule.cs" />
     <Compile Include="Validation\UserManagement\UserSettingsEditRightsValidationRule.cs" />

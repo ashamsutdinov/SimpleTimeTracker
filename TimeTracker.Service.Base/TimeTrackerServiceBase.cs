@@ -102,7 +102,7 @@ namespace TimeTracker.Service.Base
                 new TimeRecordDurationValidationRule(),
                 new TimeRecordExistsValidationRule(TimeRecordDataProvider),
                 new TimeRecordEditRightsValidationRule(TimeRecordDataProvider, "administrator"),
-                new TimeRecordTotalDuractionValidationRule(TimeRecordDataProvider)
+                new TimeRecordTotalDurationValidationRule(TimeRecordDataProvider)
             };
 
             _deleteTimeRecordValidationRules = new ValidationRule[]
@@ -140,8 +140,8 @@ namespace TimeTracker.Service.Base
         {
             //it seems to be unrealistic to catch any exception here
             var nTick = long.Parse(tick);
-            var request = new Request<long> { Data = nTick };
-            return SafeInvoke(request, (user, session) => new HeartbitData
+            var internalRequest = new Request<long> { Data = nTick };
+            return SafeInvoke(internalRequest, (user, session) => new HeartbitData
             {
                 ClientTime = nTick,
                 ServerTime = (long)DateTime.UtcNow.Subtract(_epoch).TotalMilliseconds
@@ -150,12 +150,12 @@ namespace TimeTracker.Service.Base
 
         public Response<SessionState[]> Handshake()
         {
-            var request = new Request();
-            return SafeInvoke(request, (user, session) =>
+            var internalRequest = new Request();
+            return SafeInvoke(internalRequest, (user, session) =>
             {
                 if (user == null)
                 {
-                    Log.Info(this, "Anonymous user connected: {0}", request.ClientId);
+                    Log.Info(this, "Anonymous user connected: {0}", internalRequest.ClientId);
                     return new[] { SessionState.Anonymous };
                 }
                 var result = new List<SessionState> { SessionState.LoggedInUser };
@@ -167,20 +167,20 @@ namespace TimeTracker.Service.Base
                 {
                     result.Add(SessionState.LoggedInManager);
                 }
-                Log.Info(this, "User connected: {0}", request.ClientId);
+                Log.Info(this, "User connected: {0}", internalRequest.ClientId);
                 return result.ToArray();
             });
         }
 
         public virtual Response<TicketData> Login(LoginData data)
         {
-            var request = new Request<LoginData> { Data = data };
-            return SafeInvoke(request, (userNull, sessionNull) =>
+            var internalRequest = new Request<LoginData> { Data = data };
+            return SafeInvoke(internalRequest, (userNull, sessionNull) =>
             {
                 //at this point, login and password already verified by validation rules
-                var user = UserDataProvider.GetUser(request.Data.Login);
-                var session = UserDataProvider.CreateNewSession(user.Id, request.ClientId);
-                var ticket = _cryptographyHelper.GetSessionTicket(session.Id, user.Id, request.ClientId);
+                var user = UserDataProvider.GetUser(internalRequest.Data.Login);
+                var session = UserDataProvider.CreateNewSession(user.Id, internalRequest.ClientId);
+                var ticket = _cryptographyHelper.GetSessionTicket(session.Id, user.Id, internalRequest.ClientId);
                 session.Ticket = ticket;
                 UserDataProvider.SaveSession(session);
                 return new TicketData
@@ -192,8 +192,8 @@ namespace TimeTracker.Service.Base
 
         public Response<string> Logout()
         {
-            var request = new Request();
-            return SafeInvoke(request, (user, session) =>
+            var internalRequest = new Request();
+            return SafeInvoke(internalRequest, (user, session) =>
             {
                 session.Expired = true;
                 UserDataProvider.SaveSession(session);
@@ -203,60 +203,106 @@ namespace TimeTracker.Service.Base
 
         public Response<int> Register(RegistrationData data)
         {
-            var request = new Request<RegistrationData> { Data = data };
-            return SafeInvoke(request, (userNull, session) =>
+            var internalRequest = new Request<RegistrationData> { Data = data };
+            return SafeInvoke(internalRequest, (userNull, session) =>
             {
-                var login = request.Data.Login;
+                var login = internalRequest.Data.Login;
                 var salt = _cryptographyHelper.CreateSalt();
-                var hash = _cryptographyHelper.HashPassword(request.Data.Password, salt);
-                var user = UserDataProvider.RegisterUser(login, request.Data.Name, hash, salt);
+                var hash = _cryptographyHelper.HashPassword(internalRequest.Data.Password, salt);
+                var user = UserDataProvider.RegisterUser(login, internalRequest.Data.Name, hash, salt);
                 return user.Id;
             }, _registrationValidationRules);
         }
 
+        public Response<int> CreateTimeRecord(TimeRecordData data)
+        {
+            return SaveTimeRecord(null, data);
+        }
+       
         public Response<int> SaveTimeRecord(string id, TimeRecordData data)
         {
-            var request = new Request<TimeRecordData> { Data = data };
-            return SafeInvoke(request, (user, session) =>
+            var internalRequest = new Request<TimeRecordData>
             {
-                var saved = TimeRecordDataProvider.SaveTimeRecord(data.Id, user.Id, data.Date, data.Caption, data.Hours);
+                Data = data
+            };
+            var entityId = string.IsNullOrEmpty(id) ? 0 : int.Parse(id);
+            internalRequest.Data.Id = entityId;
+            return SafeInvoke(internalRequest, (user, session) =>
+            {
+                var saved = TimeRecordDataProvider.SaveTimeRecord(entityId, user.Id, internalRequest.Data.Date, internalRequest.Data.Caption, internalRequest.Data.Hours);
                 return saved.Id;
             }, _saveTimeRecordValidationRules);
         }
 
-        public Response<int> DeleteTimeRecord(Request<TimeRecordData> request)
+        public Response<int> DeleteTimeRecord(string id)
         {
-            return SafeInvoke(request, (user, session) =>
+            var internalRequest = new Request<EntityIdData>
             {
-                TimeRecordDataProvider.DeleteTimeRecord(request.Data.Id);
-                return request.Data.Id;
+                Data = new EntityIdData
+                {
+                    Id = int.Parse(id)
+                }
+            };
+            return SafeInvoke(internalRequest, (user, session) =>
+            {
+                TimeRecordDataProvider.DeleteTimeRecord(internalRequest.Data.Id);
+                return internalRequest.Data.Id;
             }, _deleteTimeRecordValidationRules);
         }
 
-        public Response<int> SaveTimeRecordNote(Request<TimeRecordNoteData> request)
+        public Response<int> CreateTimeRecordNote(TimeRecordNoteData data)
         {
-            return SafeInvoke(request, (user, session) =>
+            return SaveTimeRecordNote(null, data);
+        }
+
+        public Response<int> SaveTimeRecordNote(string id, TimeRecordNoteData data)
+        {
+            var internalRequest = new Request<TimeRecordNoteData>
             {
-                var note = TimeRecordDataProvider.PrepareTimeRecordNote(request.Data.DayRecordId, user.Id, request.Data.Text);
+                Data = data
+            };
+            var entityId = string.IsNullOrEmpty(id) ? 0 : int.Parse(id);
+            internalRequest.Data.Id = entityId;
+            return SafeInvoke(internalRequest, (user, session) =>
+            {
+                var note = TimeRecordDataProvider.PrepareTimeRecordNote(internalRequest.Data.DayRecordId, user.Id, internalRequest.Data.Text);
                 TimeRecordDataProvider.SaveTimeRecordNote(note);
                 return note.Id;
             }, _saveTimeRecordNoteValidationRules);
         }
 
-        public Response<int> DeleteTimeRecordNote(Request<TimeRecordNoteData> request)
+        public Response<int> DeleteTimeRecordNote(string id)
         {
-            return SafeInvoke(request, (user, session) =>
+            var internalRequest = new Request<EntityIdData>
             {
-                TimeRecordDataProvider.DeleteTimeRecordNote(request.Data.Id);
-                return request.Data.Id;
+                Data = new EntityIdData
+                {
+                    Id = int.Parse(id)
+                }
+            };
+            return SafeInvoke(internalRequest, (user, session) =>
+            {
+                TimeRecordDataProvider.DeleteTimeRecordNote(internalRequest.Data.Id);
+                return internalRequest.Data.Id;
             }, _saveTimeRecordNoteValidationRules);
         }
 
-        public Response<TimeRecordItemList> GetTimeRecords(Request<TimeRecordsFilterData> request)
+        public Response<TimeRecordItemList> GetTimeRecords(string pageNumber, string pageSize, string loadAllUsers, string from, string to)
         {
-            return SafeInvoke(request, (user, session) =>
+            var internalRequest = new Request<TimeRecordsFilterData>
             {
-                var data = request.Data;
+                Data = new TimeRecordsFilterData
+                {
+                    PageNumber = int.Parse(pageNumber),
+                    PageSize = int.Parse(pageSize),
+                    LoadAllUsers = bool.Parse(loadAllUsers),
+                    From = DateTime.Parse(from),
+                    To = DateTime.Parse(to)
+                }
+            };
+            return SafeInvoke(internalRequest, (user, session) =>
+            {
+                var data = internalRequest.Data;
                 int total;
                 var timeRecords = TimeRecordDataProvider.GetTimeRecords(data.LoadAllUsers ? (int?)null : user.Id, data.From, data.To, data.PageNumber, data.PageSize, out total);
                 var result = new TimeRecordItemList(timeRecords.ToList(), data.PageNumber, data.PageSize, total, UserDataProvider, TimeRecordDataProvider);
@@ -264,11 +310,18 @@ namespace TimeTracker.Service.Base
             }, _getUserTimeRecordsValidationRules);
         }
 
-        public Response<UserSettingItemList> GetUserSettings(Request<UserSettingItemList> request)
+        public Response<UserSettingItemList> GetUserSettings(string id)
         {
-            return SafeInvoke(request, (user, session) =>
+            var internalRequest = new Request<EntityIdData>
             {
-                var requestedUserId = request.Data.UserId > 0 ? request.Data.UserId : user.Id;
+                Data = new EntityIdData
+                {
+                    Id = int.Parse(id)
+                }
+            };
+            return SafeInvoke(internalRequest, (user, session) =>
+            {
+                var requestedUserId = internalRequest.Data.Id > 0 ? internalRequest.Data.Id : user.Id;
                 var allSettings = UserDataProvider.GetAllUserSettings();
                 var userSettings = UserDataProvider.GetUserSettings(requestedUserId);
                 return new UserSettingItemList
@@ -284,13 +337,18 @@ namespace TimeTracker.Service.Base
             }, _userSettingsValidationRules);
         }
 
-        public Response<int> SaveUserSettings(Request<UserSettingItemList> request)
+        //TODO: Think about id property
+        public Response<int> SaveUserSettings(string id, UserSettingItemList data)
         {
-            return SafeInvoke(request, (user, session) =>
+            var internalRequest = new Request<UserSettingItemList>
             {
-                var requestedUserId = request.Data.UserId > 0 ? request.Data.UserId : user.Id;
+                Data = data
+            };
+            return SafeInvoke(internalRequest, (user, session) =>
+            {
+                var requestedUserId = internalRequest.Data.UserId > 0 ? internalRequest.Data.UserId : user.Id;
                 var requestedUser = UserDataProvider.GetUser(requestedUserId);
-                foreach (var itemEnu in request.Data.Items)
+                foreach (var itemEnu in internalRequest.Data.Items)
                 {
                     var item = itemEnu;
                     var setting = requestedUser.Settings.FirstOrDefault(s => s.Id == item.Id);
@@ -308,27 +366,42 @@ namespace TimeTracker.Service.Base
             }, _userSettingsValidationRules);
         }
 
-        public Response<UserList> GetUsers(Request<UserListData> request)
+        public Response<UserList> GetUsers(string pageNumber, string pageSize)
         {
-            return SafeInvoke(request, (user, session) =>
+            var internalRequest = new Request<UserListData>
+            {
+                Data = new UserListData
+                {
+                    PageNumber = int.Parse(pageNumber),
+                    PageSize = int.Parse(pageSize)
+                }
+            };
+            return SafeInvoke(internalRequest, (user, session) =>
             {
                 int total;
-                var users = UserDataProvider.GetUsers(request.Data.PageNumber, request.Data.PageSize, out total);
-                var result = new UserList(users, request.Data.PageNumber, request.Data.PageSize, total, UserDataProvider);
+                var users = UserDataProvider.GetUsers(internalRequest.Data.PageNumber, internalRequest.Data.PageSize, out total);
+                var result = new UserList(users, internalRequest.Data.PageNumber, internalRequest.Data.PageSize, total, UserDataProvider);
                 return result;
             }, _userManagementValidationRules);
         }
 
-        public Response<UserListItem> GetUser(Request<UserListItem> request)
+        public Response<UserListItem> GetUser(string id)
         {
-            return SafeInvoke(request, (user, session) =>
+            var internalRequest = new Request<EntityIdData>
             {
-                var requestedUser = UserDataProvider.GetUser(request.Data.Id);
+                Data = new EntityIdData
+                {
+                    Id = int.Parse(id)
+                }
+            };
+            return SafeInvoke(internalRequest, (user, session) =>
+            {
+                var requestedUser = UserDataProvider.GetUser(internalRequest.Data.Id);
                 var convertedUser = UserList.ConvertFromDtoUser(requestedUser);
 
                 //this is to ensure ALL possible settings will be delivered to the client
                 var allSettings = UserDataProvider.GetAllUserSettings();
-                var userSettings = UserDataProvider.GetUserSettings(request.Data.Id);
+                var userSettings = UserDataProvider.GetUserSettings(internalRequest.Data.Id);
 
                 convertedUser.Settings = allSettings.Select(s => new UserSettingValueItem
                 {
@@ -342,20 +415,25 @@ namespace TimeTracker.Service.Base
             }, _userManagementValidationRules);
         }
 
-        public Response<int> SaveUser(Request<UserListItem> request)
+        //TODO: Think about id property
+        public Response<int> SaveUser(string id, UserListItem data)
         {
-            return SafeInvoke(request, (user, session) =>
+            var internalRequest = new Request<UserListItem>
             {
-                var userToSave = UserDataProvider.GetUser(request.Data.Id);
-                userToSave.Name = request.Data.Name;
-                userToSave.StateId = request.Data.StateId;
+                Data = data
+            };
+            return SafeInvoke(internalRequest, (user, session) =>
+            {
+                var userToSave = UserDataProvider.GetUser(internalRequest.Data.Id);
+                userToSave.Name = internalRequest.Data.Name;
+                userToSave.StateId = internalRequest.Data.StateId;
                 userToSave.Roles.Clear();
-                foreach (var role in request.Data.Roles)
+                foreach (var role in internalRequest.Data.Roles)
                 {
                     userToSave.Roles.Add(UserDataProvider.PrepareRole(role.Id));
                 }
                 userToSave.Settings.Clear();
-                foreach (var setting in request.Data.Settings)
+                foreach (var setting in internalRequest.Data.Settings)
                 {
                     userToSave.Settings.Add(UserDataProvider.PrepareUserSetting(setting.Id, setting.Value));
                 }
@@ -364,16 +442,30 @@ namespace TimeTracker.Service.Base
             }, _userManagementValidationRules);
         }
 
-        public Response<int> DeleteUser(Request<UserListItem> request)
+        public Response<int> DeleteUser(string id)
         {
-            return SafeInvoke(request, (user, session) => UserDataProvider.DeleteUser(request.Data.Id), _userManagementValidationRules);
+            var internalRequest = new Request<EntityIdData>
+            {
+                Data = new EntityIdData
+                {
+                    Id = int.Parse(id)
+                }
+            };
+            return SafeInvoke(internalRequest, (user, session) => UserDataProvider.DeleteUser(internalRequest.Data.Id), _userManagementValidationRules);
         }
 
-        public Response<int> ResetPassword(Request<UserListItem> request)
+        public Response<int> ResetPassword(string id)
         {
-            return SafeInvoke(request, (user, session) =>
+            var internalRequest = new Request<UserListItem>
             {
-                var requestedUser = UserDataProvider.GetUser(request.Data.Id);
+                Data = new UserListItem
+                {
+                    Id = int.Parse(id)
+                }
+            };
+            return SafeInvoke(internalRequest, (user, session) =>
+            {
+                var requestedUser = UserDataProvider.GetUser(internalRequest.Data.Id);
                 var newSalt = _cryptographyHelper.CreateSalt();
                 var newPassword = "123456";
                 var newPasswordHash = _cryptographyHelper.HashPassword(newPassword, newSalt);

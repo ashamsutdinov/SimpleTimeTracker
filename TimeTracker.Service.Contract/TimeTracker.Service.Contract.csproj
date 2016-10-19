@@ -57,6 +57,7 @@
     <Compile Include="Data\Session\SessionData.cs" />
     <Compile Include="Data\Session\SessionState.cs" />
     <Compile Include="Data\Session\TicketData.cs" />
+    <Compile Include="Data\TimeRecords\EntityIdData.cs" />
     <Compile Include="Data\TimeRecords\TimeRecordData.cs" />
     <Compile Include="Data\TimeRecords\TimeRecordGroup.cs" />
     <Compile Include="Data\TimeRecords\TimeRecordGroupItem.cs" />
